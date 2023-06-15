@@ -5,7 +5,7 @@ public class Dungeon extends MapArea {
 	private static final long serialVersionUID = 627520295057387283L;
 
 	private boolean hasSpecialFloors;
-	private String name;
+	private String dungeonName;
 	private int currentFloor;
 	private int totalFloors;
 

@@ -58,13 +58,13 @@ public class DungeonMapBuilder extends MapBuilderBase {
 
 	public DungeonMapBuilder(int level) {
 		super("Dungeon, floor " + level);
-		rooms = new ArrayList<Room>();
+		rooms = new ArrayList<>();
 		this.level = level;
 	}
 
 	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
 		in.defaultReadObject();
-		rooms = new ArrayList<Room>();
+		rooms = new ArrayList<>();
 	}
 
 	@Override
@@ -77,7 +77,7 @@ public class DungeonMapBuilder extends MapBuilderBase {
 			rooms.clear();
 
 			/* Initialize map sections */
-			mapSections = new ArrayList<DungeonMapBuilder.MapSection>();
+			mapSections = new ArrayList<>();
 			mapSections.add(new MapSection(getSubRectangle(mapRect, 0, 0, .25, .25)));
 			mapSections.add(new MapSection(getSubRectangle(mapRect, mapRect.width / 4, 0, .25, .25)));
 			mapSections.add(new MapSection(getSubRectangle(mapRect, mapRect.width / 4, mapRect.height / 4, .25, .25)));
@@ -126,12 +126,12 @@ public class DungeonMapBuilder extends MapBuilderBase {
 		int maxRooms = 15;
 		Room currentRoom = null;
 
-		Stack<Room> roomsOnPath = new Stack<Room>();
+		Stack<Room> roomsOnPath = new Stack<>();
 		roomsOnPath.push(startRoom);
 
 		currentRoom = startRoom;
 		for (int x = 0; x < maxRooms; x++) {
-			if (roomsOnPath.size() == 0)
+			if (roomsOnPath.isEmpty())
 				break;
 
 			boolean fail = false;
@@ -185,7 +185,7 @@ public class DungeonMapBuilder extends MapBuilderBase {
 				} else {
 
 					fail = true;
-					System.out.println("endPoint==null, x=" + x);
+					LOG.debug("endPoint == null, x = {}", x);
 				}
 			}
 
@@ -265,7 +265,7 @@ public class DungeonMapBuilder extends MapBuilderBase {
 				} else {
 
 					fail = true;
-					System.out.println("endPoint==null, x=" + x);
+                    LOG.debug("endPoint == null, x = {}", x);
 				}
 			}
 		}
@@ -403,7 +403,7 @@ public class DungeonMapBuilder extends MapBuilderBase {
 	}
 
 	private MapSection randomMapSection() {
-		ProbabilityTable<MapSection> sections = new ProbabilityTable<MapSection>();
+		ProbabilityTable<MapSection> sections = new ProbabilityTable<>();
 
 		for (MapSection section : mapSections) {
 			sections.add(section, (int) (((section.floorSpaces / (float) section.totalSpaces) + 1) * 100));
@@ -427,7 +427,6 @@ public class DungeonMapBuilder extends MapBuilderBase {
 	}
 
 	private void setDoor(ConnectionPoint doorPoint) {
-		// setTile(doorPoint, Symbol.DOOR);
 		map[doorPoint.x][doorPoint.y] = tb.buildTile(Symbol.DOOR);
 		LOG.debug("Created door at {}, {}", doorPoint.x, doorPoint.y);
 		doorPoint.isDoor = true;
