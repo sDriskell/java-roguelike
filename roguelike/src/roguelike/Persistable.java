@@ -6,8 +6,8 @@ import java.io.ObjectOutput;
 
 public interface Persistable<T> {
 
-	public void save(ObjectOutput output) throws IOException;
+    public void save(ObjectOutput output) throws IOException;
 
-	public T load(ObjectInput input) throws ClassNotFoundException, IOException;
+    public T load(ObjectInput input) throws ClassNotFoundException, IOException;
 
 }
