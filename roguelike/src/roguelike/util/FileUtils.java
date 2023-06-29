@@ -9,6 +9,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.jsefa.Deserializer;
@@ -19,50 +20,51 @@ import org.jsefa.csv.config.CsvConfiguration;
 import roguelike.screens.MainScreen;
 
 public class FileUtils {
-	static String readFile(String path, Charset encoding)
-			throws IOException
-	{
-		byte[] encoded = Files.readAllBytes(Paths.get(path));
-		return new String(encoded, encoding);
-	}
+    static String readFile(String path, Charset encoding) throws IOException {
+        byte[] encoded = Files.readAllBytes(Paths.get(path));
+        return new String(encoded, encoding);
+    }
 
-	public static String readFile(InputStream stream) throws IOException {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-		StringBuilder out = new StringBuilder();
-		String line;
-		while ((line = reader.readLine()) != null) {
-			out.append(line);
-			out.append("\n");
-		}
-		reader.close();
+    public static String readFile(InputStream stream) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        StringBuilder out = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            out.append(line);
+            out.append("\n");
+        }
+        reader.close();
 
-		return out.toString();
-	}
+        return out.toString();
+    }
 
-	public static <T> List<T> recordsFromCsv(String path, Class<T> typeClass) {
-		String csv;
-		try {
-			csv = FileUtils.readFile(MainScreen.class.getResourceAsStream(path));
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
+    public static <T> List<T> recordsFromCsv(String path, Class<T> typeClass) {
+        String csv;
+        try {
+            csv = FileUtils.readFile(MainScreen.class.getResourceAsStream(path));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            return Collections.emptyList();
+        }
 
-		ArrayList<T> items = new ArrayList<T>();
-		CsvConfiguration csvConfiguration = new CsvConfiguration();
-		csvConfiguration.setFieldDelimiter(',');
-		csvConfiguration.setLineFilter(new HeaderAndFooterFilter(1, false, false));
+        ArrayList<T> items = new ArrayList<>();
+        CsvConfiguration csvConfiguration = new CsvConfiguration();
+        csvConfiguration.setFieldDelimiter(',');
+        csvConfiguration.setLineFilter(new HeaderAndFooterFilter(1, false, false));
 
-		Deserializer deserializer = CsvIOFactory.createFactory(csvConfiguration, typeClass).createDeserializer();
+        Deserializer deserializer =
+                CsvIOFactory.createFactory(csvConfiguration, typeClass).createDeserializer();
 
-		deserializer.open(new StringReader(csv));
-		while (deserializer.hasNext()) {
-			T row = deserializer.next();
-			items.add(row);
-		}
-		deserializer.close(true);
+        deserializer.open(new StringReader(csv));
+        while (deserializer.hasNext()) {
+            T row = deserializer.next();
+            items.add(row);
+        }
+        deserializer.close(true);
 
-		System.out.println("Read " + items.size() + " of type " + typeClass.getName() + " from " + path);
-		return items;
-	}
+        System.out.println(
+                "Read " + items.size() + " of type " + typeClass.getName() + " from " + path);
+        return items;
+    }
 }

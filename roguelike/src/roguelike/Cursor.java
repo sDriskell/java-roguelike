@@ -78,11 +78,13 @@ public class Cursor {
     }
 
     protected void onShow() {
+        // TODO: Complete method behavior
     }
 
     protected void onDraw(TerminalBase terminal, int sx, int sy) {
         terminal.withColor(SColor.TRANSPARENT, color).fill(sx, sy, 1, 1);
-        MapArea mapArea = Game.current().getCurrentMapArea();
+        mapArea = Game.current().getCurrentMapArea();
+
         if (!mapArea.getTileAt(position).isExplored())
             terminal.withColor(SColor.TRANSPARENT, color).put(sx, sy, ' ');
     }
@@ -147,6 +149,7 @@ public class Cursor {
      * @return
      */
     protected boolean onUpdatePosition(Coordinate position) {
+        // TODO: Complete method behavior
         return true;
     }
 
@@ -158,6 +161,7 @@ public class Cursor {
      * @return
      */
     protected CursorResult onProcessCommand(InputCommand command) {
+        // TODO: Complete method behavior
         return null;
     }
 }

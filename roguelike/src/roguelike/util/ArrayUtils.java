@@ -4,6 +4,9 @@ import java.awt.Rectangle;
 import java.util.Arrays;
 
 public class ArrayUtils<E> {
+    private static final String ORIGINAL = " original=";
+    private static final String INVALID_X = "invalid x: ";
+    private static final String INVALID_Y = "invalid y: ";
 
 	public static boolean[][] getSubArray(boolean[][] original, Rectangle area) {
 		return getSubArray(original, area.x, area.y, area.width, area.height);
@@ -11,9 +14,9 @@ public class ArrayUtils<E> {
 
 	public static boolean[][] getSubArray(boolean[][] original, int x, int y, int width, int height) {
 		if (original.length < x)
-			throw new IllegalArgumentException("invalid x: " + x + " original=" + original.length);
+			throw new IllegalArgumentException(INVALID_X + x + ORIGINAL + original.length);
 		if (original[0].length < y)
-			throw new IllegalArgumentException("invalid y: " + y + " original=" + original[0].length);
+			throw new IllegalArgumentException(INVALID_Y + y + ORIGINAL + original[0].length);
 
 		boolean[][] subArray = new boolean[width][];
 		for (int i = x, j = 0; i < (x + width); i++, j++) {
@@ -28,9 +31,9 @@ public class ArrayUtils<E> {
 
 	public static float[][] getSubArray(float[][] original, int x, int y, int width, int height) {
 		if (original.length < x)
-			throw new IllegalArgumentException("invalid x: " + x + " original=" + original.length);
+			throw new IllegalArgumentException(INVALID_X + x + ORIGINAL + original.length);
 		if (original[0].length < y)
-			throw new IllegalArgumentException("invalid y: " + y + " original=" + original[0].length);
+			throw new IllegalArgumentException(INVALID_Y + y + ORIGINAL + original[0].length);
 
 		float[][] subArray = new float[width][];
 

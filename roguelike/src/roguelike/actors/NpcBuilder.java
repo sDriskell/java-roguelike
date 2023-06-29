@@ -1,7 +1,7 @@
 package roguelike.actors;
 
-import roguelike.functionalInterfaces.BehaviorProvider;
 import roguelike.items.Equipment.ItemSlot;
+import roguelike.interfaces.BehaviorProvider;
 import roguelike.items.Inventory;
 import roguelike.items.Item;
 import squidpony.squidcolor.SColor;

@@ -22,141 +22,127 @@ import squidpony.squidgrid.util.RadiusStrategy;
 
 public class AttackCursor extends Cursor {
 
-	private SColor background;
-	private FOVSolver fov = new ShadowFOV();
-	private Coordinate initialPosition;
+    private SColor background;
+    private FOVSolver fov = new ShadowFOV();
+    private Coordinate initialPosition;
 
-	boolean fovDrawn = false;
-	boolean determinedActors = false;
-	Rectangle screenArea;
-	float[][] incomingLight;
+    boolean fovDrawn = false;
+    boolean determinedActors = false;
+    Rectangle screenArea;
+    float[][] incomingLight;
 
-	private CurrentItemTracker<Actor> targets;
-	private Actor startTarget = null;
+    private CurrentItemTracker<Actor> targets;
+    private Actor startTarget = null;
 
-	public AttackCursor(Coordinate initialPosition, MapArea mapArea, int maxRadius, RadiusStrategy radiusStrategy) {
-		super(initialPosition, mapArea, maxRadius);
-		this.radiusStrategy = BasicRadiusStrategy.CIRCLE;
-		this.background = SColor.DARK_CORAL;
-		this.initialPosition = initialPosition;
+    public AttackCursor(Coordinate initialPosition, MapArea mapArea, int maxRadius,
+            RadiusStrategy radiusStrategy) {
+        super(initialPosition, mapArea, maxRadius);
+        this.radiusStrategy = BasicRadiusStrategy.CIRCLE;
+        this.background = SColor.DARK_CORAL;
+        this.initialPosition = initialPosition;
 
-		this.radiusStrategy = radiusStrategy;
-		this.targets = new CurrentItemTracker<Actor>();
-	}
+        this.radiusStrategy = radiusStrategy;
+        this.targets = new CurrentItemTracker<>();
+    }
 
-	@Override
-	protected void onDraw(TerminalBase terminal, int sx, int sy) {
-		// TODO: maybe some effects here, draw a line or something
+    @Override
+    protected void onDraw(TerminalBase terminal, int sx, int sy) {
+        // TODO: maybe some effects here, draw a line or something
 
-		if (!fovDrawn) {
-			determineFOVTiles(terminal);
-			fovDrawn = true;
-		}
-		drawFOV(terminal);
-		super.onDraw(terminal, sx, sy);
-		DisplayManager.instance().setDirty(); // update
-	}
+        if (!fovDrawn) {
+            determineFOVTiles(terminal);
+            fovDrawn = true;
+        }
+        drawFOV(terminal);
+        super.onDraw(terminal, sx, sy);
+        DisplayManager.instance().setDirty(); // update
+    }
 
-	@Override
-	protected boolean onUpdatePosition(Coordinate position) {
-		int x = position.x - screenArea.x;
-		int y = position.y - screenArea.y;
+    @Override
+    protected boolean onUpdatePosition(Coordinate position) {
+        int x = position.x - screenArea.x;
+        int y = position.y - screenArea.y;
 
-		if (incomingLight[x][y] > 0)
-			return true;
+        return incomingLight[x][y] > 0;
+    }
 
-		return false;
-	}
+    @Override
+    protected CursorResult onProcessCommand(InputCommand command) {
+        switch (command) {
+        case PREVIOUS_TARGET:
+            // move to previous target
+            targets.previous();
+            break;
 
-	@Override
-	protected CursorResult onProcessCommand(InputCommand command) {
-		switch (command) {
-		case PREVIOUS_TARGET:
-			// move to previous target
-			targets.previous();
-			break;
+        case NEXT_TARGET:
+            // move to next target
+            targets.advance();
+            break;
 
-		case NEXT_TARGET:
-			// move to next target
-			targets.advance();
-			break;
+        default:
+            return null;
+        }
 
-		default:
-			return null;
-		}
+        Actor tgt = targets.getCurrent();
+        if (tgt != null)
+            position.setLocation(tgt.getPosition());
 
-		Actor tgt = targets.getCurrent();
-		if (tgt != null)
-			position.setLocation(tgt.getPosition());
+        return null;
+    }
 
-		return null;
-	}
+    private void determineFOVTiles(TerminalBase terminal) {
+        MapArea currentMap = Game.current().getCurrentMapArea();
+        screenArea = currentMap.getVisibleAreaInTiles(terminal, initialPosition);
 
-	private void determineFOVTiles(TerminalBase terminal) {
-		int width = maxRadius;
-		int height = maxRadius;
-		MapArea currentMap = Game.current().getCurrentMapArea();
-		screenArea = currentMap.getVisibleAreaInTiles(terminal, initialPosition);
+        float[][] lighting = ArrayUtils.getSubArray(currentMap.getLightValues(), screenArea);
 
-		float[][] lighting = new float[width][height];
+        incomingLight = fov.calculateFOV(lighting, initialPosition.x - screenArea.x,
+                initialPosition.y - screenArea.y, maxRadius + 1f);
 
-		lighting = ArrayUtils.getSubArray(currentMap.getLightValues(), screenArea);
+    }
 
-		incomingLight = fov.calculateFOV(
-				lighting,
-				initialPosition.x - screenArea.x,
-				initialPosition.y - screenArea.y,
-				maxRadius + 1);
+    private void drawFOV(TerminalBase terminal) {
+        MapArea currentMap = Game.current().getCurrentMapArea();
 
-	}
+        for (int x = screenArea.x; x < screenArea.getMaxX(); x++) {
+            for (int y = screenArea.y; y < screenArea.getMaxY(); y++) {
+                int cX = x - screenArea.x;
+                int cY = y - screenArea.y;
 
-	private void drawFOV(TerminalBase terminal) {
-		MapArea currentMap = Game.current().getCurrentMapArea();
+                Tile t = currentMap.getTileAt(x, y);
+                if (incomingLight[cX][cY] > 0 && t.isVisible()) {
 
-		for (int x = screenArea.x; x < screenArea.getMaxX(); x++) {
-			for (int y = screenArea.y; y < screenArea.getMaxY(); y++) {
-				int cX = x - screenArea.x;
-				int cY = y - screenArea.y;
+                    if (!t.isWall())
+                        terminal.withColor(SColor.TRANSPARENT, SColorFactory.dimmest(background))
+                                .fill(cX, cY, 1, 1);
 
-				Tile t = currentMap.getTileAt(x, y);
-				if (incomingLight[cX][cY] > 0 && t.isVisible()) {
+                    if (!determinedActors) {
+                        Actor a = t.getActor();
+                        if (a != null && !(a instanceof Player)) {
+                            targets.add(a);
+                        }
+                    }
+                }
+            }
+        }
+        if (!determinedActors && startTarget == null) {
+            targetNearestEnemy();
+        }
 
-					if (!t.isWall())
-						terminal.withColor(SColor.TRANSPARENT, SColorFactory.dimmest(background)).fill(cX, cY, 1, 1);
+        determinedActors = true;
+    }
 
-					if (!determinedActors) {
-						Actor a = t.getActor();
-						if (a != null && !(a instanceof Player)) {
-							targets.add(a);
-						}
-					}
-				}
-			}
-		}
-		if (!determinedActors && startTarget == null) {
-			targetNearestEnemy();
-		}
+    /**
+     * Sets the cursor position to the enemy nearest to the player
+     */
+    private void targetNearestEnemy() {
+        startTarget = targets.getAll().stream().sorted((t1, t2) -> {
+            return Double.compare(t1.getPosition().distance(this.initialPosition),
+                    t2.getPosition().distance(this.initialPosition));
+        }).findFirst().orElse(null);
 
-		determinedActors = true;
-	}
-
-	/**
-	 * Sets the cursor position to the enemy nearest to the player
-	 */
-	private void targetNearestEnemy() {
-		startTarget = targets
-				.getAll()
-				.stream()
-				.sorted((t1, t2) -> {
-					return Double.compare(
-							t1.getPosition().distance(this.initialPosition),
-							t2.getPosition().distance(this.initialPosition));
-				})
-				.findFirst()
-				.orElse(null);
-
-		if (startTarget != null) {
-			position.setLocation(startTarget.getPosition());
-		}
-	}
+        if (startTarget != null) {
+            position.setLocation(startTarget.getPosition());
+        }
+    }
 }

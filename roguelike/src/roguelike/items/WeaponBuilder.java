@@ -3,7 +3,7 @@ package roguelike.items;
 import roguelike.actions.combat.DamageType;
 import roguelike.actions.combat.WeaponCategory;
 import roguelike.actors.conditions.Condition;
-import roguelike.functionalInterfaces.StatisticProvider;
+import roguelike.interfaces.StatisticProvider;
 import roguelike.items.Equipment.ItemSlot;
 import squidpony.squidcolor.SColor;
 

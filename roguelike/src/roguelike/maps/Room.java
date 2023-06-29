@@ -15,219 +15,188 @@ import squidpony.squidmath.RNG;
 import squidpony.squidutility.ProbabilityTable;
 
 public class Room {
-	protected final RNG random = Game.current().random();
-	protected final ArrayList<Point> floorTiles;
+    protected final RNG random = Game.current().random();
+    protected final ArrayList<Point> floorTiles;
 
-	public final ArrayList<ConnectionPoint> doors;
-	public final Rectangle area;
+    public final List<ConnectionPoint> doors;
+    public final Rectangle area;
 
-	public Room(Rectangle area) {
-		this.area = area;
-		doors = new ArrayList<ConnectionPoint>();
-		floorTiles = new ArrayList<Point>();
-	}
+    public Room(Rectangle area) {
+        this.area = area;
+        doors = new ArrayList<>();
+        floorTiles = new ArrayList<>();
+    }
 
-	public int bottom() {
-		return (int) area.getMaxY() - 1;
-	}
+    public int bottom() {
+        return (int) area.getMaxY() - 1;
+    }
 
-	public int top() {
-		return (int) area.getMinY();
-	}
+    public int top() {
+        return (int) area.getMinY();
+    }
 
-	public int left() {
-		return (int) area.getMinX();
-	}
+    public int left() {
+        return (int) area.getMinX();
+    }
 
-	public int right() {
-		return (int) area.getMaxX() - 1;
-	}
+    public int right() {
+        return (int) area.getMaxX() - 1;
+    }
 
-	public int getRandomX() {
-		return (int) random.between(area.getMinX() + 1, area.getMaxX() - 1);
-	}
+    public int getRandomX() {
+        return (int) random.between(area.getMinX() + 1, area.getMaxX() - 1);
+    }
 
-	public int getRandomY() {
-		return (int) random.between(area.getMinY() + 1, area.getMaxY() - 1);
-	}
+    public int getRandomY() {
+        return (int) random.between(area.getMinY() + 1, area.getMaxY() - 1);
+    }
 
-	public Point getRandomFloorTile() {
-		Point p = null;
-		if (floorTiles.size() > 1) {
-			return floorTiles.get(random.between(0, floorTiles.size()));
-		}
-		return p;
-	}
+    public Point getRandomFloorTile() {
+        Point p = null;
+        if (floorTiles.size() > 1) {
+            return floorTiles.get(random.between(0, floorTiles.size()));
+        }
+        return p;
+    }
 
-	public Point getDoorCoordinate(Tile[][] map, DirectionCardinal direction) {
-		Point p = null;
-		switch (direction) {
-		case DOWN:
-			p = new Point(this.getRandomX(), this.bottom());
-			break;
-		case UP:
-			p = new Point(this.getRandomX(), this.top());
-			break;
-		case LEFT:
-			p = new Point(this.left(), this.getRandomY());
-			break;
-		case RIGHT:
-			p = new Point(this.right(), this.getRandomY());
-			break;
-		default:
-			return null;
-		}
-		return p;
-	}
+    public Point getDoorCoordinate(Tile[][] map, DirectionCardinal direction) {
+        Point p = null;
+        switch (direction) {
+        case DOWN:
+            p = new Point(this.getRandomX(), this.bottom());
+            break;
+        case UP:
+            p = new Point(this.getRandomX(), this.top());
+            break;
+        case LEFT:
+            p = new Point(this.left(), this.getRandomY());
+            break;
+        case RIGHT:
+            p = new Point(this.right(), this.getRandomY());
+            break;
+        default:
+            return null;
+        }
+        return p;
+    }
 
-	public Point addRandomDoorToRoom(Tile[][] map, DirectionCardinal direction) {
-		ConnectionPoint p = new ConnectionPoint(getDoorCoordinate(map, direction), direction, this);
+    public Point addRandomDoorToRoom(Tile[][] map, DirectionCardinal direction) {
+        ConnectionPoint p = new ConnectionPoint(getDoorCoordinate(map, direction), direction, this);
 
-		if (map[p.x][p.y].isWall()) {
-			this.doors.add(p);
-			return p;
-		}
-		return null;
-	}
+        if (map[p.x][p.y].isWall()) {
+            this.doors.add(p);
+            return p;
+        }
+        return null;
+    }
 
-	public Point getDoorFrom(Point p, DirectionCardinal thisDoorDirection) {
-		switch (thisDoorDirection) {
-		case DOWN:
-			return new Point(p.x, this.bottom());
-		case UP:
-			return new Point(p.x, this.top());
-		case LEFT:
-			return new Point(this.left(), p.y);
-		case RIGHT:
-			return new Point(this.right(), p.y);
-		default:
-			return null;
-		}
-	}
+    public Point getDoorFrom(Point p, DirectionCardinal thisDoorDirection) {
+        switch (thisDoorDirection) {
+        case DOWN:
+            return new Point(p.x, this.bottom());
+        case UP:
+            return new Point(p.x, this.top());
+        case LEFT:
+            return new Point(this.left(), p.y);
+        case RIGHT:
+            return new Point(this.right(), p.y);
+        default:
+            return null;
+        }
+    }
 
-	public Point getExistingDoor(DirectionCardinal direction) {
-		final Point startPoint;
-		final Point endPoint;
-		switch (direction) {
-		case DOWN:
-			startPoint = new Point(this.left(), this.bottom());
-			endPoint = new Point(this.right(), this.bottom());
-			break;
-		case UP:
-			startPoint = new Point(this.left(), this.top());
-			endPoint = new Point(this.right(), this.top());
-			break;
-		case LEFT:
-			startPoint = new Point(this.left(), this.top());
-			endPoint = new Point(this.left(), this.bottom());
-			break;
-		case RIGHT:
-			startPoint = new Point(this.right(), this.top());
-			endPoint = new Point(this.right(), this.bottom());
-			break;
-		default:
-			startPoint = null;
-			endPoint = null;
-		}
-		if (startPoint == null || endPoint == null)
-			return null;
+    public Point getExistingDoor(DirectionCardinal direction) {
+        final Point startPoint;
+        final Point endPoint;
+        switch (direction) {
+        case DOWN:
+            startPoint = new Point(this.left(), this.bottom());
+            endPoint = new Point(this.right(), this.bottom());
+            break;
+        case UP:
+            startPoint = new Point(this.left(), this.top());
+            endPoint = new Point(this.right(), this.top());
+            break;
+        case LEFT:
+            startPoint = new Point(this.left(), this.top());
+            endPoint = new Point(this.left(), this.bottom());
+            break;
+        case RIGHT:
+            startPoint = new Point(this.right(), this.top());
+            endPoint = new Point(this.right(), this.bottom());
+            break;
+        default:
+            startPoint = null;
+            endPoint = null;
+        }
+        if (startPoint == null || endPoint == null)
+            return null;
 
-		List<Point> candidates = doors
-				.stream()
-				.filter(d -> d.x == startPoint.x || d.x == endPoint.x || d.y == startPoint.y || d.y == endPoint.y)
-				.collect(Collectors.toList());
+        List<Point> candidates = doors.stream().filter(d -> d.x == startPoint.x || d.x == endPoint.x
+                || d.y == startPoint.y || d.y == endPoint.y).collect(Collectors.toList());
 
-		if (candidates.size() > 0) {
-			return CollectionUtils.getRandomElement(candidates);
-		}
-		return null;
-	}
+        if (candidates.size() > 0) {
+            return CollectionUtils.getRandomElement(candidates);
+        }
+        return null;
+    }
 
-	public void fillRoom(Tile[][] map, TileBuilder tb, Symbol tile) {
-		Rectangle rect = this.area;
-		for (int x = (int) rect.getMinX() + 1; x < rect.getMaxX() - 1; x++) {
-			for (int y = (int) rect.getMinY() + 1; y < rect.getMaxY() - 1; y++) {
+    public void fillRoom(Tile[][] map, TileBuilder tb, Symbol tile) {
+        Rectangle rect = this.area;
+        for (int x = (int) rect.getMinX() + 1; x < rect.getMaxX() - 1; x++) {
+            for (int y = (int) rect.getMinY() + 1; y < rect.getMaxY() - 1; y++) {
 
-				map[x][y] = tb.buildTile(tile);
+                map[x][y] = tb.buildTile(tile);
 
-				if (!map[x][y].isWall() && isFloorAdjacentToWall(map, x, y)) {
-					floorTiles.add(new Point(x, y));
-				}
-			}
-		}
-	}
+                if (!map[x][y].isWall() && isFloorAdjacentToWall(map, x, y)) {
+                    floorTiles.add(new Point(x, y));
+                }
+            }
+        }
+    }
 
-	public void fillRoom(Tile[][] map, TileBuilder tb, ProbabilityTable<Symbol> tiles) {
-		Rectangle rect = this.area;
-		for (int x = (int) rect.getMinX() + 1; x < rect.getMaxX() - 1; x++) {
-			for (int y = (int) rect.getMinY() + 1; y < rect.getMaxY() - 1; y++) {
+    public void fillRoom(Tile[][] map, TileBuilder tb, ProbabilityTable<Symbol> tiles) {
+        Rectangle rect = this.area;
+        for (int x = (int) rect.getMinX() + 1; x < rect.getMaxX() - 1; x++) {
+            for (int y = (int) rect.getMinY() + 1; y < rect.getMaxY() - 1; y++) {
 
-				map[x][y] = tb.buildTile(tiles.random());
+                map[x][y] = tb.buildTile(tiles.random());
 
-				if (!map[x][y].isWall() && isFloorAdjacentToWall(map, x, y)) {
-					floorTiles.add(new Point(x, y));
-				}
-			}
-		}
-	}
+                if (!map[x][y].isWall() && isFloorAdjacentToWall(map, x, y)) {
+                    floorTiles.add(new Point(x, y));
+                }
+            }
+        }
+    }
 
-	protected void addFloorTile(Point point) {
-		if (area.contains(point) && !floorTiles.contains(point)) {
-			floorTiles.add(point);
-		}
-	}
+    protected void addFloorTile(Point point) {
+        if (area.contains(point) && !floorTiles.contains(point)) {
+            floorTiles.add(point);
+        }
+    }
 
-	protected boolean isFloorAdjacentToWall(Tile[][] map, int x, int y) {
-		if (x > 0 && map[x - 1][y].isWall())
-			return true;
-		if (y > 0 && map[x][y - 1].isWall())
-			return true;
-		if (x < map.length - 1 && map[x + 1][y].isWall())
-			return true;
-		if (y < map.length - 1 && map[x][y + 1].isWall())
-			return true;
+    /**
+     * Checks map tiles to determine if a wall is within proximity of the floor.
+     * 
+     * @param map 2d array of Tiles that are inspected
+     * @param x   coordinate of given location
+     * @param y   coordinate of given location
+     * @return true if within bounds and near a wall
+     */
+    protected boolean isFloorAdjacentToWall(Tile[][] map, int x, int y) {
+        return (x > 0 && map[x - 1][y].isWall() || (y > 0 && map[x][y - 1].isWall())
+                || (x < map.length - 1 && map[x + 1][y].isWall())
+                || (y < map.length - 1 && map[x][y + 1].isWall()));
+    }
 
-		return false;
-	}
+    protected void fillPath(Queue<Point> points, char tile, Room room, Tile[][] map,
+            TileBuilder tb) {
+        Point p = points.poll();
+        while (p != null) {
+            room.addFloorTile(p);
 
-	protected void fillPath(Queue<Point> points, char tile, Room room, Tile[][] map, TileBuilder tb) {
-		Point p = points.poll();
-		while (p != null) {
-			room.addFloorTile(p);
-
-			map[p.x][p.y] = tb.buildTile(tile);
-			p = points.poll();
-		}
-	}
-
-	// public final boolean connectTo(Room other, Point doorPoint, Tile[][] map, TileBuilder tb) {
-	// if (!onConnectingTo(other, doorPoint, map, tb))
-	// return false;
-	//
-	// if (!other.onBeingConnectedTo(other, doorPoint, map, tb))
-	// return false;
-	//
-	// return true;
-	// }
-	//
-	// protected boolean onConnectingTo(Room other, Point doorPoint, Tile[][] map, TileBuilder tb) {
-	// this.fillRoom(map, tb, Symbol.DUNGEON_FLOOR);
-	// Log.debug("ROOM onConnectingTo: " + this.doors.remove(doorPoint));
-	//
-	// // Point newRoomConnectingTile = this.getRandomFloorTile();
-	// // if (newRoomConnectingTile != null) {
-	// // Queue<Point> path = MapHelpers.findPath(random, doorPoint, newRoomConnectingTile);
-	// // fillPath(path, '.', this, map, tb);
-	// // }
-	//
-	// map[doorPoint.x][doorPoint.y] = tb.buildTile('+');
-	//
-	// return true;
-	// }
-
-	// protected boolean onBeingConnectedTo(Room other, Point doorPoint, Tile[][] map, TileBuilder tb) {
-	// Log.debug("ROOM onBeingConnectedTo: " + this.doors.remove(doorPoint));
-	// return true;
-	// }
-
+            map[p.x][p.y] = tb.buildTile(tile);
+            p = points.poll();
+        }
+    }
 }

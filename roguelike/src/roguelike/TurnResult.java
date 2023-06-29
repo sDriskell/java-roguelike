@@ -16,19 +16,19 @@ public class TurnResult implements Serializable {
     boolean playerActed;
     ArrayList<MessageDisplayProperties> messages;
     transient ArrayList<TurnEvent> events;
-    transient Pair<Point, Boolean> currentLook = new Pair<Point, Boolean>(null, false);
+    transient Pair<Point, Boolean> currentLook = new Pair<>(null, false);
 
     private TurnResult(boolean running) {
         this.running = running;
-        this.messages = new ArrayList<MessageDisplayProperties>();
-        this.events = new ArrayList<TurnEvent>();
+        this.messages = new ArrayList<>();
+        this.events = new ArrayList<>();
     }
 
     private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
         in.defaultReadObject();
 
-        this.currentLook = new Pair<Point, Boolean>(null, false);
-        this.events = new ArrayList<TurnEvent>();
+        this.currentLook = new Pair<>(null, false);
+        this.events = new ArrayList<>();
     }
 
     public static TurnResult reset(TurnResult result, boolean running) {

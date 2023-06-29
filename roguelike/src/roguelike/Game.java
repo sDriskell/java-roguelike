@@ -23,13 +23,10 @@ import squidpony.squidcolor.SColor;
 import squidpony.squidmath.RNG;
 
 /**
- * Setting - sword and sorcery version of 17th century caribbean/pirate setting.
- * port towns, swashbucklers, black powder weapons, jungle temples, fanatical
- * cultists, lost treasures, etc
- * 
- * win condition - leaving the island alive with as much wealth as you can carry
+ * Setting - ...
  * 
  * @author john
+ * @author shane
  * 
  */
 public class Game implements Serializable {
@@ -37,8 +34,8 @@ public class Game implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public final static int MAP_WIDTH = 83;
-    public final static int MAP_HEIGHT = 43;
+    public static final int MAP_WIDTH = 83;
+    public static final int MAP_HEIGHT = 43;
 
     private static Game currentGame;
 
@@ -59,7 +56,7 @@ public class Game implements Serializable {
      * @param gameLoader
      */
     Game() {
-        this.queuedActions = new LinkedList<Action>();
+        this.queuedActions = new LinkedList<>();
         this.rng = GameLoader.getRandom();
 
         currentGame = this;
@@ -303,8 +300,8 @@ public class Game implements Serializable {
             }
 
         }
-        else { // incomplete action
-
+        else {
+            // TODO: incomplete action
             queuedActions.add(currentAction);
         }
 

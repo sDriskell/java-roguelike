@@ -1,4 +1,4 @@
-package roguelike.functionalInterfaces;
+package roguelike.interfaces;
 
 import roguelike.actors.conditions.Condition;
 

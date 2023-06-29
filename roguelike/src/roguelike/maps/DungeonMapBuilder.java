@@ -19,450 +19,461 @@ import squidpony.squidutility.ProbabilityTable;
 
 public class DungeonMapBuilder extends MapBuilderBase {
     private static final Logger LOG = LogManager.getLogger(DungeonMapBuilder.class);
-    
-	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Divide the map up into equal sections to try and get a reasonably even distribution of rooms
-	 * 
-	 * @author john
-	 *
-	 */
-	private class MapSection {
-		public Rectangle area;
-		public int floorSpaces;
-		public int totalSpaces;
+    private static final long serialVersionUID = 1L;
 
-		public MapSection(Rectangle area) {
-			this.area = area;
-			floorSpaces = 0;
-			totalSpaces = area.width * area.height;
-		}
+    /**
+     * Divide the map up into equal sections to try and get a reasonably even
+     * distribution of rooms
+     * 
+     * @author john
+     *
+     */
+    private class MapSection {
+        public Rectangle area;
+        public int floorSpaces;
+        public int totalSpaces;
 
-		public boolean contains(Point point) {
-			return area.contains(point);
-		}
+        public MapSection(Rectangle area) {
+            this.area = area;
+            floorSpaces = 0;
+            totalSpaces = area.width * area.height;
+        }
 
-		public void add(Rectangle rectangle) {
-			floorSpaces += (rectangle.width * rectangle.height);
-		}
-	}
+        public boolean contains(Point point) {
+            return area.contains(point);
+        }
 
-	private transient ArrayList<Room> rooms;
-	private transient ArrayList<MapSection> mapSections;
-	private int level;
+        public void add(Rectangle rectangle) {
+            floorSpaces += (rectangle.width * rectangle.height);
+        }
+    }
 
-	public DungeonMapBuilder() {
-		this(1);
-	}
+    private transient ArrayList<Room> rooms;
+    private transient ArrayList<MapSection> mapSections;
+    private int level;
 
-	public DungeonMapBuilder(int level) {
-		super("Dungeon, floor " + level);
-		rooms = new ArrayList<>();
-		this.level = level;
-	}
+    public DungeonMapBuilder() {
+        this(1);
+    }
 
-	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-		in.defaultReadObject();
-		rooms = new ArrayList<>();
-	}
+    public DungeonMapBuilder(int level) {
+        super("Dungeon, floor " + level);
+        rooms = new ArrayList<>();
+        this.level = level;
+    }
 
-	@Override
-	protected void onBuildMap(Tile[][] map) {
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        rooms = new ArrayList<>();
+    }
 
-		int roomCount = 20;
-		int maxTries = 50;
+    @Override
+    protected void onBuildMap(Tile[][] map) {
 
-		for (int i = 0; i < maxTries; i++) {
-			rooms.clear();
+        int roomCount = 20;
+        int maxTries = 50;
 
-			/* Initialize map sections */
-			mapSections = new ArrayList<>();
-			mapSections.add(new MapSection(getSubRectangle(mapRect, 0, 0, .25, .25)));
-			mapSections.add(new MapSection(getSubRectangle(mapRect, mapRect.width / 4, 0, .25, .25)));
-			mapSections.add(new MapSection(getSubRectangle(mapRect, mapRect.width / 4, mapRect.height / 4, .25, .25)));
-			mapSections.add(new MapSection(getSubRectangle(mapRect, 0, mapRect.height / 4, .25, .25)));
+        for (int i = 0; i < maxTries; i++) {
+            rooms.clear();
 
-			fillMap(Symbol.WALL);
+            /* Initialize map sections */
+            mapSections = new ArrayList<>();
+            mapSections.add(new MapSection(getSubRectangle(mapRect, 0, 0, .25, .25)));
+            mapSections.add(new MapSection(getSubRectangle(mapRect, mapRect.width / 4, 0, .25, .25)));
+            mapSections.add(new MapSection(getSubRectangle(mapRect, mapRect.width / 4, mapRect.height / 4, .25, .25)));
+            mapSections.add(new MapSection(getSubRectangle(mapRect, 0, mapRect.height / 4, .25, .25)));
 
-			Room startRoom = null;
+            fillMap(Symbol.WALL);
 
-			while (startRoom == null)
-				startRoom = chooseRandomStartRoom();
+            Room startRoom = null;
 
-			rooms.add(startRoom);
+            while (startRoom == null)
+                startRoom = chooseRandomStartRoom();
 
-			// TODO: add the stairs going up at the player's starting position
+            rooms.add(startRoom);
 
-			int startX = (int) startRoom.area.getCenterX();
-			int startY = (int) startRoom.area.getCenterY();
-			Game.current().getPlayer().setPosition(startX, startY);
+            // TODO: add the stairs going up at the player's starting position
 
-			addStairsUp(new Point(startX, startY));
+            int startX = (int) startRoom.area.getCenterX();
+            int startY = (int) startRoom.area.getCenterY();
+            Game.current().getPlayer().setPosition(startX, startY);
 
-			int roomsGenerated = generateMainPath(startRoom);
+            addStairsUp(new Point(startX, startY));
 
-			roomsGenerated += generateRandomRooms();
+            int roomsGenerated = generateMainPath(startRoom);
 
-			if (roomsGenerated >= roomCount)
-				break;
-		}
+            roomsGenerated += generateRandomRooms();
 
-		createRandomPools();
-	}
+            if (roomsGenerated >= roomCount)
+                break;
+        }
 
-	private Room chooseRandomStartRoom() {
-		MapSection startInSection = randomMapSection();
-		Rectangle startingArea = getRandomRectangleInside(startInSection.area);
+        createRandomPools();
+    }
 
-		if (!canCreateRoom(startingArea))
-			return null;
+    private Room chooseRandomStartRoom() {
+        MapSection startInSection = randomMapSection();
+        Rectangle startingArea = getRandomRectangleInside(startInSection.area);
 
-		return createRoom(startingArea);
-	}
+        if (!canCreateRoom(startingArea))
+            return null;
 
-	private int generateMainPath(Room startRoom) {
-		int roomsGenerated = 0;
-		int maxRooms = 15;
-		Room currentRoom = null;
+        return createRoom(startingArea);
+    }
 
-		Stack<Room> roomsOnPath = new Stack<>();
-		roomsOnPath.push(startRoom);
+    private int generateMainPath(Room startRoom) {
+        int roomsGenerated = 0;
+        int maxRooms = 15;
+        Room currentRoom = null;
 
-		currentRoom = startRoom;
-		for (int x = 0; x < maxRooms; x++) {
-			if (roomsOnPath.isEmpty())
-				break;
+        Stack<Room> roomsOnPath = new Stack<>();
+        roomsOnPath.push(startRoom);
 
-			boolean fail = false;
-			DirectionCardinal direction = null;
-			Rectangle area = null;
+        currentRoom = startRoom;
+        for (int x = 0; x < maxRooms; x++) {
+            if (roomsOnPath.isEmpty())
+                break;
 
-			for (int i = 0; i < 10; i++) {
-				fail = false;
-				direction = getRandomDirection();
-				Point initialLocation = currentRoom.area.getLocation();
+            boolean fail = false;
+            DirectionCardinal direction = null;
+            Rectangle area = null;
 
-				area = getRectangleForRoom(direction, initialLocation);
+            for (int i = 0; i < 10; i++) {
+                fail = false;
+                direction = getRandomDirection();
+                Point initialLocation = currentRoom.area.getLocation();
 
-				if (!canCreateRoom(area)) {
-					fail = true;
-				}
-				if (!fail)
-					break;
-			}
-			if (direction == null || area == null)
-				continue;
+                area = getRectangleForRoom(direction, initialLocation);
 
-			ConnectionPoint door = generateRandomDoor(currentRoom, direction);
+                if (!canCreateRoom(area)) {
+                    fail = true;
+                }
+                if (!fail)
+                    break;
+            }
+            if (direction == null || area == null)
+                continue;
 
-			if (door == null)
-				fail = true;
+            ConnectionPoint door = generateRandomDoor(currentRoom, direction);
 
-			if (!fail) {
-				Rectangle rect = area;
+            if (door == null)
+                fail = true;
 
-				Room newRoom = createRoom(rect);
+            if (!fail) {
+                Rectangle rect = area;
 
-				ConnectionPoint endPoint = buildCorridor(door, newRoom, area);
+                Room newRoom = createRoom(rect);
 
-				if (endPoint != null) {
+                ConnectionPoint endPoint = buildCorridor(door, newRoom, area);
 
-					setTile(door, Symbol.DUNGEON_FLOOR);
-					setTile(endPoint, Symbol.DUNGEON_FLOOR);
+                if (endPoint != null) {
 
-					if (random.nextBoolean())
-						setDoor(door);
+                    setTile(door, Symbol.DUNGEON_FLOOR);
+                    setTile(endPoint, Symbol.DUNGEON_FLOOR);
 
-					currentRoom.doors.add(door);
+                    if (random.nextBoolean())
+                        setDoor(door);
 
-					addRoom(newRoom);
-					roomsOnPath.push(currentRoom);
+                    currentRoom.doors.add(door);
 
-					currentRoom = newRoom;
+                    addRoom(newRoom);
+                    roomsOnPath.push(currentRoom);
 
-					roomsGenerated++;
-				} else {
+                    currentRoom = newRoom;
 
-					fail = true;
-					LOG.debug("endPoint == null, x = {}", x);
-				}
-			}
+                    roomsGenerated++;
+                }
+                else {
 
-			if (fail) {
-
-				for (ConnectionPoint doorPoint : currentRoom.doors) {
-					setDoor(doorPoint);
-					roomsGenerated--;
-				}
-
-				currentRoom = roomsOnPath.pop();
-			}
-		}
-
-		/* put the stairs in the last room we generated */
-		Point stairPoint = currentRoom.getRandomFloorTile();
-		addStairsDown(stairPoint);
-		return roomsGenerated;
-	}
-
-	private int generateRandomRooms() {
-		int roomsGenerated = 0;
-		int maxRooms = 20;
-
-		LOG.debug("Room count: {}", rooms.size());
-
-		for (int x = 0; x < maxRooms; x++) {
-
-			Room randomRoom = CollectionUtils.getRandomElement(rooms);
-
-			boolean fail = false;
-			DirectionCardinal direction = null;
-			Rectangle area = null;
-
-			for (int i = 0; i < 10; i++) {
-				fail = false;
-				direction = getRandomDirection();
-				Point initialLocation = randomRoom.area.getLocation();
-
-				area = getRectangleForRoom(direction, initialLocation);
-
-				if (!canCreateRoom(area)) {
-					fail = true;
-				}
-				if (!fail)
-					break;
-			}
-			if (direction == null || area == null || fail)
-				continue;
-
-			ConnectionPoint door = generateRandomDoor(randomRoom, direction);
-			if (door == null)
-				fail = true;
-
-			if (!fail) {
-				Rectangle rect = area;
-
-				Room newRoom = createRoom(rect);
-
-				ConnectionPoint endPoint = buildCorridor(door, newRoom, area);
-
-				if (endPoint != null) {
-
-					setTile(door, Symbol.BUILDING_FLOOR);
-					setTile(endPoint, Symbol.BUILDING_FLOOR);
-
-					if (random.nextBoolean())
-						setDoor(door);
-
-					randomRoom.doors.add(door);
-
-					addRoom(newRoom);
-
-					roomsGenerated++;
-
-					connectToRandomRoom(randomRoom);
-				} else {
-
-					fail = true;
+                    fail = true;
                     LOG.debug("endPoint == null, x = {}", x);
-				}
-			}
-		}
+                }
+            }
 
-		return roomsGenerated;
-	}
+            if (fail) {
 
-	private Rectangle getRectangleForRoom(DirectionCardinal direction, Point initialLocation) {
-		Rectangle area;
-		int xOffset;
-		int yOffset;
-		area = new Rectangle(initialLocation);
+                for (ConnectionPoint doorPoint : currentRoom.doors) {
+                    setDoor(doorPoint);
+                    roomsGenerated--;
+                }
 
-		area.width = random.between(6, 15);
-		area.height = random.between(4, 10);
+                currentRoom = roomsOnPath.pop();
+            }
+        }
 
-		xOffset = (direction.deltaX * (area.width));
-		yOffset = (direction.deltaY * (area.height));
+        return placeStairs(roomsGenerated, currentRoom);
+    }
 
-		xOffset += random.between(-3, 3);
-		yOffset += random.between(-3, 3);
+    /**
+     * Put the stairs in the last room we generated. This will take a random tile in
+     * the provided room and add a set of stairs to it.
+     * 
+     * @param roomsGenerated number of rooms created for the specified floor
+     * @param currentRoom    is the room that will contain the stairs
+     * @return
+     */
+    private int placeStairs(int roomsGenerated, Room currentRoom) {
+        Point stairPoint = currentRoom.getRandomFloorTile();
+        addStairsDown(stairPoint);
+        return roomsGenerated;
+    }
 
-		area.x += xOffset;
-		area.y += yOffset;
-		return area;
-	}
+    private int generateRandomRooms() {
+        int roomsGenerated = 0;
+        int maxRooms = 20;
 
-	/**
-	 * Creates a ConnectionPoint for a door in the given direction.
-	 * 
-	 * @param room
-	 * @return
-	 */
-	private ConnectionPoint generateRandomDoor(Room room, DirectionCardinal direction) {
+        LOG.debug("Room count: {}", rooms.size());
 
-		Point doorPoint = room.getDoorCoordinate(map, direction);
-		ConnectionPoint point = new ConnectionPoint(doorPoint, direction, room);
+        for (int x = 0; x < maxRooms; x++) {
 
-		return point;
-	}
+            Room randomRoom = CollectionUtils.getRandomElement(rooms);
 
-	/**
-	 * Fills the map with DUNGEON_FLOOR inside the given Rectangle and returns a Room with that area.
-	 * 
-	 * @param area
-	 * @return
-	 */
-	private Room createRoom(Rectangle area) {
-		Room room = null;
+            boolean fail = false;
+            DirectionCardinal direction = null;
+            Rectangle area = null;
 
-		room = new Room(area);
-		room.fillRoom(map, tb, Symbol.DUNGEON_FLOOR);
+            for (int i = 0; i < 10; i++) {
+                fail = false;
+                direction = getRandomDirection();
+                Point initialLocation = randomRoom.area.getLocation();
 
-		return room;
-	}
+                area = getRectangleForRoom(direction, initialLocation);
 
-	private ConnectionPoint buildCorridor(ConnectionPoint originatingPoint, Room room, Rectangle targetArea) {
+                if (!canCreateRoom(area)) {
+                    fail = true;
+                }
+                if (!fail)
+                    break;
+            }
+            if (direction == null || area == null || fail)
+                continue;
 
-		DirectionCardinal direction = originatingPoint.direction();
+            ConnectionPoint door = generateRandomDoor(randomRoom, direction);
+            if (door == null)
+                fail = true;
 
-		Point endPoint = new Point(originatingPoint.x + (direction.deltaX), originatingPoint.y + (direction.deltaY));
-		Point constrained = new Point(endPoint);
-		MapHelpers.constrainToRectangle(constrained, mapRect.width - 1, mapRect.height - 1);
-		if (!endPoint.equals(constrained)) {
-			LOG.debug("cannot construct corridor");
-			return null;
-		}
-		setTile(endPoint, Symbol.DUNGEON_FLOOR);
+            if (!fail) {
+                Rectangle rect = area;
 
-		Rectangle floorTargetArea = new Rectangle(targetArea);
-		floorTargetArea.grow(-1, -1);
-		if (!floorTargetArea.contains(endPoint)) {
-			boolean yFirst = random.nextBoolean();
-			int targetX = (int) random.between(targetArea.getMinX() + 2, targetArea.getMaxX() - 2);
-			int targetY = (int) random.between(targetArea.getMinY() + 2, targetArea.getMaxY() - 2);
+                Room newRoom = createRoom(rect);
 
-			int xOffset = (int) (Math.signum(targetX - endPoint.x));
-			int yOffset = (int) (Math.signum(targetY - endPoint.y));
+                ConnectionPoint endPoint = buildCorridor(door, newRoom, area);
 
-			if (yFirst) {
-				while (endPoint.y != targetY) {
-					endPoint.translate(0, yOffset);
-					setTile(endPoint, Symbol.DUNGEON_FLOOR);
-				}
-				while (endPoint.x != targetX) {
-					endPoint.translate(xOffset, 0);
-					setTile(endPoint, Symbol.DUNGEON_FLOOR);
-				}
+                if (endPoint != null) {
 
-			} else {
-				while (endPoint.x != targetX) {
-					endPoint.translate(xOffset, 0);
-					setTile(endPoint, Symbol.DUNGEON_FLOOR);
-				}
-				while (endPoint.y != targetY) {
-					endPoint.translate(0, yOffset);
-					setTile(endPoint, Symbol.DUNGEON_FLOOR);
-				}
+                    setTile(door, Symbol.BUILDING_FLOOR);
+                    setTile(endPoint, Symbol.BUILDING_FLOOR);
 
-			}
-		}
-		return new ConnectionPoint(endPoint, direction, room);
-	}
+                    if (random.nextBoolean())
+                        setDoor(door);
 
-	private boolean connectToRandomRoom(Room room) {
-		if (random.nextDouble() < 0.3)
-			return false;
+                    randomRoom.doors.add(door);
 
-		for (int x = 0; x < 3; x++) {
-			Room randomRoom = CollectionUtils.getRandomElement(rooms);
-			if (randomRoom == null)
-				return false;
+                    addRoom(newRoom);
 
-			int maxDistance = 25;
-			if (room.area.getLocation().distance(randomRoom.area.getLocation()) <= maxDistance) {
-				// try to connect them
+                    roomsGenerated++;
 
-				if (room.doors.stream().anyMatch(d -> d.isDoor)) {
-					if (randomRoom.doors.stream().anyMatch(d -> d.isDoor))
-						return false;
-				}
+                    connectToRandomRoom(randomRoom);
+                }
+                else {
 
-				ConnectionPoint randomDoor = CollectionUtils.getRandomElement(room.doors);
-				if (randomDoor != null) {
-					ConnectionPoint endPoint = buildCorridor(randomDoor, room, randomRoom.area);
-					if (endPoint == null)
-						LOG.debug("connect to random room, null endpoint");
-					else
-						LOG.debug("endPoint = {}", endPoint);
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+                    fail = true;
+                    LOG.debug("endPoint == null, x = {}", x);
+                }
+            }
+        }
 
-	private MapSection randomMapSection() {
-		ProbabilityTable<MapSection> sections = new ProbabilityTable<>();
+        return roomsGenerated;
+    }
 
-		for (MapSection section : mapSections) {
-			sections.add(section, (int) (((section.floorSpaces / (float) section.totalSpaces) + 1) * 100));
-		}
+    private Rectangle getRectangleForRoom(DirectionCardinal direction, Point initialLocation) {
+        Rectangle area;
+        int xOffset;
+        int yOffset;
+        area = new Rectangle(initialLocation);
 
-		return sections.random();
-	}
+        area.width = random.between(6, 15);
+        area.height = random.between(4, 10);
 
-	private void addStairsUp(Point point) {
-		map[point.x][point.y] =
-				new Stairs(this, false).setValues(Symbol.STAIRS_UP.symbol(), true, SColor.WHITE);
-	}
+        xOffset = (direction.deltaX * (area.width));
+        yOffset = (direction.deltaY * (area.height));
 
-	private void addStairsDown(Point point) {
-		map[point.x][point.y] =
-				new Stairs(new DungeonMapBuilder(level + 1), true).setValues(Symbol.STAIRS_DOWN.symbol(), true, SColor.WHITE);
-	}
+        xOffset += random.between(-3, 3);
+        yOffset += random.between(-3, 3);
 
-	private void addRoom(Room room) {
-		rooms.add(room);
-	}
+        area.x += xOffset;
+        area.y += yOffset;
+        return area;
+    }
 
-	private void setDoor(ConnectionPoint doorPoint) {
-		map[doorPoint.x][doorPoint.y] = tb.buildTile(Symbol.DOOR);
-		LOG.debug("Created door at {}, {}", doorPoint.x, doorPoint.y);
-		doorPoint.isDoor = true;
-	}
+    /**
+     * Creates a ConnectionPoint for a door in the given direction.
+     * 
+     * @param room
+     * @return
+     */
+    private ConnectionPoint generateRandomDoor(Room room, DirectionCardinal direction) {
+        Point doorPoint = room.getDoorCoordinate(map, direction);
+        return new ConnectionPoint(doorPoint, direction, room);
+    }
 
-	private void createRandomPools() {
-		int numPools = random.between(1, 20);
+    /**
+     * Fills the map with DUNGEON_FLOOR inside the given Rectangle and returns a
+     * Room with that area.
+     * 
+     * @param area
+     * @return
+     */
+    private Room createRoom(Rectangle area) {
+        Room room = null;
 
-		for (int i = 0; i < numPools; i++) {
-			Room randomRoom = CollectionUtils.getRandomElement(rooms);
+        room = new Room(area);
+        room.fillRoom(map, tb, Symbol.DUNGEON_FLOOR);
 
-			int sx = randomRoom.getRandomX();
-			int sy = randomRoom.getRandomY();
-			int turns = random.between(4, 10);
+        return room;
+    }
 
-			createPool(sx, sy, turns);
-		}
+    private ConnectionPoint buildCorridor(ConnectionPoint originatingPoint, Room room, Rectangle targetArea) {
 
-	}
+        DirectionCardinal direction = originatingPoint.direction();
 
-	private void createPool(int x, int y, int count) {
-		if (count <= 0)
-			return;
-		if (!MapHelpers.isWithinBounds(map, x, y))
-			return;
+        Point endPoint = new Point(originatingPoint.x + (direction.deltaX), originatingPoint.y + (direction.deltaY));
+        Point constrained = new Point(endPoint);
+        MapHelpers.constrainToRectangle(constrained, mapRect.width - 1, mapRect.height - 1);
+        if (!endPoint.equals(constrained)) {
+            LOG.debug("cannot construct corridor");
+            return null;
+        }
+        setTile(endPoint, Symbol.DUNGEON_FLOOR);
 
-		if (map[x][y].symbol == Symbol.DUNGEON_FLOOR.symbol())
-			setTile(x, y, Symbol.SHALLOW_WATER);
+        Rectangle floorTargetArea = new Rectangle(targetArea);
+        floorTargetArea.grow(-1, -1);
+        if (!floorTargetArea.contains(endPoint)) {
+            boolean yFirst = random.nextBoolean();
+            int targetX = (int) random.between(targetArea.getMinX() + 2, targetArea.getMaxX() - 2);
+            int targetY = (int) random.between(targetArea.getMinY() + 2, targetArea.getMaxY() - 2);
 
-		if (random.nextBoolean())
-			createPool(x - 1, y, count - 1);
-		if (random.nextBoolean())
-			createPool(x + 1, y, count - 1);
-		if (random.nextBoolean())
-			createPool(x, y - 1, count - 1);
-		if (random.nextBoolean())
-			createPool(x, y + 1, count - 1);
-	}
+            int xOffset = (int) (Math.signum(targetX - endPoint.x));
+            int yOffset = (int) (Math.signum(targetY - endPoint.y));
+
+            if (yFirst) {
+                while (endPoint.y != targetY) {
+                    endPoint.translate(0, yOffset);
+                    setTile(endPoint, Symbol.DUNGEON_FLOOR);
+                }
+                while (endPoint.x != targetX) {
+                    endPoint.translate(xOffset, 0);
+                    setTile(endPoint, Symbol.DUNGEON_FLOOR);
+                }
+
+            }
+            else {
+                while (endPoint.x != targetX) {
+                    endPoint.translate(xOffset, 0);
+                    setTile(endPoint, Symbol.DUNGEON_FLOOR);
+                }
+                while (endPoint.y != targetY) {
+                    endPoint.translate(0, yOffset);
+                    setTile(endPoint, Symbol.DUNGEON_FLOOR);
+                }
+
+            }
+        }
+        return new ConnectionPoint(endPoint, direction, room);
+    }
+
+    private boolean connectToRandomRoom(Room room) {
+        if (random.nextDouble() < 0.3)
+            return false;
+
+        for (int x = 0; x < 3; x++) {
+            Room randomRoom = CollectionUtils.getRandomElement(rooms);
+            if (randomRoom == null)
+                return false;
+
+            int maxDistance = 25;
+            if (room.area.getLocation().distance(randomRoom.area.getLocation()) <= maxDistance) {
+                // try to connect them
+
+                if (room.doors.stream().anyMatch(d -> d.isDoor)) {
+                    if (randomRoom.doors.stream().anyMatch(d -> d.isDoor))
+                        return false;
+                }
+
+                ConnectionPoint randomDoor = CollectionUtils.getRandomElement(room.doors);
+                if (randomDoor != null) {
+                    ConnectionPoint endPoint = buildCorridor(randomDoor, room, randomRoom.area);
+                    if (endPoint == null)
+                        LOG.debug("connect to random room, null endpoint");
+                    else
+                        LOG.debug("endPoint = {}", endPoint);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private MapSection randomMapSection() {
+        ProbabilityTable<MapSection> sections = new ProbabilityTable<>();
+
+        for (MapSection section : mapSections) {
+            sections.add(section, (int) (((section.floorSpaces / (float) section.totalSpaces) + 1) * 100));
+        }
+
+        return sections.random();
+    }
+
+    private void addStairsUp(Point point) {
+        map[point.x][point.y] = new Stairs(this, false).setValues(Symbol.STAIRS_UP.symbol(), true, SColor.WHITE);
+    }
+
+    private void addStairsDown(Point point) {
+        map[point.x][point.y] = new Stairs(new DungeonMapBuilder(level + 1), true).setValues(Symbol.STAIRS_DOWN.symbol(), true, SColor.WHITE);
+    }
+
+    private void addRoom(Room room) {
+        rooms.add(room);
+    }
+
+    private void setDoor(ConnectionPoint doorPoint) {
+        map[doorPoint.x][doorPoint.y] = tb.buildTile(Symbol.DOOR);
+        LOG.debug("Created door at {}, {}", doorPoint.x, doorPoint.y);
+        doorPoint.isDoor = true;
+    }
+
+    private void createRandomPools() {
+        int numPools = random.between(1, 20);
+
+        for (int i = 0; i < numPools; i++) {
+            Room randomRoom = CollectionUtils.getRandomElement(rooms);
+
+            int sx = randomRoom.getRandomX();
+            int sy = randomRoom.getRandomY();
+            int turns = random.between(4, 10);
+
+            createPool(sx, sy, turns);
+        }
+
+    }
+
+    private void createPool(int x, int y, int count) {
+        if (count <= 0)
+            return;
+        if (!MapHelpers.isWithinBounds(map, x, y))
+            return;
+
+        if (map[x][y].symbol == Symbol.DUNGEON_FLOOR.symbol())
+            setTile(x, y, Symbol.SHALLOW_WATER);
+
+        if (random.nextBoolean())
+            createPool(x - 1, y, count - 1);
+        if (random.nextBoolean())
+            createPool(x + 1, y, count - 1);
+        if (random.nextBoolean())
+            createPool(x, y - 1, count - 1);
+        if (random.nextBoolean())
+            createPool(x, y + 1, count - 1);
+    }
 }

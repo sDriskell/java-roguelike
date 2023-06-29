@@ -19,10 +19,10 @@ public class DialogResult<T> {
     }
 
     public static <T> DialogResult<T> ok(T item) {
-        return new DialogResult<T>(item, false);
+        return new DialogResult<>(item, false);
     }
 
     public static <T> DialogResult<T> cancel() {
-        return new DialogResult<T>(null, true);
+        return new DialogResult<>(null, true);
     }
 }
