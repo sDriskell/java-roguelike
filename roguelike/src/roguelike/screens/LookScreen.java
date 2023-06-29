@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import roguelike.Game;
 import roguelike.actors.Actor;
 import roguelike.actors.Statistics;
-import roguelike.functionalInterfaces.CursorCallback;
+import roguelike.interfaces.CursorCallback;
 import roguelike.items.Inventory;
 import roguelike.items.Weapon;
 import roguelike.items.Equipment.ItemSlot;

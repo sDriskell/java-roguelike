@@ -38,7 +38,7 @@ public class StringEx extends ArrayList<CharEx> {
 	}
 
 	public StringEx(String text) {
-		this(text, CharEx.DEFAULT_FOREGROUND, CharEx.DEFAULT_BACKGROUND);
+		this(text, CharEx.defaultForeground, CharEx.defaultBackground);
 	}
 
 	public StringEx(String text, SColor foreground, SColor background) {

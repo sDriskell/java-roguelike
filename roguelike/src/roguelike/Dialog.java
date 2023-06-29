@@ -67,13 +67,13 @@ public abstract class Dialog<T> extends TextWindow {
 
     public final boolean process() {
         InputCommand nextCommand = InputManager.nextCommandPreserveKeyData();
-        DialogResult<T> result = onProcess(nextCommand);
+        DialogResult<T> tempResult = onProcess(nextCommand);
 
-        if (result != null) {
+        if (tempResult != null) {
             InputManager.previousKeyMap();
             isOpen = false;
         }
-        this.result = result;
+        this.result = tempResult;
 
         return !isOpen;
     }

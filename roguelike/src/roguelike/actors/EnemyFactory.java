@@ -23,7 +23,7 @@ public class EnemyFactory {
 	private static EnemyFactory factory = new EnemyFactory();
 	private static InventoryBuilder inventoryBuilder = new InventoryBuilder();
 
-	private Map<EnemyType, NpcBuilderFactory> npcBuilders = new HashMap<EnemyType, EnemyFactory.NpcBuilderFactory>();
+	private Map<EnemyType, NpcBuilderFactory> npcBuilders = new HashMap<>();
 
 	private EnemyFactory() {
 
@@ -34,7 +34,7 @@ public class EnemyFactory {
 						.withVisionRadius(16)
 						.withDescription("It looks at you with sinister eyes and snarls menacingly.")
 						.withSpeed(30)
-						.withBehavior(a -> new SearchForPlayerBehavior(a))
+						.withBehavior(SearchForPlayerBehavior::new)
 						.withStats(5, 6, 6, 6, 4, 3)
 						.equipItem(WeaponFactory.create(WeaponType.BITE), ItemSlot.RIGHT_HAND) // yes, this is funny
 						.buildNpc());
@@ -45,7 +45,7 @@ public class EnemyFactory {
 						.withHealth(8)
 						.withDescription("A large ant, whose bite is said to cause immense pain.")
 						.withSpeed(15)
-						.withBehavior(a -> new SearchForPlayerBehavior(a))
+						.withBehavior(SearchForPlayerBehavior::new)
 						.withStats(4, 3, 4, 4, 4, 4)
 						.equipItem(WeaponFactory.create(WeaponType.MANDIBLES), ItemSlot.RIGHT_HAND)
 						.buildNpc());
@@ -56,7 +56,7 @@ public class EnemyFactory {
 						.withHealth(25)
 						.withDescription("Waiting in ambush for their victims, these scoundrels prey upon the weak.")
 						.withSpeed(10)
-						.withBehavior(a -> new SearchForPlayerBehavior(a))
+						.withBehavior(SearchForPlayerBehavior::new)
 						.withStats(6, 7, 7, 5, 6, 6)
 						.withInventory(inventoryBuilder.populateRandomInventory())
 						.buildNpc());
@@ -78,7 +78,7 @@ public class EnemyFactory {
 						.withHealth(20)
 						.withDescription("Probably a deserter from some king's army.")
 						.withSpeed(10)
-						.withBehavior(a -> new MoveToRandomPointBehavior(a))
+						.withBehavior(MoveToRandomPointBehavior::new)
 						.withStats(5, 4, 8, 8, 5, 4)
 						.equipItem(WeaponFactory.create(WeaponType.SHORT_BOW), ItemSlot.RIGHT_HAND)
 						.equipItem(WeaponFactory.create(WeaponType.ARROW), ItemSlot.PROJECTILE)
@@ -115,10 +115,9 @@ public class EnemyFactory {
 		EnemyType[] types = new EnemyType[] { EnemyType.WOLF, EnemyType.FIRE_ANT, EnemyType.BANDIT, EnemyType.SNAKE, EnemyType.ARCHER };
 
 		EnemyType randomType = CollectionUtils.getRandomElement(types);
-		NpcBuilderFactory factory = npcBuilders.get(randomType);
+		NpcBuilderFactory npcBuilderFactory = npcBuilders.get(randomType);
 
-		Npc npc = factory.create();
-		return npc;
+		return npcBuilderFactory.create();
 	}
 
 }

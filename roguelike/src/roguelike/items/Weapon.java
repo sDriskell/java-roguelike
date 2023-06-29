@@ -10,7 +10,7 @@ import roguelike.actions.combat.Attack;
 import roguelike.actions.combat.DamageType;
 import roguelike.actions.combat.WeaponCategory;
 import roguelike.actors.conditions.Condition;
-import roguelike.functionalInterfaces.StatisticProvider;
+import roguelike.interfaces.StatisticProvider;
 import roguelike.items.Equipment.ItemSlot;
 
 public abstract class Weapon extends Item {

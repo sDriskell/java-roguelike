@@ -31,8 +31,7 @@ public abstract class Animation {
 			onNextFrame(terminal);
 		}
 		currentFrame++;
-		boolean finished = currentFrame > totalFrames;
-		return finished;
+		return currentFrame > totalFrames;
 	}
 
 	protected Point getOffsetPosition(TerminalBase terminal, Actor target) {
@@ -47,9 +46,7 @@ public abstract class Animation {
 				.getCurrentMapArea()
 				.getUpperLeftScreenTile(termSize.width, termSize.height, g.getPlayer().getPosition());
 
-		Point ret = new Point(targetPos.x - upperLeft.x, targetPos.y - upperLeft.y);
-
-		return ret;
+		return new Point(targetPos.x - upperLeft.x, targetPos.y - upperLeft.y);
 	}
 
 	public abstract void onNextFrame(TerminalBase terminal);

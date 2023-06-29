@@ -1,7 +1,7 @@
 package roguelike.screens;
 
 import roguelike.Dialog;
-import roguelike.functionalInterfaces.DialogCallback;
+import roguelike.interfaces.DialogCallback;
 import roguelike.ui.windows.TerminalBase;
 
 public class DialogScreen<T> extends Screen {

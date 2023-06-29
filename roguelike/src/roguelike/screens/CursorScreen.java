@@ -4,7 +4,7 @@ import java.awt.Rectangle;
 
 import roguelike.Cursor;
 import roguelike.Game;
-import roguelike.functionalInterfaces.CursorCallback;
+import roguelike.interfaces.CursorCallback;
 import roguelike.maps.MapArea;
 import roguelike.ui.windows.TerminalBase;
 import roguelike.util.Coordinate;

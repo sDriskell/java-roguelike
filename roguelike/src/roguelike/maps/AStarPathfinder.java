@@ -49,23 +49,13 @@ public class AStarPathfinder {
      * @see PathFinder#findPath(Mover, int, int, int, int)
      */
     public Path findPath(MapArea map, int sx, int sy, int tx, int ty) {
-
         LOG.debug("Finding path from {}, {} to {}, {}", sx, sy, tx, ty);
-
-        // initial state for A*. The closed group is empty. Only the starting
-        // tile is in the open list and it's cost is zero, i.e. we're already
-        // there
-        nodes[sx][sy].cost = 0;
-        nodes[sx][sy].depth = 0;
-        closed.clear();
-        open.clear();
-        open.add(nodes[sx][sy]);
-
-        nodes[tx][ty].parent = null;
+        initializeState(sx, sy, tx, ty);
 
         // while we haven't found the goal and haven't exceeded our max search
         // depth
         int maxDepth = 0;
+
         while ((maxDepth < maxSearchDistance) && (open.size() != 0)) {
             // pull out the first node in our open list, this is determined to
             // be the most likely to be the next step based on our heuristic
@@ -78,13 +68,16 @@ public class AStarPathfinder {
             addToClosed(current);
 
             ArrayList<Point> neighbors = MapHelpers.getNeighbors(map, current.x, current.y, 1);
+
             // search through all the neighbours of the current node evaluating
             // them as next steps
             for (Point n : neighbors) {
                 int xp = n.x;
                 int yp = n.y;
+
                 float nextStepCost = current.cost + getMovementCost(current.x, current.y, xp, yp);
                 Node neighbor = nodes[xp][yp];
+
                 if (nextStepCost < neighbor.cost) {
                     if (inOpenList(neighbor))
                         removeFromOpen(neighbor);
@@ -119,6 +112,25 @@ public class AStarPathfinder {
 
         // thats it, we have our path
         return path;
+    }
+
+    /**
+     * Initial state for A*. The closed group is empty. Only the starting tile is in
+     * the open list and it's cost is zero, i.e. we're already there
+     * 
+     * @param sx
+     * @param sy
+     * @param tx
+     * @param ty
+     */
+    private void initializeState(int sx, int sy, int tx, int ty) {
+        nodes[sx][sy].cost = 0;
+        nodes[sx][sy].depth = 0;
+        closed.clear();
+        open.clear();
+        open.add(nodes[sx][sy]);
+
+        nodes[tx][ty].parent = null;
     }
 
     /**
