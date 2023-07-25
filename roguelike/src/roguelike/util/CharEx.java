@@ -37,21 +37,21 @@ public class CharEx implements Serializable {
     public static CharEx parse(String text) {
         String[] elements = text.split(":");
 
-        if (elements == null || elements.length == 0)
+        if (elements == null || elements.length == 0) {
             throw new IllegalArgumentException("Invalid text passed to Character.parse");
-
+        }
         return new CharEx(elements[0].charAt(0));
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
-
         out.writeInt(foreground.getRGB());
         out.writeInt(background.getRGB());
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
+        
         foreground = SColorFactory.asSColor(in.readInt());
         background = SColorFactory.asSColor(in.readInt());
     }
@@ -77,6 +77,7 @@ public class CharEx implements Serializable {
     public boolean equals(Object obj) {
         if (obj instanceof CharEx) {
             CharEx other = (CharEx) obj;
+            
             return (Character.compare(other.symbol, this.symbol) == 0
                     && other.background.equals(this.background)
                     && other.foreground.equals(this.foreground));

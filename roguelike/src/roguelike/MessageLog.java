@@ -11,7 +11,7 @@ public class MessageLog implements Serializable {
     private int maxSize = 100;
 
     public MessageLog() {
-        this.messages = new LinkedList<MessageDisplayProperties>();
+        this.messages = new LinkedList<>();
     }
 
     public void add(MessageDisplayProperties messageProps) {

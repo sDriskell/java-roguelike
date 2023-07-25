@@ -49,7 +49,7 @@ public class WalkAction extends Action {
 
 		if (!mapArea.canMoveTo(actor, pos)) {
 			Tile tile = mapArea.getTileAt(pos);
-			if (tile != null && tile instanceof Door && canOpenDoors)
+			if (tile instanceof Door && canOpenDoors)
 				return ActionResult.alternate(new OpenDoorAction(actor, tile));
 
 			return ActionResult.failure().setMessage(actor.doAction("can't move there"));
@@ -58,7 +58,6 @@ public class WalkAction extends Action {
 		// we can move here
 		mapArea.moveActor(actor, pos);
 
-		ActionResult result = ActionResult.success();
-		return result;
+		return ActionResult.success();
 	}
 }

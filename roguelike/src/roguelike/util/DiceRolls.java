@@ -18,11 +18,12 @@ public class DiceRolls {
 
     public static int roll(int poolSize, int targetNumber) {
         RNG rng = Game.current().random();
-
         int successes = 0;
+        
         for (int x = 0; x < poolSize; x++) {
-            int result = rng.between(1, DICE_TYPE + 1); // +1 because max is
-                                                        // exclusive
+            /* +1 because max is exclusive*/
+            int result = rng.between(1, DICE_TYPE + 1); 
+            
             if (result > targetNumber) {
                 successes++;
             }

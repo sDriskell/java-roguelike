@@ -19,7 +19,7 @@ public class EquipItemAction extends Action {
 
 	@Override
 	protected ActionResult onPerform() {
-		ActionResult result = ActionResult.incomplete();
+		ActionResult result;
 
 		if (item.type() == ItemType.RANGED_WEAPON) {
 			ItemSlot.RANGED.equipItem(actor, item);

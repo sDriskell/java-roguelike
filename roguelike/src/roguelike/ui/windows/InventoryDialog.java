@@ -11,71 +11,73 @@ import squidpony.squidcolor.SColorFactory;
 
 public class InventoryDialog extends Dialog<Item> {
 
-	private InventoryMenu menu;
+    private InventoryMenu menu;
 
-	public InventoryDialog(InventoryMenu menu) {
-		super(60, 30);
-		this.menu = menu;
-	}
+    public InventoryDialog(InventoryMenu menu) {
+        super(60, 30);
+        this.menu = menu;
+    }
 
-	@Override
-	protected void onDraw() {
-		SColor menuBgColor = SColorFactory.asSColor(30, 30, 30);
+    @Override
+    protected void onDraw() {
+        SColor menuBgColor = SColorFactory.asSColor(30, 30, 30);
 
-		// TerminalBase border = terminal.withColor(SColor.WHITE, SColor.GRAPE_MOUSE);
-		TerminalBase border = terminal.withColor(SColor.WHITE, SColor.BLACK);
-		TerminalBase background = terminal.withColor(menuBgColor, menuBgColor);
-		TerminalBase text = terminal.withColor(SColor.WHITE, menuBgColor);
+        TerminalBase border = terminal.withColor(SColor.WHITE, SColor.BLACK);
+        TerminalBase background = terminal.withColor(menuBgColor, menuBgColor);
+        TerminalBase text = terminal.withColor(SColor.WHITE, menuBgColor);
 
-		background.fill(0, 0, size.width, size.height, ' ');
-		border.fill(0, 0, size.width, 1, ' ');
+        background.fill(0, 0, size.width, size.height, ' ');
+        border.fill(0, 0, size.width, 1, ' ');
 
-		drawBoxShape(border);
+        drawBoxShape(border);
 
-		int currentPage = menu.getCurrentPage();
-		int pageCount = menu.getPageCount();
+        int currentPage = menu.getCurrentPage();
+        int pageCount = menu.getPageCount();
 
-		border.write(1, 0, String.format("Inventory `Gray`(%d/%d)", currentPage, pageCount));
+        border.write(1, 0, String.format("Inventory `Gray`(%d/%d)", currentPage, pageCount));
 
-		int displayY = 2;
-		for (MenuItem<Item> item : menu.currentPageItems()) {
-			String color = "";
-			if (item.isActive()) {
-				color = "`Alizarin`";
-			}
-			text.write(2, displayY, color + item.getText());
-			displayY++;
-		}
-	}
+        int displayY = 2;
+        for (MenuItem<Item> item : menu.currentPageItems()) {
+            String color = "";
 
-	@Override
-	protected DialogResult<Item> onProcess(InputCommand command) {
-		DialogResult<Item> result = null;
+            if (item.isActive()) {
+                color = "`Alizarin`";
+            }
 
-		if (command != null) {
-			switch (command) {
-			case CONFIRM:
+            text.write(2, displayY, color + item.getText());
+            displayY++;
+        }
+    }
 
-				Item activeItem = menu.getActiveItem();
-				if (activeItem != null) {
-					result = DialogResult.ok(activeItem);
+    @Override
+    protected DialogResult<Item> onProcess(InputCommand command) {
+        DialogResult<Item> result = null;
 
-				} else {
-					result = DialogResult.ok(null);
+        if (command != null) {
+            switch (command) {
+            case CONFIRM:
 
-				}
+                Item activeItem = menu.getActiveItem();
+                if (activeItem != null) {
+                    result = DialogResult.ok(activeItem);
 
-			case CANCEL:
-				if (result == null)
-					result = DialogResult.cancel();
+                }
+                else {
+                    result = DialogResult.ok(null);
 
-				break;
+                }
 
-			default:
-				menu.processCommand(command);
-			}
-		}
-		return result;
-	}
+            case CANCEL:
+                if (result == null)
+                    result = DialogResult.cancel();
+
+                break;
+
+            default:
+                menu.processCommand(command);
+            }
+        }
+        return result;
+    }
 
 }

@@ -6,33 +6,33 @@ import roguelike.actions.Action;
 import roguelike.actors.Actor;
 
 public abstract class Behavior implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	protected Actor actor;
+    protected Actor actor;
 
-	protected Behavior(Actor actor) {
-		if (actor == null)
-			throw new IllegalArgumentException("actor cannot be null");
+    protected Behavior(Actor actor) {
+        if (actor == null) {
+            throw new IllegalArgumentException("actor cannot be null");
+        }
+        this.actor = actor;
+    }
 
-		this.actor = actor;
-	}
+    public abstract boolean isHostile();
 
-	public abstract boolean isHostile();
+    public void onNoAmmunition() {
+    }
 
-	public void onNoAmmunition() {
-	}
+    public void onAttacked(Actor attacker) {
+    }
 
-	public void onAttacked(Actor attacker) {
-	}
+    public abstract Action getAction();
 
-	public abstract Action getAction();
+    /**
+     * Allows the actor to change behaviors based on some criteria
+     * 
+     * @return
+     */
+    public abstract Behavior getNextBehavior();
 
-	/**
-	 * Allows the actor to change behaviors based on some criteria
-	 * 
-	 * @return
-	 */
-	public abstract Behavior getNextBehavior();
-
-	public abstract String getDescription();
+    public abstract String getDescription();
 }

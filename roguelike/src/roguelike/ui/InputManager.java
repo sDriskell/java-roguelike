@@ -21,7 +21,7 @@ public class InputManager {
     private static boolean inputReceived;
     private static boolean inputEnabled = true;
     private static KeyMap activeKeyMap = new KeyMap(".");
-    private static Stack<KeyMap> keyBindings = new Stack<KeyMap>();
+    private static Stack<KeyMap> keyBindings = new Stack<>();
 
     private InputManager() {
     }
@@ -40,9 +40,10 @@ public class InputManager {
 
     public static DirectionIntercardinal nextDirection() {
         InputCommand cmd = nextCommandPreserveKeyData();
-        if (cmd == null)
-            return null;
 
+        if (cmd == null) {
+            return null;
+        }
         return cmd.toDirection();
     }
 
@@ -58,12 +59,14 @@ public class InputManager {
 
     public static KeyMap setActiveKeybindings(KeyMap keyMap) {
         KeyMap old = activeKeyMap;
+
         if (!keyMap.getName().equals(old.getName())) {
             LOG.debug("switching keyMap to {}", keyMap.getName());
             activeKeyMap = keyMap;
 
-            if (!".".equals(old.getName()))
+            if (!".".equals(old.getName())) {
                 keyBindings.push(old);
+            }
         }
         return old;
     }
@@ -74,8 +77,9 @@ public class InputManager {
      * @return The new active key map.
      */
     public static KeyMap previousKeyMap() {
-        if (keyBindings.isEmpty())
+        if (keyBindings.isEmpty()) {
             return null;
+        }
 
         activeKeyMap = keyBindings.pop();
         return activeKeyMap;
@@ -83,6 +87,7 @@ public class InputManager {
 
     private static InputCommand nextCommand(KeyEvent key, boolean getKeyData) {
         InputCommand cmd = activeKeyMap.getCommand(key);
+
         if (cmd == null && key != null && getKeyData) {
             return InputCommand.fromKey(key.getKeyCode(), key.getKeyChar());
         }
@@ -90,12 +95,14 @@ public class InputManager {
     }
 
     private static KeyEvent nextKey() {
-        if (!inputEnabled)
+        if (!inputEnabled) {
             return null;
+        }
 
         KeyEvent key = keyListener.next();
+
         if (key != null) {
-            DisplayManager.instance().setDirty();
+            DisplayManager.instance().turnOnDirty();
         }
         return key;
     }

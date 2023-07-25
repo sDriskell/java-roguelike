@@ -25,6 +25,7 @@ public class CurrentItemTracker<T> implements Serializable {
 
     public void remove(T item) {
         list.remove(item);
+        
         if (list.isEmpty()) {
             currentItem = 0;
             return;

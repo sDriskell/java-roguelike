@@ -53,6 +53,7 @@ public class Room {
 
     public Point getRandomFloorTile() {
         Point p = null;
+
         if (floorTiles.size() > 1) {
             return floorTiles.get(random.between(0, floorTiles.size()));
         }
@@ -61,6 +62,7 @@ public class Room {
 
     public Point getDoorCoordinate(Tile[][] map, DirectionCardinal direction) {
         Point p = null;
+
         switch (direction) {
         case DOWN:
             p = new Point(this.getRandomX(), this.bottom());
@@ -108,6 +110,7 @@ public class Room {
     public Point getExistingDoor(DirectionCardinal direction) {
         final Point startPoint;
         final Point endPoint;
+
         switch (direction) {
         case DOWN:
             startPoint = new Point(this.left(), this.bottom());
@@ -129,13 +132,15 @@ public class Room {
             startPoint = null;
             endPoint = null;
         }
-        if (startPoint == null || endPoint == null)
+
+        if (startPoint == null || endPoint == null) {
             return null;
+        }
 
         List<Point> candidates = doors.stream().filter(d -> d.x == startPoint.x || d.x == endPoint.x
                 || d.y == startPoint.y || d.y == endPoint.y).collect(Collectors.toList());
 
-        if (candidates.size() > 0) {
+        if (!candidates.isEmpty()) {
             return CollectionUtils.getRandomElement(candidates);
         }
         return null;
@@ -143,9 +148,9 @@ public class Room {
 
     public void fillRoom(Tile[][] map, TileBuilder tb, Symbol tile) {
         Rectangle rect = this.area;
+
         for (int x = (int) rect.getMinX() + 1; x < rect.getMaxX() - 1; x++) {
             for (int y = (int) rect.getMinY() + 1; y < rect.getMaxY() - 1; y++) {
-
                 map[x][y] = tb.buildTile(tile);
 
                 if (!map[x][y].isWall() && isFloorAdjacentToWall(map, x, y)) {
@@ -157,9 +162,9 @@ public class Room {
 
     public void fillRoom(Tile[][] map, TileBuilder tb, ProbabilityTable<Symbol> tiles) {
         Rectangle rect = this.area;
+
         for (int x = (int) rect.getMinX() + 1; x < rect.getMaxX() - 1; x++) {
             for (int y = (int) rect.getMinY() + 1; y < rect.getMaxY() - 1; y++) {
-
                 map[x][y] = tb.buildTile(tiles.random());
 
                 if (!map[x][y].isWall() && isFloorAdjacentToWall(map, x, y)) {
@@ -192,6 +197,7 @@ public class Room {
     protected void fillPath(Queue<Point> points, char tile, Room room, Tile[][] map,
             TileBuilder tb) {
         Point p = points.poll();
+
         while (p != null) {
             room.addFloorTile(p);
 

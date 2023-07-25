@@ -9,7 +9,7 @@ import roguelike.screens.Screen;
 public abstract class DialogInputRequiredAction<T> extends CursorInputRequiredAction<T> {
 
 	protected Dialog<T> dialog;
-	protected DialogResult<T> result;
+	protected DialogResult<T> dialogResult;
 
 	protected DialogInputRequiredAction(Actor actor) {
 		super(actor);
@@ -25,6 +25,6 @@ public abstract class DialogInputRequiredAction<T> extends CursorInputRequiredAc
 
 	protected final void showDialog(Dialog<T> dialog) {
 		Screen currentScreen = Screen.currentScreen();
-		currentScreen.setNextScreen(new DialogScreen<T>(currentScreen.terminal(), dialog, r -> result = r));
+		currentScreen.setNextScreen(new DialogScreen<T>(currentScreen.terminal(), dialog, r -> dialogResult = r));
 	}
 }

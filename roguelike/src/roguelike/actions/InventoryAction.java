@@ -10,25 +10,24 @@ import roguelike.screens.Screen;
 
 public class InventoryAction extends DialogInputRequiredAction<Item> {
     private static final Logger LOG = LogManager.getLogger(InventoryAction.class);
-    
-	public InventoryAction(Actor actor) {
-		super(actor);
 
-		this.usesEnergy = false;
-		Screen screen = Screen.currentScreen();
-		screen.setNextScreen(new InventoryScreen(screen, screen.terminal()));
-	}
+    public InventoryAction(Actor actor) {
+        super(actor);
 
-	@Override
-	protected ActionResult onPerform() {
-	    LOG.debug("InventoryAction");
-		return ActionResult.success();
-	}
+        this.usesEnergy = false;
+        Screen screen = Screen.currentScreen();
+        screen.setNextScreen(new InventoryScreen(screen, screen.terminal()));
+    }
 
-	@Override
-	public boolean checkForIncomplete() {
-		boolean incomplete = super.checkForIncomplete();
-		return incomplete;
-	}
+    @Override
+    protected ActionResult onPerform() {
+        LOG.debug("InventoryAction");
+        return ActionResult.success();
+    }
+
+    @Override
+    public boolean checkForIncomplete() {
+        return super.checkForIncomplete();
+    }
 
 }

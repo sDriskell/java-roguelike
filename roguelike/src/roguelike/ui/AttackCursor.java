@@ -37,6 +37,7 @@ public class AttackCursor extends Cursor {
     public AttackCursor(Coordinate initialPosition, MapArea mapArea, int maxRadius,
             RadiusStrategy radiusStrategy) {
         super(initialPosition, mapArea, maxRadius);
+
         this.radiusStrategy = BasicRadiusStrategy.CIRCLE;
         this.background = SColor.DARK_CORAL;
         this.initialPosition = initialPosition;
@@ -53,9 +54,10 @@ public class AttackCursor extends Cursor {
             determineFOVTiles(terminal);
             fovDrawn = true;
         }
+
         drawFOV(terminal);
         super.onDraw(terminal, sx, sy);
-        DisplayManager.instance().setDirty(); // update
+        DisplayManager.instance().turnOnDirty(); // update
     }
 
     @Override
@@ -84,9 +86,10 @@ public class AttackCursor extends Cursor {
         }
 
         Actor tgt = targets.getCurrent();
-        if (tgt != null)
-            position.setLocation(tgt.getPosition());
 
+        if (tgt != null) {
+            position.setLocation(tgt.getPosition());
+        }
         return null;
     }
 
@@ -112,12 +115,14 @@ public class AttackCursor extends Cursor {
                 Tile t = currentMap.getTileAt(x, y);
                 if (incomingLight[cX][cY] > 0 && t.isVisible()) {
 
-                    if (!t.isWall())
+                    if (!t.isWall()) {
                         terminal.withColor(SColor.TRANSPARENT, SColorFactory.dimmest(background))
                                 .fill(cX, cY, 1, 1);
+                    }
 
                     if (!determinedActors) {
                         Actor a = t.getActor();
+
                         if (a != null && !(a instanceof Player)) {
                             targets.add(a);
                         }
@@ -125,10 +130,10 @@ public class AttackCursor extends Cursor {
                 }
             }
         }
+
         if (!determinedActors && startTarget == null) {
             targetNearestEnemy();
         }
-
         determinedActors = true;
     }
 

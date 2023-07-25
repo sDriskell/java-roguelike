@@ -35,7 +35,8 @@ public class GameLoader {
 
         Game game = new Game();
         Player player = game.getPlayer();
-        MapArea currentMapArea = MapArea.build(Game.MAP_WIDTH, Game.MAP_HEIGHT, new DungeonMapBuilder());
+        MapArea currentMapArea =
+                MapArea.build(Game.MAP_WIDTH, Game.MAP_HEIGHT, new DungeonMapBuilder());
         currentMapArea.addActor(player);
 
         game.setCurrentMapArea(currentMapArea);
@@ -43,15 +44,10 @@ public class GameLoader {
     }
 
     public static void save(Game game) {
-        try {
-            OutputStream file = new FileOutputStream("saves/game.ser");
-            GZIPOutputStream gzip = new GZIPOutputStream(file);
-            ObjectOutput output = new ObjectOutputStream(gzip);
-
+        try (OutputStream file = new FileOutputStream("saves/game.ser");
+                GZIPOutputStream gzip = new GZIPOutputStream(file);
+                ObjectOutput output = new ObjectOutputStream(gzip)) {
             output.writeObject(game);
-
-            output.close();
-
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -61,15 +57,10 @@ public class GameLoader {
 
     public static Game load() {
         Game game = new Game();
-        try {
-            InputStream file = new FileInputStream("saves/game.ser");
-            GZIPInputStream gzip = new GZIPInputStream(file);
-            ObjectInput input = new ObjectInputStream(gzip);
-
+        try (InputStream file = new FileInputStream("saves/game.ser");
+                GZIPInputStream gzip = new GZIPInputStream(file);
+                ObjectInput input = new ObjectInputStream(gzip)) {
             game = (Game) input.readObject();
-
-            input.close();
-
         }
         catch (Exception e) {
             e.printStackTrace();

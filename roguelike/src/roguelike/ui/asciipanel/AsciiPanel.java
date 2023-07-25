@@ -1,6 +1,5 @@
 package roguelike.ui.asciipanel;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -163,9 +162,9 @@ public class AsciiPanel extends JPanel {
      * @param defaultBackgroundColor
      */
     public void setDefaultBackgroundColor(SColor defaultBackgroundColor) {
-        if (defaultBackgroundColor == null)
+        if (defaultBackgroundColor == null) {
             throw new IllegalArgumentException("defaultBackgroundColor must not be null.");
-
+        }
         this.defaultBackgroundColor = defaultBackgroundColor;
     }
 
@@ -184,9 +183,9 @@ public class AsciiPanel extends JPanel {
      * @param defaultForegroundColor
      */
     public void setDefaultForegroundColor(SColor defaultForegroundColor) {
-        if (defaultForegroundColor == null)
+        if (defaultForegroundColor == null) {
             throw new IllegalArgumentException("defaultForegroundColor must not be null.");
-
+        }
         this.defaultForegroundColor = defaultForegroundColor;
     }
 
@@ -240,8 +239,9 @@ public class AsciiPanel extends JPanel {
 
     @Override
     public void paint(Graphics g) {
-        if (g == null)
+        if (g == null) {
             throw new IllegalArgumentException();
+        }
 
         if (offscreenBuffer == null) {
             offscreenBuffer = createImage(this.getWidth(), this.getHeight());
@@ -250,10 +250,9 @@ public class AsciiPanel extends JPanel {
 
         for (int x = 0; x < widthInCharacters; x++) {
             for (int y = 0; y < heightInCharacters; y++) {
-                if (oldBackgroundColors[x][y] == backgroundColors[x][y]
-                        && oldForegroundColors[x][y] == foregroundColors[x][y]
-                        && oldChars[x][y] == chars[x][y])
+                if (doColorsMatch(x, y)) {
                     continue;
+                }
 
                 SColor bg = backgroundColors[x][y];
                 SColor fg = foregroundColors[x][y];
@@ -269,6 +268,19 @@ public class AsciiPanel extends JPanel {
         }
 
         g.drawImage(offscreenBuffer, 0, 0, this);
+    }
+
+    /**
+     * Checks if background and foreground colors match between current and previous
+     * 
+     * @param x range
+     * @param y range
+     * @return true if old and current colors match; false if different
+     */
+    private boolean doColorsMatch(int x, int y) {
+        return oldBackgroundColors[x][y] == backgroundColors[x][y]
+                && oldForegroundColors[x][y] == foregroundColors[x][y]
+                && oldChars[x][y] == chars[x][y];
     }
 
     private void loadGlyphs() {
@@ -685,10 +697,10 @@ public class AsciiPanel extends JPanel {
 
         int x = (widthInCharacters - string.length()) / 2;
 
-        if (y < 0 || y >= heightInCharacters)
+        if (y < 0 || y >= heightInCharacters) {
             throw new IllegalArgumentException(
                     "y " + y + MUST_BE_WITHIN_RANGE_0 + heightInCharacters + ")");
-
+        }
         return write(string, x, y, defaultForegroundColor, defaultBackgroundColor);
     }
 
@@ -760,8 +772,9 @@ public class AsciiPanel extends JPanel {
                 int x = left + x0;
                 int y = top + y0;
 
-                if (x < 0 || y < 0 || x >= widthInCharacters || y >= heightInCharacters)
+                if (x < 0 || y < 0 || x >= widthInCharacters || y >= heightInCharacters) {
                     continue;
+                }
 
                 data.character = chars[x][y];
                 data.foregroundColor = foregroundColors[x][y];
@@ -799,7 +812,7 @@ public class AsciiPanel extends JPanel {
             throw new IllegalArgumentException("width " + width + MUST_BE_GREATER_THAN_ZERO);
         }
     }
-    
+
     /**
      * Checks char range in comparison to glyphs.
      * 
@@ -807,11 +820,12 @@ public class AsciiPanel extends JPanel {
      * @throws IllegalArgumentException if char is not within range
      */
     private void checkCharRange(char character) {
-        if (character < 0 || character >= glyphs.length)
+        if (character < 0 || character >= glyphs.length) {
             throw new IllegalArgumentException(
                     "character " + character + MUST_BE_WITHIN_RANGE_0 + glyphs.length + "].");
+        }
     }
-    
+
     /**
      * Checks if y is in range with height in characters.
      * 
@@ -841,7 +855,7 @@ public class AsciiPanel extends JPanel {
     /**
      * Checks if the sum of y and height is within range.
      * 
-     * @param y int representing y coordinate
+     * @param y      int representing y coordinate
      * @param height int representing height for range
      * @throws IllegalArgumentException if the sum of y and height is out of range
      */
@@ -855,7 +869,7 @@ public class AsciiPanel extends JPanel {
     /**
      * Checks if the sum of x and width is within range.
      * 
-     * @param x int representing x coordinate
+     * @param x     int representing x coordinate
      * @param width int representing height of range
      * @throws IllegalArgumentException if the sum of x and height is out of range
      */
@@ -870,8 +884,9 @@ public class AsciiPanel extends JPanel {
      * Checks the sum of String length and x arguments are within range.
      * 
      * @param string String object whose length is measured
-     * @param x int is x coordinate measured
-     * @throws IllegalArgumentException if the sum of the length of String and x exceed range
+     * @param x      int is x coordinate measured
+     * @throws IllegalArgumentException if the sum of the length of String and x
+     *                                  exceed range
      */
     private void checkXAndStringRange(String string, int x) {
         if (x + string.length() >= widthInCharacters) {
@@ -881,9 +896,11 @@ public class AsciiPanel extends JPanel {
     }
 
     /**
-     * Checks the sum of String length and cursor's X coordinate to see if within range.
+     * Checks the sum of String length and cursor's X coordinate to see if within
+     * range.
      * 
-     * @param string String object whose length is measured in conjunction with cursor's x
+     * @param string String object whose length is measured in conjunction with
+     *               cursor's x
      * @throws IllegalArgumentException if cursorX and string length exceeds range
      */
     private void checkCursorXAndStringRange(String string) {

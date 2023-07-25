@@ -39,7 +39,8 @@ public class MessageDisplay {
     }
 
     public void draw() {
-        terminal.withColor(SColor.RED).fill(0, 0, terminal.size().width, terminal.size().height, ' ');
+        terminal.withColor(SColor.RED).fill(0, 0, terminal.size().width, terminal.size().height,
+                ' ');
 
         int msgCount = 0;
         int maxSize = messages.size(numLines);
@@ -47,13 +48,17 @@ public class MessageDisplay {
         for (int x = 0; x < maxSize; x++) {
             MessageDisplayProperties props = messages.get(x);
             StringEx[] lines = props.getText().wordWrap(terminal.size().width - 6);
-            TerminalBase colorTerm = terminal.withColor(SColorFactory.blend(props.getColor(), SColor.BLACK_CHESTNUT_OAK, (x / (float) numLines)));
+
+            TerminalBase colorTerm = terminal.withColor(SColorFactory.blend(props.getColor(),
+                    SColor.BLACK_CHESTNUT_OAK, (x / (float) numLines)));
+
             String prefix = "> ";
 
             int startIdx = maxSize - msgCount - lines.length + 1;
             for (int i = 0; (i < lines.length) && (msgCount < maxSize); i++) {
-                if (i > 0)
+                if (i > 0) {
                     prefix = "";
+                }
 
                 colorTerm.write(0, startIdx + i, prefix + lines[i].toString());
                 msgCount++;

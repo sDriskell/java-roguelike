@@ -20,12 +20,8 @@ import roguelike.util.CharEx;
 public class DisplayManager {
     private static final Logger LOG = LogManager.getLogger(DisplayManager.class);
 
-    // private final String FONT_NAME = "joystix monospace.ttf";
-    // private final String FONT_NAME = "Adore64.ttf";
-    // private final String FONT_NAME = "Commodore Pixelized v1.2.ttf";
-    private final String FONT_NAME = "Nouveau_IBM.ttf";
-
-    private final String BACKUP_FONT_NAME = "Lucidia";
+    private static final String FONT_NAME = "Nouveau_IBM.ttf";
+    private static final String BACKUP_FONT_NAME = "Lucidia";
 
     private Font font;
     private JComponent displayPane;
@@ -65,7 +61,7 @@ public class DisplayManager {
         }
     }
 
-    public void setDirty() {
+    public void turnOnDirty() {
         dirty = true;
     }
 
@@ -105,21 +101,21 @@ public class DisplayManager {
     }
 
     private Font getFont(String name) {
-        Font font = null;
+        Font tempFont = null;
         String fName = "./assets/" + name;
+        
         try {
             InputStream is = TitleScreen.class.getResourceAsStream("/resources/assets/" + name);
-            font = Font.createFont(Font.TRUETYPE_FONT, is);
+            tempFont = Font.createFont(Font.TRUETYPE_FONT, is);
 
-            System.out.println("Loaded " + fName);
             LOG.info("Loaded {}", fName);
         }
         catch (Exception ex) {
             ex.printStackTrace();
 
             LOG.error("{} not loaded; using {} font", fName, FONT_NAME);
-            font = new Font(BACKUP_FONT_NAME, Font.PLAIN, 24);
+            tempFont = new Font(BACKUP_FONT_NAME, Font.PLAIN, 24);
         }
-        return font;
+        return tempFont;
     }
 }

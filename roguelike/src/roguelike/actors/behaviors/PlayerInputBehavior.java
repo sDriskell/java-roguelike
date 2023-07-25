@@ -20,114 +20,113 @@ import roguelike.ui.InputManager;
 import squidpony.squidgrid.util.DirectionIntercardinal;
 
 public class PlayerInputBehavior extends Behavior {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public PlayerInputBehavior(Actor actor) {
-		super(actor);
-	}
+    public PlayerInputBehavior(Actor actor) {
+        super(actor);
+    }
 
-	@Override
-	public boolean isHostile() {
-		return false;
-	}
+    @Override
+    public boolean isHostile() {
+        return false;
+    }
 
-	@Override
-	public Action getAction() {
-		InputCommand input = InputManager.nextCommand();
-		if (input == null)
-			return null;
+    @Override
+    public Action getAction() {
+        InputCommand input = InputManager.nextCommand();
+        if (input == null) {
+            return null;
+        }
 
-		// use Shift+up/right/down/left for up-left, up-right,down-right,down-left
+        switch (input) {
+        case CANCEL:
+            return new QuitAction(actor);
 
-		switch (input) {
-		case CANCEL:
-			return new QuitAction(actor);
+        case LEFT:
+            return walk(DirectionIntercardinal.LEFT);
 
-		case LEFT:
-			return walk(DirectionIntercardinal.LEFT);
+        case DOWN_LEFT:
+            return walk(DirectionIntercardinal.DOWN_LEFT);
 
-		case DOWN_LEFT:
-			return walk(DirectionIntercardinal.DOWN_LEFT);
+        case UP_RIGHT:
+            return walk(DirectionIntercardinal.UP_RIGHT);
 
-		case UP_RIGHT:
-			return walk(DirectionIntercardinal.UP_RIGHT);
+        case RIGHT:
+            return walk(DirectionIntercardinal.RIGHT);
 
-		case RIGHT:
-			return walk(DirectionIntercardinal.RIGHT);
+        case UP_LEFT:
+            return walk(DirectionIntercardinal.UP_LEFT);
 
-		case UP_LEFT:
-			return walk(DirectionIntercardinal.UP_LEFT);
+        case UP:
+            return walk(DirectionIntercardinal.UP);
 
-		case UP:
-			return walk(DirectionIntercardinal.UP);
+        case DOWN_RIGHT:
+            return walk(DirectionIntercardinal.DOWN_RIGHT);
 
-		case DOWN_RIGHT:
-			return walk(DirectionIntercardinal.DOWN_RIGHT);
+        case DOWN:
+            return walk(DirectionIntercardinal.DOWN);
 
-		case DOWN:
-			return walk(DirectionIntercardinal.DOWN);
+        case REST:
+            return new WaitAction(actor);
 
-		case REST:
-			return new WaitAction(actor);
+        case INVENTORY:
+            return new InventoryAction(actor);
 
-		case INVENTORY:
-			return new InventoryAction(actor);
+        case CLOSE_DOOR:
+            return new CloseDoorAction(actor, Game.current().getCurrentMapArea());
 
-		case CLOSE_DOOR:
-			return new CloseDoorAction(actor, Game.current().getCurrentMapArea());
+        case STAIRS_UP:
+            return useStairsUp();
 
-		case STAIRS_UP:
-			return useStairsUp();
+        case STAIRS_DOWN:
+            return useStairsDown();
 
-		case STAIRS_DOWN:
-			return useStairsDown();
+        case PICK_UP:
+            return new GetItemAction(actor, Game.current().getCurrentMapArea());
 
-		case PICK_UP:
-			return new GetItemAction(actor, Game.current().getCurrentMapArea());
+        case LOOK:
+            return new LookAction(actor, Game.current().getCurrentMapArea());
 
-		case LOOK:
-			return new LookAction(actor, Game.current().getCurrentMapArea());
+        case SHOW_MESSAGES:
+            return new ShowMessagesAction(actor);
 
-		case SHOW_MESSAGES:
-			return new ShowMessagesAction(actor);
+        case RANGED_ATTACK:
+            return getRangedAttackAction();
 
-		case RANGED_ATTACK:
-			return getRangedAttackAction();
+        default:
+            return null;
+        }
+    }
 
-		default:
-			return null;
-		}
-	}
+    @Override
+    public Behavior getNextBehavior() {
+        return this;
+    }
 
-	@Override
-	public Behavior getNextBehavior() {
-		return this;
-	}
+    private WalkAction walk(DirectionIntercardinal direction) {
+        return new WalkAction(actor, Game.current().getCurrentMapArea(), direction);
+    }
 
-	private WalkAction walk(DirectionIntercardinal direction) {
-		return new WalkAction(actor, Game.current().getCurrentMapArea(), direction);
-	}
+    private Action useStairsUp() {
+        return new StairsUpAction(actor, Game.current().getCurrentMapArea());
+    }
 
-	private Action useStairsUp() {
-		return new StairsUpAction(actor, Game.current().getCurrentMapArea());
-	}
+    private Action useStairsDown() {
+        return new StairsDownAction(actor, Game.current().getCurrentMapArea());
+    }
 
-	private Action useStairsDown() {
-		return new StairsDownAction(actor, Game.current().getCurrentMapArea());
-	}
+    private RangedAttackAction getRangedAttackAction() {
+        RangedWeapon rangedWeapon = actor.equipment().getRangedWeapon();
+        if (rangedWeapon != null)
+            return new RangedAttackAction(actor, Game.current().getCurrentMapArea(), rangedWeapon);
+        else {
+            Game.current().displayMessage("You don't have a ranged weapon equipped.");
+        }
+        return null;
+    }
 
-	private RangedAttackAction getRangedAttackAction() {
-		RangedWeapon rangedWeapon = actor.equipment().getRangedWeapon();
-		if (rangedWeapon != null)
-			return new RangedAttackAction(actor, Game.current().getCurrentMapArea(), rangedWeapon);
-		else {
-			Game.current().displayMessage("You don't have a ranged weapon equipped.");
-		}
-		return null;
-	}
-
-	@Override
-	public String getDescription() {
-		return "Waiting for input";
-	}
+    @Override
+    public String getDescription() {
+        return "Waiting for input";
+    }
 }

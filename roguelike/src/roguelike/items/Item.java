@@ -38,9 +38,9 @@ public abstract class Item implements Serializable {
 	public abstract ItemType type();
 
 	public String name() {
-		if (name == null)
-			return "???";
-
+		if (name == null) {
+	          return "???";
+		}
 		return this.name;
 	}
 
@@ -100,7 +100,7 @@ public abstract class Item implements Serializable {
 	 * @return
 	 */
 	public Pair<Item, Boolean> onUsed() {
-		return new Pair<Item, Boolean>(this, false);
+		return new Pair<>(this, false);
 	}
 
 	public void onEquipped(Actor actor) {

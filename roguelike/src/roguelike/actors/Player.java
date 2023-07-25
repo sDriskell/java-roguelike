@@ -33,8 +33,7 @@ public class Player extends Actor {
 
 	@Override
 	public Action getNextAction() {
-		Action action = behavior.getAction();
-		return action;
+		return behavior.getAction();
 	}
 
 	@Override

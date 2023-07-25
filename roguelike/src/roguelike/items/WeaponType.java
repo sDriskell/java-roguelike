@@ -39,9 +39,9 @@ public enum WeaponType {
 	MANDIBLES("mandibles"),
 	CLAWS("claws");
 
-	public final String name;
+	public final String weaponName;
 
 	WeaponType(String name) {
-		this.name = name;
+		this.weaponName = name;
 	}
 }

@@ -28,6 +28,7 @@ public class AttackAnimation extends Animation {
 
         DirectionIntercardinal dir = DirectionIntercardinal
                 .getDirection(targetPos.x - attackerPos.x, targetPos.y - attackerPos.y);
+
         switch (dir) {
         case UP:
         case DOWN:
@@ -49,6 +50,7 @@ public class AttackAnimation extends Animation {
             attackChar = '*';
             break;
         }
+
         if (Math.floor(attackerPos.distance(targetPos)) <= 1) {
             attackCharPoint = targetPos;
         }
@@ -76,6 +78,7 @@ public class AttackAnimation extends Animation {
                 SColorFactory.blend(SColor.RED, SColor.BLACK, currentFrame / (float) totalFrames);
         SColor foregroundColor;
         int yOffset = 0;
+
         if (Player.isPlayer(target)) {
             foregroundColor = SColor.RED;
             yOffset = (currentFrame / 4) * 2;
@@ -83,6 +86,7 @@ public class AttackAnimation extends Animation {
         else {
             foregroundColor = SColor.YELLOW;
         }
+
         foregroundColor = SColorFactory.blend(foregroundColor, SColor.BENI_DYE,
                 currentFrame / (float) totalFrames);
 
@@ -90,7 +94,6 @@ public class AttackAnimation extends Animation {
         TerminalBase dmg = terminal.withColor(foregroundColor);
 
         effect.fill(offsetPos.x, offsetPos.y, 1, 1);
-
         effect.put(attackCharPos.x, attackCharPos.y, attackChar);
 
         dmg.write(x, y + yOffset, damage);

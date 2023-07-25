@@ -56,8 +56,9 @@ public abstract class Actor implements Serializable {
     public final Coordinate position;
 
     protected Actor(char symbol, SColor color) {
-        if (color == null)
+        if (color == null) {
             throw new IllegalArgumentException("color cannot be null: " + symbol);
+        }
 
         this.symbol = symbol;
         this.color = color;

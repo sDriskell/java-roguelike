@@ -18,7 +18,7 @@ public class ShowMessagesAction extends DialogInputRequiredAction<InputCommand> 
 
 	@Override
 	protected ActionResult onPerform() {
-		if (result != null)
+		if (dialogResult != null)
 			return ActionResult.success();
 
 		return ActionResult.incomplete().setMessage("No result from show messages dialog");

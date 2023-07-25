@@ -17,10 +17,7 @@ public abstract class CursorInputRequiredAction<T> extends Action {
 
 	@Override
 	public boolean checkForIncomplete() {
-		if (cursor != null && cursor.waitingForResult())
-			return true;
-
-		return false;
+		return cursor != null && cursor.waitingForResult();
 	}
 
 	protected void showCursor(Cursor cursor) {

@@ -8,9 +8,9 @@ public enum Material {
 	IRON("iron"),
 	STEEL("steel");
 
-	public final String name;
+	public final String materialName;
 
 	Material(String name) {
-		this.name = name;
+		this.materialName = name;
 	}
 }
