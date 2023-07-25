@@ -9,7 +9,8 @@ public abstract class Condition implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	protected StringEx identifier;
-	protected int duration, initialDuration;
+	protected int duration;
+	protected int initialDuration;
 
 	protected Condition(StringEx identifier, int duration) {
 		this.identifier = identifier;

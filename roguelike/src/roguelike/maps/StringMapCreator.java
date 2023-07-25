@@ -11,9 +11,11 @@ public class StringMapCreator {
 	public StringMapCreator(String mapTiles) {
 		this.mapTiles = mapTiles;
 		this.tileBuilder = new TileBuilder();
-		this.tiles = new CurrentItemTracker<Character>();
-		for (int x = 0; x < this.mapTiles.length(); x++)
-			tiles.add(this.mapTiles.charAt(x));
+		this.tiles = new CurrentItemTracker<>();
+		
+		for (int x = 0; x < this.mapTiles.length(); x++) {
+	          tiles.add(this.mapTiles.charAt(x));
+		}
 	}
 
 	public Tile nextTile() {

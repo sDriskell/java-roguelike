@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsefa.Deserializer;
 import org.jsefa.common.lowlevel.filter.HeaderAndFooterFilter;
 import org.jsefa.csv.CsvIOFactory;
@@ -20,6 +22,8 @@ import org.jsefa.csv.config.CsvConfiguration;
 import roguelike.screens.MainScreen;
 
 public class FileUtils {
+    private static final Logger LOG = LogManager.getLogger(FileUtils.class);
+
     static String readFile(String path, Charset encoding) throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         return new String(encoded, encoding);
@@ -29,17 +33,19 @@ public class FileUtils {
         BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
         StringBuilder out = new StringBuilder();
         String line;
+
         while ((line = reader.readLine()) != null) {
             out.append(line);
             out.append("\n");
         }
-        reader.close();
 
+        reader.close();
         return out.toString();
     }
 
     public static <T> List<T> recordsFromCsv(String path, Class<T> typeClass) {
         String csv;
+        
         try {
             csv = FileUtils.readFile(MainScreen.class.getResourceAsStream(path));
         }
@@ -49,6 +55,7 @@ public class FileUtils {
         }
 
         ArrayList<T> items = new ArrayList<>();
+        
         CsvConfiguration csvConfiguration = new CsvConfiguration();
         csvConfiguration.setFieldDelimiter(',');
         csvConfiguration.setLineFilter(new HeaderAndFooterFilter(1, false, false));
@@ -63,8 +70,7 @@ public class FileUtils {
         }
         deserializer.close(true);
 
-        System.out.println(
-                "Read " + items.size() + " of type " + typeClass.getName() + " from " + path);
+        LOG.info("Read {} of type {} from {}", items.size(), typeClass.getName(), path);
         return items;
     }
 }

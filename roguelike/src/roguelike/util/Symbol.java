@@ -46,17 +46,17 @@ public enum Symbol {
 	BOX_BOTTOM_RIGHT_DOUBLE(188), // ╝
 
 	;
-	private char symbol;
+	private char charSymbol;
 
 	public char symbol() {
-		return this.symbol;
+		return this.charSymbol;
 	}
 
 	Symbol(char symbol) {
-		this.symbol = symbol;
+		this.charSymbol = symbol;
 	}
 
 	Symbol(int charIndex) {
-		this.symbol = (char) charIndex;
+		this.charSymbol = (char) charIndex;
 	}
 }

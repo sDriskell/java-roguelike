@@ -14,52 +14,54 @@ import squidpony.squidcolor.SColor;
 
 public class MessageLogWindow extends Dialog<InputCommand> {
 
-	private Menu<MessageDisplayProperties> messageMenu;
+    private Menu<MessageDisplayProperties> messageMenu;
 
-	public MessageLogWindow(int width, int height, MessageLog messages) {
-		super(width, height);
+    public MessageLogWindow(int width, int height, MessageLog messages) {
+        super(width, height);
 
-		messageMenu = new Menu<MessageDisplayProperties>(messages.getAll(), 25) {
+        messageMenu = new Menu<MessageDisplayProperties>(messages.getAll(), 25) {
 
-			@Override
-			protected StringEx getTextFor(MessageDisplayProperties item, int position) {
-				return item.getText();
-			}
-		};
-	}
+            @Override
+            protected StringEx getTextFor(MessageDisplayProperties item, int position) {
+                return item.getText();
+            }
+        };
+    }
 
-	@Override
-	protected DialogResult<InputCommand> onProcess(InputCommand command) {
-		DialogResult<InputCommand> result = null;
-		if (command != null) {
+    @Override
+    protected DialogResult<InputCommand> onProcess(InputCommand command) {
+        DialogResult<InputCommand> result = null;
+        if (command != null) {
 
-			switch (command) {
-			case CONFIRM:
-			case CANCEL:
-				return DialogResult.ok(command);
+            switch (command) {
+            case CONFIRM:
+            case CANCEL:
+                return DialogResult.ok(command);
 
-			default:
-				messageMenu.processCommand(command);
-			}
-		}
-		return result;
-	}
+            default:
+                messageMenu.processCommand(command);
+            }
+        }
+        return result;
+    }
 
-	@Override
-	protected void onDraw() {
+    @Override
+    protected void onDraw() {
 
-		terminal.withColor(SColor.MOUSY_INDIGO).fill(0, 0, size.width, size.height, ' ');
-		drawBoxShape(terminal);
+        terminal.withColor(SColor.MOUSY_INDIGO).fill(0, 0, size.width, size.height, ' ');
+        drawBoxShape(terminal);
 
-		List<MenuItem<MessageDisplayProperties>> currentPage = messageMenu.currentPageItems();
-		int y = 1;
-		for (MenuItem<MessageDisplayProperties> item : currentPage) {
-			StringEx text = item.getText();
-			StringEx[] lines = text.wordWrap(size.width - 1);
-			for (int x = 0; x < lines.length; x++) {
-				terminal.write(1, y, lines[x]);
-				y++;
-			}
-		}
-	}
+        List<MenuItem<MessageDisplayProperties>> currentPage = messageMenu.currentPageItems();
+        int y = 1;
+        
+        for (MenuItem<MessageDisplayProperties> item : currentPage) {
+            StringEx text = item.getText();
+            StringEx[] lines = text.wordWrap(size.width - 1);
+            
+            for (int x = 0; x < lines.length; x++) {
+                terminal.write(1, y, lines[x]);
+                y++;
+            }
+        }
+    }
 }

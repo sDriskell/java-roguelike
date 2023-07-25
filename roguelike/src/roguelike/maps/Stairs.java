@@ -20,7 +20,6 @@ public class Stairs extends Tile {
 		if (getActor() != null && visible) {
 			return getActor().symbol();
 		}
-
 		return down ? '>' : '<';
 	}
 
@@ -30,7 +29,6 @@ public class Stairs extends Tile {
 
 	public void use() {
 		MapArea oldMap = Game.current().getCurrentMapArea();
-
 		MapArea newMap = new MapArea(Game.MAP_WIDTH, Game.MAP_HEIGHT, mapBuilder);
 
 		// TODO: put stairs going back up wherever the player gets created

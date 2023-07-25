@@ -210,13 +210,11 @@ public class AStarPathfinder {
      * @return True if the location is valid for the given mover
      */
     protected boolean isValidLocation(int sx, int sy, int x, int y) {
-
         boolean invalid = !map.isWithinBounds(x, y);
 
         if ((!invalid) && ((sx != x) || (sy != y))) {
             invalid = MapHelpers.isBlocked(map, x, y, true);
         }
-
         return !invalid;
     }
 
@@ -399,7 +397,5 @@ public class AStarPathfinder {
         private AStarPathfinder getEnclosingInstance() {
             return AStarPathfinder.this;
         }
-
     }
-
 }

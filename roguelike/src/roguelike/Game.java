@@ -227,7 +227,8 @@ public class Game implements Serializable {
             }
         }
         else { // advance to next actor
-            currentMapArea.nextActor("getCurrentActions, !canAct, queueSize=" + queuedActions.size());
+            currentMapArea
+                    .nextActor("getCurrentActions, !canAct, queueSize=" + queuedActions.size());
 
             if (Player.isPlayer(actor)) {
                 // TODO: process things that happen every turn after player queues actions
@@ -250,7 +251,8 @@ public class Game implements Serializable {
 
         // don't perform the action if the actor is dead
         if (!currentAction.getActor().isAlive()) {
-            currentMapArea.nextActor("executeQueuedActions, currentAction actor !isAlive: " + currentAction.getActor().getName());
+            currentMapArea.nextActor("executeQueuedActions, currentAction actor !isAlive: "
+                    + currentAction.getActor().getName());
             return turnResult;
         }
 
@@ -261,57 +263,106 @@ public class Game implements Serializable {
          * if the result is completed we can proceed, else put it back on the queue
          */
         if (result.isCompleted()) {
-
-            while (result.getAlternateAction() != null) {
-                Action alternate = result.getAlternateAction();
-                result = alternate.perform();
-                messages.add(result.getMessage());
-
-                if (!result.isCompleted())
-                    queuedActions.add(alternate);
-            }
+            result = modifyActionResult(result);
 
             Actor currentActor = currentAction.getActor();
-            if (currentActor != null && !currentActor.energy().canAct()) {
 
+            if (currentActor != null && !currentActor.energy().canAct()) {
                 if (result.isSuccess()) {
-                    currentActor.finishTurn();
-                    DisplayManager.instance().setDirty(); // make sure we show the result of the action
+                    showResults(currentActor);
                 }
                 else {
-                    currentMapArea.nextActor("executeQueuedActions, !currentActor.canAct && !success");
+                    currentMapArea
+                            .nextActor("executeQueuedActions, !currentActor.canAct && !success");
                     return turnResult;
                 }
-
+            }
+            else if (currentActor == null) {
+                LOG.error("Current actor is null.");
             }
             else {
-                LOG.warn("Game: Actor = {} Alive = {} Action = {}", currentActor.getName(), currentActor.isAlive(), currentAction);
-                LOG.warn("Game: Remaining energy: {} Result = {}", currentActor.energy().getCurrent(), result);
-                LOG.warn("Game: M = {} S = {} C = {}", result.getMessage(), result.isSuccess(), result.isCompleted());
-
-                /*
-                 * bug fix for infinite loop with enemy pathfinding where they can't move to a
-                 * square they want to and fail the walk action
-                 */
-                if (!result.isSuccess())
-                    currentMapArea.nextActor("executeQueueActions, can act but not success");
+                warnActorStatus(currentAction, result, currentActor);
+                actNotSuccessful(result);
 
                 return turnResult;
             }
-
         }
         else {
             // TODO: incomplete action
             queuedActions.add(currentAction);
         }
+        return redrawAfterPlayerAction(turnResult, currentAction);
+    }
 
-        /* return when player's actions are performed so we can redraw */
+    /**
+     * Handle when enemy path-finding cannot move to a square.
+     * 
+     * @param result ActionResult to inspect for enemy action
+     */
+    private void actNotSuccessful(ActionResult result) {
+        if (!result.isSuccess()) {
+            currentMapArea.nextActor("executeQueueActions, can act but not success");
+        }
+    }
+
+    /**
+     * Return when the player's actions are performed to allow redraw.
+     * 
+     * @param turnResult Object used to check and enact player actions
+     * @param currentAction Object to be performed during player's action
+     * @return TurnResult after player turn is executed
+     */
+    private TurnResult redrawAfterPlayerAction(TurnResult turnResult, Action currentAction) {
         if (Player.isPlayer(currentAction.getActor())) {
             turnResult.playerActed();
             return turnResult;
         }
-
         return null;
+    }
+
+    /**
+     * Show results of action by Actor object.
+     * 
+     * @param currentActor Actor object whose results are to be displayed
+     */
+    private void showResults(Actor currentActor) {
+        currentActor.finishTurn();
+        DisplayManager.instance().turnOnDirty();
+    }
+
+    /**
+     * Extracts an action from an ActionResult object to be executed
+     * 
+     * @param result Object that will have action extracted from
+     * @return ActionResult after modification is performed
+     */
+    private ActionResult modifyActionResult(ActionResult result) {
+        while (result.getAlternateAction() != null) {
+            Action alternate = result.getAlternateAction();
+            result = alternate.perform();
+            messages.add(result.getMessage());
+
+            if (!result.isCompleted()) {
+                queuedActions.add(alternate);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Write log warnings for actor status at time of calling
+     * 
+     * @param currentAction Action object that was performed
+     * @param result ActionResult object that was performed
+     * @param currentActor Actor object that is performing action and result
+     */
+    private void warnActorStatus(Action currentAction, ActionResult result, Actor currentActor) {
+        LOG.warn("Game: Actor = {} Alive = {} Action = {}", currentActor.getName(),
+                currentActor.isAlive(), currentAction);
+        LOG.warn("Game: Remaining energy: {} Result = {}", currentActor.energy().getCurrent(),
+                result);
+        LOG.warn("Game: M = {} S = {} C = {}", result.getMessage(), result.isSuccess(),
+                result.isCompleted());
     }
 
     private void showItemsOnPlayerSquare() {

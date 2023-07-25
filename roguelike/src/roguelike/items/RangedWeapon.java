@@ -45,15 +45,13 @@ public class RangedWeapon extends Weapon {
 
 	@Override
 	public Attack getAttack() {
-
 		if (requiresProjectiles) {
 			Projectile projectile = getProjectile();
+			
 			if (projectile != null) {
-				Attack attack = projectile.getAttack();
-				return attack;
+				return projectile.getAttack();
 			}
 		}
-
 		return new NoAmmunitionAttack(0, this);
 	}
 
@@ -87,8 +85,7 @@ public class RangedWeapon extends Weapon {
 		Coordinate userPos = user.getPosition();
 		Coordinate targetPos = target.getPosition();
 
-		float distance = targetPos.distance(userPos, BasicRadiusStrategy.CIRCLE);
-		return distance <= this.maxRange;
+		return targetPos.distance(userPos, BasicRadiusStrategy.CIRCLE) <= this.maxRange;
 	}
 
 	public Projectile getProjectile() {

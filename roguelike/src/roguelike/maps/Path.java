@@ -12,13 +12,13 @@ public class Path {
      * Create an empty path
      */
     public Path() {
-
+        // Empty Constructor for creating an empty path.
     }
 
     public Step getCurrentStep() {
-        if (currentStep < steps.size())
+        if (currentStep < steps.size()) {
             return getStep(currentStep);
-
+        }
         return null;
     }
 
@@ -45,7 +45,7 @@ public class Path {
      * @return The step information, the position on the map.
      */
     public Step getStep(int index) {
-        return (Step) steps.get(index);
+        return steps.get(index);
     }
 
     /**
@@ -155,7 +155,6 @@ public class Path {
 
                 return (o.x == x) && (o.y == y);
             }
-
             return false;
         }
     }

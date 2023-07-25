@@ -64,6 +64,6 @@ public class Projectile extends Weapon {
 
 	@Override
 	public Pair<Item, Boolean> onUsed() {
-		return new Pair<Item, Boolean>(this, true);
+		return new Pair<>(this, true);
 	}
 }

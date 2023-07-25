@@ -31,7 +31,8 @@ public class ActorUtils {
         float force = 1;
         float decay = 1f / actor.getVisionRadius();
 
-        boolean visible = losSolver.isReachable(mapArea.getLightValues(), startx, starty, targetx, targety, force, decay, BasicRadiusStrategy.CIRCLE);
+        boolean visible = losSolver.isReachable(mapArea.getLightValues(), startx, starty, targetx,
+                targety, force, decay, BasicRadiusStrategy.CIRCLE);
 
         LOG.debug("{} can see {} = {}", actor.getName(), other.getName(), visible);
 
@@ -43,15 +44,12 @@ public class ActorUtils {
 
         if ("has".equals(words[0])) {
             words[0] = "have";
-
         }
         else if (words[0].endsWith("Es")) {
             words[0] = words[0].substring(0, words[0].length() - 1);
-
         }
         else if (words[0].endsWith("es")) {
             words[0] = words[0].substring(0, words[0].length() - 2);
-
         }
         else if (words[0].endsWith("s")) {
             words[0] = words[0].substring(0, words[0].length() - 1);
@@ -61,11 +59,11 @@ public class ActorUtils {
         }
 
         StringBuilder builder = new StringBuilder();
+        
         for (String word : words) {
             builder.append(" ");
             builder.append(word);
         }
-
         return builder.toString().trim();
     }
 }

@@ -1,7 +1,5 @@
 package roguelike.ui.asciipanel;
 
-import java.awt.Color;
-
 import squidpony.squidcolor.SColor;
 
 public class AsciiCharacterData {

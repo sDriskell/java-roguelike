@@ -19,9 +19,10 @@ public class ChooseItemCommandDialog extends Dialog<InputCommand> {
     private static KeyMap keyBindings = new KeyMap("ChooseItemCommand")
             .bindKey(KeyEvent.VK_ENTER, InputCommand.CONFIRM)
             .bindKey(KeyEvent.VK_ESCAPE, InputCommand.CANCEL)
-            .bindKey(KeyEvent.VK_UP, InputCommand.UP).bindKey(KeyEvent.VK_DOWN, InputCommand.DOWN)
-
-            .bindKey(KeyEvent.VK_E, InputCommand.EQUIP).bindKey(KeyEvent.VK_U, InputCommand.USE)
+            .bindKey(KeyEvent.VK_UP, InputCommand.UP)
+            .bindKey(KeyEvent.VK_DOWN, InputCommand.DOWN)
+            .bindKey(KeyEvent.VK_E, InputCommand.EQUIP)
+            .bindKey(KeyEvent.VK_U, InputCommand.USE)
             .bindKey(KeyEvent.VK_D, InputCommand.DROP)
 
             .bindKey(KeyEvent.VK_LEFT, InputCommand.PREVIOUS_PAGE)
@@ -121,6 +122,7 @@ public class ChooseItemCommandDialog extends Dialog<InputCommand> {
         border.write(1, 0, String.format("Action? %d %d", currentPage, pageCount));
 
         int displayY = 2;
+        
         for (MenuItem<InputCommand> item : commands.currentPageItems()) {
             String color = "";
             if (item.isActive()) {

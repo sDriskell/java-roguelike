@@ -6,43 +6,45 @@ import java.util.Map;
 
 public class KeyMap {
 
-	private Map<Integer, InputCommand> keyBindings;
-	private Map<Integer, InputCommand> shiftKeyBindings;
+    private Map<Integer, InputCommand> keyBindings;
+    private Map<Integer, InputCommand> shiftKeyBindings;
 
-	private String name;
+    private String name;
 
-	public KeyMap(String name) {
-		this.name = name;
-		this.keyBindings = new HashMap<Integer, InputCommand>();
-		this.shiftKeyBindings = new HashMap<Integer, InputCommand>();
-	}
+    public KeyMap(String name) {
+        this.name = name;
+        this.keyBindings = new HashMap<>();
+        this.shiftKeyBindings = new HashMap<>();
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public KeyMap bindKey(Integer key, InputCommand command) {
-		return bindKey(key, false, command);
-	}
+    public KeyMap bindKey(Integer key, InputCommand command) {
+        return bindKey(key, false, command);
+    }
 
-	public KeyMap bindKey(Integer key, boolean shift, InputCommand command) {
-		if (shift) {
-			shiftKeyBindings.put(key, command);
-		} else {
-			keyBindings.put(key, command);
-		}
-		return this;
-	}
+    public KeyMap bindKey(Integer key, boolean shift, InputCommand command) {
+        if (shift) {
+            shiftKeyBindings.put(key, command);
+        }
+        else {
+            keyBindings.put(key, command);
+        }
+        return this;
+    }
 
-	public InputCommand getCommand(KeyEvent key) {
-		if (key == null)
-			return null;
+    public InputCommand getCommand(KeyEvent key) {
+        if (key == null) {
+            return null;
+        }
 
-		if (key.isShiftDown()) {
-			return shiftKeyBindings.getOrDefault(key.getKeyCode(), null);
-		}
-		else {
-			return keyBindings.getOrDefault(key.getKeyCode(), null);
-		}
-	}
+        if (key.isShiftDown()) {
+            return shiftKeyBindings.getOrDefault(key.getKeyCode(), null);
+        }
+        else {
+            return keyBindings.getOrDefault(key.getKeyCode(), null);
+        }
+    }
 }

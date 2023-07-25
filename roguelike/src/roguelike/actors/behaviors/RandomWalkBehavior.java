@@ -31,7 +31,9 @@ public class RandomWalkBehavior extends Behavior {
     public Action getAction() {
         MapArea map = Game.current().getCurrentMapArea();
         double rnd = Game.current().random().nextDouble();
+
         DirectionIntercardinal direction;
+
         if (rnd < 0.25) {
             direction = DirectionIntercardinal.UP;
         }
@@ -46,9 +48,9 @@ public class RandomWalkBehavior extends Behavior {
         }
 
         Coordinate pos = actor.getPosition().createOffsetPosition(direction);
-        if (map.canMoveTo(actor, pos) && map.getActorAt(pos.x, pos.y) == null)
+        if (map.canMoveTo(actor, pos) && map.getActorAt(pos.x, pos.y) == null) {
             return new WalkAction(actor, map, direction);
-
+        }
         return new WaitAction(actor);
     }
 
@@ -59,7 +61,6 @@ public class RandomWalkBehavior extends Behavior {
             LOG.debug("RandomWalkBehavior: Switching to targeted attack behavior");
             return new TargetedAttackBehavior(actor, lastAttackedBy.getActor());
         }
-
         return this;
     }
 

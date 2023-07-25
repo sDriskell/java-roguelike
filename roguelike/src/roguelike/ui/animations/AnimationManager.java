@@ -16,8 +16,9 @@ public class AnimationManager {
     public void addAnimation(Animation animation) {
         animations.add(animation);
 
-        if (animation.isBlocking())
+        if (animation.isBlocking()) {
             InputManager.setInputEnabled(false);
+        }
     }
 
     public boolean shouldRefresh() {
@@ -39,13 +40,15 @@ public class AnimationManager {
         boolean anyAnimations = false;
 
         ArrayList<Animation> toRemove = new ArrayList<>();
+        
         for (Animation animation : animations) {
             if (animation.nextFrame(terminal)) {
                 toRemove.add(animation);
             }
             else {
-                if (!anyBlocking && animation.isBlocking())
+                if (!anyBlocking && animation.isBlocking()) {
                     anyBlocking = true;
+                }
             }
             anyAnimations = true;
         }
@@ -54,8 +57,9 @@ public class AnimationManager {
             animations.remove(a);
         }
 
-        if (!anyBlocking)
+        if (!anyBlocking) {
             InputManager.setInputEnabled(true);
+        }
 
         if (!toRemove.isEmpty()) {
             refresh = true;

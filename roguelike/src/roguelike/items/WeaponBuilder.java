@@ -21,8 +21,10 @@ public class WeaponBuilder extends ItemBuilder {
         return (Weapon) item;
     }
 
-    public static WeaponBuilder melee(String name, String attackDescription, char symbol, SColor color) {
+    public static WeaponBuilder melee(String name, String attackDescription, char symbol,
+            SColor color) {
         Weapon weapon = new MeleeWeapon();
+
         weapon.name = name;
         weapon.attackDescription = attackDescription;
         weapon.symbol = symbol;
@@ -31,9 +33,10 @@ public class WeaponBuilder extends ItemBuilder {
         return new WeaponBuilder(weapon);
     }
 
-    public static WeaponBuilder ranged(String name, String attackDescription, char symbol, SColor color, int maxRange,
-            WeaponCategory projectileType) {
+    public static WeaponBuilder ranged(String name, String attackDescription, char symbol,
+            SColor color, int maxRange, WeaponCategory projectileType) {
         RangedWeapon w = new RangedWeapon();
+
         w.name = name;
         w.attackDescription = attackDescription;
         w.symbol = symbol;
@@ -52,8 +55,10 @@ public class WeaponBuilder extends ItemBuilder {
         return new WeaponBuilder(w);
     }
 
-    public static WeaponBuilder projectile(String name, String attackDescription, char symbol, SColor color) {
+    public static WeaponBuilder projectile(String name, String attackDescription, char symbol,
+            SColor color) {
         Projectile w = new Projectile();
+        
         w.name = name;
         w.attackDescription = attackDescription;
         w.symbol = symbol;
@@ -72,7 +77,8 @@ public class WeaponBuilder extends ItemBuilder {
         return this;
     }
 
-    public WeaponBuilder withTargetNumberAndDamageValue(DamageType damageType, int targetNumber, int damageValue) {
+    public WeaponBuilder withTargetNumberAndDamageValue(DamageType damageType, int targetNumber,
+            int damageValue) {
         weapon.damage.put(damageType, new int[] { targetNumber, damageValue });
         return this;
     }
@@ -82,7 +88,8 @@ public class WeaponBuilder extends ItemBuilder {
         return this;
     }
 
-    public WeaponBuilder canCauseCondition(Condition condition, int attackSuccesses, StatisticProvider statistic, int attributeSuccesses) {
+    public WeaponBuilder canCauseCondition(Condition condition, int attackSuccesses,
+            StatisticProvider statistic, int attributeSuccesses) {
         weapon.canCauseCondition = condition;
         weapon.attackSuccessesToCause = attackSuccesses;
         weapon.defenseAgainstConditionStat = statistic;
