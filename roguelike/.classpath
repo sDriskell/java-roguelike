@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="/Users/john/Documents/Dev Resources/Squidlib/SquidLib.jar" sourcepath="/Users/john/Documents/Dev Resources/Squidlib/SquidLib-sources.jar">
+	<classpathentry kind="lib" path="/home/sldrisk/git/java-roguelike/roguelike/SquidLib.jar" sourcepath="/home/sldrisk/git/java-roguelike/roguelike/SquidLib-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/Users/john/Documents/Dev%20Resources/Squidlib/SquidLib-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:file:/home/sldrisk/git/java-roguelike/roguelike/SquidLib-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/john/Documents/Dev Resources/json-20140107.jar" sourcepath="/Users/john/.m2/repository/org/json/json/20140107/json-20140107-sources.jar"/>
-	<classpathentry kind="lib" path="/Users/john/Documents/eclipseprojects/roguelike workspace/roguelike/jsefa-1.0.0.RELEASE.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="lib" path="/home/sldrisk/git/java-roguelike/roguelike/json-20140107.jar" sourcepath="/Users/john/.m2/repository/org/json/json/20140107/json-20140107-sources.jar"/>
+	<classpathentry kind="lib" path="/home/sldrisk/git/java-roguelike/roguelike/jsefa-1.0.0.RELEASE.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
