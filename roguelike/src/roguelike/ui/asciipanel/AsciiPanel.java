@@ -23,85 +23,22 @@ import roguelike.ui.MainWindow;
 public class AsciiPanel extends JPanel {
   private static final long serialVersionUID = -4167851861147593092L;
 
-  /**
-   * The color black (pure black).
-   */
-  public static Color black = new Color(0, 0, 0);
-
-  /**
-   * The color red.
-   */
-  public static Color red = new Color(128, 0, 0);
-
-  /**
-   * The color green.
-   */
-  public static Color green = new Color(0, 128, 0);
-
-  /**
-   * The color yellow.
-   */
-  public static Color yellow = new Color(128, 128, 0);
-
-  /**
-   * The color blue.
-   */
-  public static Color blue = new Color(0, 0, 128);
-
-  /**
-   * The color magenta.
-   */
-  public static Color magenta = new Color(128, 0, 128);
-
-  /**
-   * The color cyan.
-   */
-  public static Color cyan = new Color(0, 128, 128);
-
-  /**
-   * The color white (light gray).
-   */
-  public static Color white = new Color(192, 192, 192);
-
-  /**
-   * A brighter black (dark gray).
-   */
-  public static Color brightBlack = new Color(128, 128, 128);
-
-  /**
-   * A brighter red.
-   */
-  public static Color brightRed = new Color(255, 0, 0);
-
-  /**
-   * A brighter green.
-   */
-  public static Color brightGreen = new Color(0, 255, 0);
-
-  /**
-   * A brighter yellow.
-   */
-  public static Color brightYellow = new Color(255, 255, 0);
-
-  /**
-   * A brighter blue.
-   */
-  public static Color brightBlue = new Color(0, 0, 255);
-
-  /**
-   * A brighter magenta.
-   */
-  public static Color brightMagenta = new Color(255, 0, 255);
-
-  /**
-   * A brighter cyan.
-   */
-  public static Color brightCyan = new Color(0, 255, 255);
-
-  /**
-   * A brighter white (pure white).
-   */
-  public static Color brightWhite = new Color(255, 255, 255);
+  public static final Color BLACK = new Color(0, 0, 0);
+  public static final Color RED = new Color(128, 0, 0);
+  public static final Color GREEN = new Color(0, 128, 0);
+  public static final Color YELLOW = new Color(128, 128, 0);
+  public static final Color BLUE = new Color(0, 0, 128);
+  public static final Color MAGENTA = new Color(128, 0, 128);
+  public static final Color CYAN = new Color(0, 128, 128);
+  public static final Color WHITE = new Color(192, 192, 192);
+  public static final Color DARK_GRAY = new Color(128, 128, 128);
+  public static final Color BRIGHT_RED = new Color(255, 0, 0);
+  public static final Color BRIGHT_GREEN = new Color(0, 255, 0);
+  public static final Color BRIGHT_YELLOW = new Color(255, 255, 0);
+  public static final Color BRIGHT_BLUE = new Color(0, 0, 255);
+  public static final Color BRIGHT_MAGENTA = new Color(255, 0, 255);
+  public static final Color BRIGHT_CYAN = new Color(0, 255, 255);
+  public static final Color BRIGHT_WHITE = new Color(255, 255, 255);
 
   private Image offscreenBuffer;
   private Graphics offscreenGraphics;
@@ -286,8 +223,8 @@ public class AsciiPanel extends JPanel {
     heightInCharacters = height;
     setPreferredSize(new Dimension(charWidth * widthInCharacters, charHeight * heightInCharacters));
 
-    defaultBackgroundColor = black;
-    defaultForegroundColor = white;
+    defaultBackgroundColor = BLACK;
+    defaultForegroundColor = WHITE;
 
     chars = new char[widthInCharacters][heightInCharacters];
     backgroundColors = new Color[widthInCharacters][heightInCharacters];

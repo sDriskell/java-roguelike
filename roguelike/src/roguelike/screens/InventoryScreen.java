@@ -33,7 +33,7 @@ public class InventoryScreen extends Screen {
       }
     };
 
-    InputManager.setActiveKeybindings(Menu.KeyBindings);
+    InputManager.setActiveKeybindings(Menu.KEY_BINDINGS);
   }
 
   @Override

@@ -23,8 +23,8 @@ import squidpony.squidcolor.SColorFactory;
 public class LookScreen extends CursorScreen {
 
   private class InformationPanel extends TextWindow {
-    private final int BOTTOM_MARGIN = 1;
-    private final int TOP_MARGIN = 1;
+    private static final int BOTTOM_MARGIN = 1;
+    private static final int TOP_MARGIN = 1;
 
     public InformationPanel(int width, int height) {
       super(width, height);
