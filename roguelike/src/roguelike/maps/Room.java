@@ -198,39 +198,4 @@ public class Room {
       p = points.poll();
     }
   }
-
-  // public final boolean connectTo(Room other, Point doorPoint, Tile[][] map,
-  // TileBuilder tb) {
-  // if (!onConnectingTo(other, doorPoint, map, tb))
-  // return false;
-  //
-  // if (!other.onBeingConnectedTo(other, doorPoint, map, tb))
-  // return false;
-  //
-  // return true;
-  // }
-  //
-  // protected boolean onConnectingTo(Room other, Point doorPoint, Tile[][] map,
-  // TileBuilder tb) {
-  // this.fillRoom(map, tb, Symbol.DUNGEON_FLOOR);
-  // Log.debug("ROOM onConnectingTo: " + this.doors.remove(doorPoint));
-  //
-  // // Point newRoomConnectingTile = this.getRandomFloorTile();
-  // // if (newRoomConnectingTile != null) {
-  // // Queue<Point> path = MapHelpers.findPath(random, doorPoint,
-  // newRoomConnectingTile);
-  // // fillPath(path, '.', this, map, tb);
-  // // }
-  //
-  // map[doorPoint.x][doorPoint.y] = tb.buildTile('+');
-  //
-  // return true;
-  // }
-
-  // protected boolean onBeingConnectedTo(Room other, Point doorPoint, Tile[][]
-  // map, TileBuilder tb) {
-  // Log.debug("ROOM onBeingConnectedTo: " + this.doors.remove(doorPoint));
-  // return true;
-  // }
-
 }

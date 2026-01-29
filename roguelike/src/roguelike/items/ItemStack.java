@@ -52,7 +52,6 @@ public class ItemStack extends Item {
   public Weapon asWeapon() {
     if (items.isEmpty())
       return null;
-    // return items.get(0).asWeapon();
     return items.get(0).as(Weapon.class);
   }
 

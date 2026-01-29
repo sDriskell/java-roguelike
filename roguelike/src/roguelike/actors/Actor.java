@@ -89,9 +89,6 @@ public abstract class Actor implements Serializable {
 
     Log.debug("reading actor: " + actorId);
     Log.debug("game=" + game.toString());
-
-    // attacked = new Stack<AttackAttempt>();
-    // attackedBy = new Stack<AttackAttempt>();
   }
 
   public char symbol() {

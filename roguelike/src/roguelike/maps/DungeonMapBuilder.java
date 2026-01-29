@@ -432,7 +432,6 @@ public class DungeonMapBuilder extends MapBuilderBase {
   }
 
   private void setDoor(ConnectionPoint doorPoint) {
-    // setTile(doorPoint, Symbol.DOOR);
     map[doorPoint.x][doorPoint.y] = tb.buildTile(Symbol.DOOR);
     Log.debug("Created door at " + doorPoint.x + ", " + doorPoint.y);
     doorPoint.isDoor = true;
