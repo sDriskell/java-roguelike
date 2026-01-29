@@ -12,7 +12,7 @@ public class AnimationManager {
   private boolean refresh;
 
   public AnimationManager() {
-    animations = new ArrayList<Animation>();
+    animations = new ArrayList<>();
   }
 
   public void addAnimation(Animation animation) {
@@ -41,7 +41,7 @@ public class AnimationManager {
     boolean anyBlocking = false;
     boolean anyAnimations = false;
 
-    ArrayList<Animation> toRemove = new ArrayList<Animation>();
+    ArrayList<Animation> toRemove = new ArrayList<>();
     for (Animation animation : animations) {
       if (animation.nextFrame(terminal)) {
         toRemove.add(animation);

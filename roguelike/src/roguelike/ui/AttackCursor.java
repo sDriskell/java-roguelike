@@ -42,7 +42,7 @@ public class AttackCursor extends Cursor {
     this.initialPosition = initialPosition;
 
     this.radiusStrategy = radiusStrategy;
-    this.targets = new CurrentItemTracker<Actor>();
+    this.targets = new CurrentItemTracker<>();
   }
 
   @Override

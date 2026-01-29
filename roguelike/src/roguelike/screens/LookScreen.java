@@ -81,7 +81,7 @@ public class LookScreen extends CursorScreen {
     }
 
     private ArrayList<StringEx> getTextLines(MapArea map, int x, int y, boolean drawActor) {
-      ArrayList<StringEx> textList = new ArrayList<StringEx>();
+      ArrayList<StringEx> textList = new ArrayList<>();
 
       Actor actor = drawActor ? map.getActorAt(x, y) : null;
       if (actor != null) {

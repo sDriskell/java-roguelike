@@ -32,7 +32,7 @@ public class ChooseItemCommandDialog extends Dialog<InputCommand> {
   public ChooseItemCommandDialog() {
     super(20, 7, false);
 
-    ArrayList<InputCommand> commandList = new ArrayList<InputCommand>();
+    ArrayList<InputCommand> commandList = new ArrayList<>();
     commandList.add(InputCommand.EQUIP);
     commandList.add(InputCommand.USE);
     commandList.add(InputCommand.DROP);

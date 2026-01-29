@@ -237,7 +237,7 @@ public class AStarPathfinder {
    */
   private class SortedList {
     /** The list of elements */
-    private ArrayList<Node> list = new ArrayList<Node>();
+    private ArrayList<Node> list = new ArrayList<>();
 
     /**
      * Retrieve the first element from the list

@@ -16,7 +16,7 @@ public class MapHelpers {
   public static ArrayList<Point> getNeighbors(int width, int height, int xPos, int yPos,
       int range) {
     int size = range * 2 + 1;
-    ArrayList<Point> neighbors = new ArrayList<Point>(size * size + 1);
+    ArrayList<Point> neighbors = new ArrayList<>(size * size + 1);
 
     for (int y = yPos - range; y <= yPos + range; y++) {
       for (int x = xPos - range; x <= xPos + range; x++) {

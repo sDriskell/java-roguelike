@@ -66,10 +66,10 @@ public abstract class Actor implements Serializable {
     this.inventory = new Inventory();
     this.equipment = new Equipment();
 
-    attacked = new Stack<AttackAttempt>();
-    attackedBy = new Stack<AttackAttempt>();
+    attacked = new Stack<>();
+    attackedBy = new Stack<>();
 
-    conditions = new ArrayList<Condition>();
+    conditions = new ArrayList<>();
 
     visionRadius = 15;
   }
@@ -216,7 +216,7 @@ public abstract class Actor implements Serializable {
   }
 
   public final void applyConditions() {
-    ArrayList<Condition> toRemove = new ArrayList<Condition>();
+    ArrayList<Condition> toRemove = new ArrayList<>();
     for (Condition condition : conditions) {
       if (condition.process(this))
         toRemove.add(condition);
