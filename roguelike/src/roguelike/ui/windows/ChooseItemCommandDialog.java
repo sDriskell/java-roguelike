@@ -16,7 +16,7 @@ import squidpony.squidcolor.SColorFactory;
 
 public class ChooseItemCommandDialog extends Dialog<InputCommand> {
 
-  private static KeyMap KeyBindings = new KeyMap("ChooseItemCommand")
+  private static final KeyMap KEY_BINDINGS = new KeyMap("ChooseItemCommand")
       .bindKey(KeyEvent.VK_ENTER, InputCommand.CONFIRM)
       .bindKey(KeyEvent.VK_ESCAPE, InputCommand.CANCEL).bindKey(KeyEvent.VK_UP, InputCommand.UP)
       .bindKey(KeyEvent.VK_DOWN, InputCommand.DOWN)
@@ -64,7 +64,7 @@ public class ChooseItemCommandDialog extends Dialog<InputCommand> {
 
   @Override
   protected KeyMap getKeyBindings() {
-    return ChooseItemCommandDialog.KeyBindings;
+    return ChooseItemCommandDialog.KEY_BINDINGS;
   }
 
   @Override

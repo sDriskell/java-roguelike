@@ -11,19 +11,19 @@ import squidpony.squidcolor.SColorFactory;
 public class CharEx implements Serializable {
 	private static final long serialVersionUID = -506720251888391231L;
 
-	static SColor DEFAULT_FOREGROUND = SColor.WHITE;
-	static SColor DEFAULT_BACKGROUND = SColor.BLACK;
+	static SColor defaultForeground = SColor.WHITE;
+	static SColor defaultBackground = SColor.BLACK;
 
 	private transient SColor foreground;
 	private transient SColor background;
 	private char symbol;
 
 	public CharEx(char symbol) {
-		this(symbol, DEFAULT_FOREGROUND, DEFAULT_BACKGROUND);
+		this(symbol, defaultForeground, defaultBackground);
 	}
 
 	public CharEx(char symbol, SColor foreground) {
-		this(symbol, foreground, DEFAULT_BACKGROUND);
+		this(symbol, foreground, defaultBackground);
 	}
 
 	public CharEx(char symbol, SColor foreground, SColor background) {

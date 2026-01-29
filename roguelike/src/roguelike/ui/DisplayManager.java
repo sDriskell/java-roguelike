@@ -16,8 +16,8 @@ import roguelike.util.CharEx;
 import roguelike.util.Log;
 
 public class DisplayManager {
-  private final String FONT_NAME = "Nouveau_IBM.ttf";
-  private final String BACKUP_FONT_NAME = "Lucidia";
+  private static final String FONT_NAME = "Nouveau_IBM.ttf";
+  private static final String BACKUP_FONT_NAME = "Lucidia";
 
   private Font font;
   private JComponent displayPane;

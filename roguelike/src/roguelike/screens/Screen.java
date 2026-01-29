@@ -7,8 +7,8 @@ import roguelike.ui.MainWindow;
 import roguelike.ui.windows.TerminalBase;
 
 public abstract class Screen {
-  final static int WIDTH = MainWindow.WIDTH;
-  final static int HEIGHT = MainWindow.HEIGHT;
+  static final int WIDTH = MainWindow.WIDTH;
+  static final int HEIGHT = MainWindow.HEIGHT;
 
   protected TerminalBase terminal;
   private static Screen nextScreen;

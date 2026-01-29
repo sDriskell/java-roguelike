@@ -33,8 +33,8 @@ import squidpony.squidgrid.util.RadiusStrategy;
 import squidpony.squidutility.Pair;
 
 public class MainScreen extends Screen {
-  private final static int windowWidth = WIDTH - MainWindow.STAT_WIDTH;
-  private final static int windowHeight = HEIGHT;
+  private static final int WINDOW_WIDTH = WIDTH - MainWindow.STAT_WIDTH;
+  private static final int WINDOW_HEIGHT = HEIGHT;
 
   private final FOVTranslator fov = new FOVTranslator(new TranslucenceWrapperFOV());
   private final RadiusStrategy radiusStrategy = BasicRadiusStrategy.CIRCLE;
@@ -60,8 +60,8 @@ public class MainScreen extends Screen {
 
     this.game = initialGame;
 
-    int midX = windowWidth / 2;
-    int midY = windowHeight / 2;
+    int midX = WINDOW_WIDTH / 2;
+    int midY = WINDOW_HEIGHT / 2;
 
     screenQuadrants[0] = new Rectangle(0, 0, midX, midY);
     screenQuadrants[1] = new Rectangle(0, midY, midX, midY);
@@ -70,9 +70,9 @@ public class MainScreen extends Screen {
 
     game.initialize();
 
-    this.windowTerminal = terminal.getWindow(0, 0, windowWidth, windowHeight);
+    this.windowTerminal = terminal.getWindow(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-    Log.debug("Window tile size: " + windowWidth + "x" + windowHeight);
+    Log.debug("Window tile size: " + WINDOW_WIDTH + "x" + WINDOW_HEIGHT);
 
     /* used for FOV lighting */
     SColorFactory.addPallet("light",
@@ -93,8 +93,8 @@ public class MainScreen extends Screen {
     statsDisplay.setPlayer(game.getPlayer());
 
     Rectangle statsSize = statsTerminal.size();
-    int lookWidth = Math.min(20, windowWidth - 4);
-    int lookHeight = Math.min(20, windowHeight - 4);
+    int lookWidth = Math.min(20, WINDOW_WIDTH - 4);
+    int lookHeight = Math.min(20, WINDOW_HEIGHT - 4);
     lookDisplay = new LookDisplay(
         statsTerminal.getWindow(statsSize.x + 2, statsSize.height - 23, statsSize.width - 4, 22),
         lookWidth, lookHeight);
@@ -110,7 +110,7 @@ public class MainScreen extends Screen {
 
   @Override
   public Rectangle getDrawableArea() {
-    return new Rectangle(0, 0, windowWidth, windowHeight);
+    return new Rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
   }
 
   @Override
@@ -181,7 +181,7 @@ public class MainScreen extends Screen {
     MapArea currentMap = game.getCurrentMapArea();
     Coordinate centerPosition = game.getCenterScreenPosition();
 
-    Rectangle screenArea = currentMap.getVisibleAreaInTiles(windowWidth, windowHeight,
+    Rectangle screenArea = currentMap.getVisibleAreaInTiles(WINDOW_WIDTH, WINDOW_HEIGHT,
         centerPosition);
 
     for (int x = screenArea.x; x < screenArea.getMaxX(); x++) {
@@ -222,7 +222,7 @@ public class MainScreen extends Screen {
     MapArea currentMap = game.getCurrentMapArea();
     Coordinate centerPosition = game.getCenterScreenPosition();
 
-    Rectangle screenArea = currentMap.getVisibleAreaInTiles(windowWidth, windowHeight,
+    Rectangle screenArea = currentMap.getVisibleAreaInTiles(WINDOW_WIDTH, WINDOW_HEIGHT,
         centerPosition);
 
     doFOV(currentMap, screenArea, centerPosition);
@@ -264,7 +264,7 @@ public class MainScreen extends Screen {
     if (run == null)
       return;
 
-    Rectangle screenArea = game.getCurrentMapArea().getVisibleAreaInTiles(windowWidth, windowHeight,
+    Rectangle screenArea = game.getCurrentMapArea().getVisibleAreaInTiles(WINDOW_WIDTH, WINDOW_HEIGHT,
         game.getCenterScreenPosition());
 
     for (TurnEvent event : run.getEvents()) {

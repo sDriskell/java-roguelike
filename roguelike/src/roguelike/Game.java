@@ -33,8 +33,8 @@ import squidpony.squidmath.RNG;
 public class Game implements Serializable {
   private static final long serialVersionUID = 1L;
 
-  public final static int MAP_WIDTH = 83;
-  public final static int MAP_HEIGHT = 43;
+  public static final int MAP_WIDTH = 83;
+  public static final int MAP_HEIGHT = 43;
 
   private static Game currentGame;
 

@@ -18,8 +18,8 @@ import squidpony.squidcolor.SColor;
 import squidpony.squidcolor.SColorFactory;
 
 public class LookDisplay extends TextWindow {
-  private final int BOTTOM_MARGIN = 1;
-  private final int TOP_MARGIN = 1;
+  private static final int BOTTOM_MARGIN = 1;
+  private static final int TOP_MARGIN = 1;
   private TerminalBase terminal;
   private ArrayList<StringEx> textLines;
 

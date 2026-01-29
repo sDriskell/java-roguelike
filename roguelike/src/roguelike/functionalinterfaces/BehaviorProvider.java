@@ -1,4 +1,4 @@
-package roguelike.functionalInterfaces;
+package roguelike.functionalinterfaces;
 
 import roguelike.actors.Actor;
 import roguelike.actors.behaviors.Behavior;

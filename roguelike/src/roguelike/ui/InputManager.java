@@ -12,7 +12,7 @@ import squidpony.squidgrid.util.DirectionIntercardinal;
 
 public class InputManager {
 
-  public static KeyMap DefaultKeyBindings;
+  public static KeyMap defaultKeyBindings;
 
   private static SGKeyListener keyListener = new SGKeyListener(false, CaptureType.DOWN);
   private static boolean inputReceived;
