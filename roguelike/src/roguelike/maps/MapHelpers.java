@@ -42,7 +42,7 @@ public class MapHelpers {
   }
 
   public static float distance(int x0, int y0, int x1, int y1) {
-    return Math.abs(x1 - x0) + Math.abs(y1 - y0);
+    return (float) Math.abs(x1 - x0) + Math.abs(y1 - y0);
   }
 
   public static float distance(Point p1, Point p2) {
@@ -53,7 +53,7 @@ public class MapHelpers {
     int a = Math.abs(x1 - x0);
     int b = Math.abs(y1 - y0);
 
-    return (float) Math.sqrt((a * a) + (b * b));
+    return (float) Math.sqrt((a * a) + (float) (b * b));
   }
 
   public static Queue<Point> findPath(RNG random, Point p1, Point p2) {

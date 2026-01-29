@@ -94,8 +94,7 @@ public class EnemyFactory {
     EnemyType randomType = CollectionUtils.getRandomElement(types);
     NpcBuilderFactory factory = npcBuilders.get(randomType);
 
-    Npc npc = factory.create();
-    return npc;
+    return factory.create();
   }
 
 }

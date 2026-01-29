@@ -118,8 +118,8 @@ public class StringEx extends ArrayList<CharEx> {
 
   public StringEx substring(int startIndex, int length) {
     StringEx substring = new StringEx();
-    substring.addAll(
-        this.stream().skip(startIndex).limit(startIndex + length).collect(Collectors.toList()));
+    substring.addAll(this.stream().skip(startIndex).limit((long) startIndex + length)
+        .collect(Collectors.toList()));
 
     return substring;
   }

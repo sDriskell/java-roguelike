@@ -37,8 +37,7 @@ public abstract class Screen {
   public final long draw() {
     long start = System.currentTimeMillis();
     onDraw();
-    long time = System.currentTimeMillis() - start;
-    return time;
+    return System.currentTimeMillis() - start;
   }
 
   public final void setNextScreen(Screen screen) {

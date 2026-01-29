@@ -198,8 +198,7 @@ public class MapArea implements Serializable {
       Log.warning("Failed! no items at " + x + "," + y);
       return false;
     }
-    boolean removed = items.remove(item);
-    return removed;
+    return items.remove(item);
   }
 
   /**

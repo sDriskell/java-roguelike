@@ -302,9 +302,7 @@ public class DungeonMapBuilder extends MapBuilderBase {
   private ConnectionPoint generateRandomDoor(Room room, DirectionCardinal direction) {
 
     Point doorPoint = room.getDoorCoordinate(map, direction);
-    ConnectionPoint point = new ConnectionPoint(doorPoint, direction, room);
-
-    return point;
+    return new ConnectionPoint(doorPoint, direction, room);
   }
 
   /**
@@ -345,8 +343,8 @@ public class DungeonMapBuilder extends MapBuilderBase {
       int targetX = (int) random.between(targetArea.getMinX() + 2, targetArea.getMaxX() - 2);
       int targetY = (int) random.between(targetArea.getMinY() + 2, targetArea.getMaxY() - 2);
 
-      int xOffset = (int) (Math.signum(targetX - endPoint.x));
-      int yOffset = (int) (Math.signum(targetY - endPoint.y));
+      int xOffset = (int) (Math.signum((float) targetX - endPoint.x));
+      int yOffset = (int) (Math.signum((float) targetY - endPoint.y));
 
       if (yFirst) {
         while (endPoint.y != targetY) {

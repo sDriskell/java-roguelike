@@ -31,9 +31,9 @@ public class WeaponFactory {
 
   public static Weapon create(WeaponType type) {
     WeaponBuilderFactory builderFactory = factory.weaponBuilders.get(type);
+
     if (builderFactory != null) {
-      Weapon weapon = builderFactory.create();
-      return weapon;
+      return builderFactory.create();
     }
     return null;
   }
