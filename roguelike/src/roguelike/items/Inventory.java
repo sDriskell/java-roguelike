@@ -13,7 +13,7 @@ public class Inventory implements Serializable {
   private List<Item> items;
 
   public Inventory() {
-    items = new ArrayList<Item>();
+    items = new ArrayList<>();
   }
 
   public boolean any() {

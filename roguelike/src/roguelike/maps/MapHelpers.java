@@ -57,7 +57,7 @@ public class MapHelpers {
   }
 
   public static Queue<Point> findPath(RNG random, Point p1, Point p2) {
-    Queue<Point> points = new LinkedList<Point>();
+    Queue<Point> points = new LinkedList<>();
     int xDist = p2.x - p1.x;
     int yDist = p2.y - p1.y;
 

@@ -18,7 +18,7 @@ public class MapBuilder extends MapBuilderBase {
     super("Outside");
   }
 
-  private ArrayList<Rectangle> buildings = new ArrayList<Rectangle>();
+  private ArrayList<Rectangle> buildings = new ArrayList<>();
 
   @Override
   public void onBuildMap(Tile[][] map) {
@@ -110,14 +110,14 @@ public class MapBuilder extends MapBuilderBase {
     System.out.println("Factor=" + factor);
 
     // collection whose max weight should not be greater than 100
-    WeightedCollection<Symbol> tiles = new WeightedCollection<Symbol>();
+    WeightedCollection<Symbol> tiles = new WeightedCollection<>();
     tiles.add(Symbol.WATER, -50);
     tiles.add(Symbol.TREE, 30);
     tiles.add(Symbol.GROUND, 40);
     tiles.add(Symbol.HILLS, 50);
     tiles.add(Symbol.MOUNTAIN, 90);
 
-    ArrayList<Point> validStartingPoints = new ArrayList<Point>();
+    ArrayList<Point> validStartingPoints = new ArrayList<>();
 
     for (int x = 0; x < width; x++) {
       for (int y = 0; y < height; y++) {

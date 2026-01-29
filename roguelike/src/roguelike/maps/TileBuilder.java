@@ -19,16 +19,16 @@ public class TileBuilder {
   private ProbabilityTable<SColor> groundColor;
 
   public TileBuilder() {
-    trees = new ProbabilityTable<Character>();
-    ground = new ProbabilityTable<Character>();
-    water = new ProbabilityTable<Character>();
+    trees = new ProbabilityTable<>();
+    ground = new ProbabilityTable<>();
+    water = new ProbabilityTable<>();
 
-    waterColor = new ProbabilityTable<SColor>();
+    waterColor = new ProbabilityTable<>();
     waterColor.add(SColor.DARK_BLUE, 10);
     waterColor.add(SColor.BLUE, 3);
     waterColor.add(SColorFactory.desaturate(SColor.DARK_BLUE, 0.2), 6);
 
-    groundColor = new ProbabilityTable<SColor>();
+    groundColor = new ProbabilityTable<>();
     groundColor.add(SColorFactory.dimmer(SColor.DARK_GRAY), 10);
     groundColor.add(SColorFactory.desaturate(SColor.BLACK, 0.4), 4);
     groundColor.add(SColorFactory.desaturate(SColor.BLACK_CHESTNUT_OAK, 0.8), 2);

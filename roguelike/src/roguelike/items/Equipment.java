@@ -53,10 +53,10 @@ public class Equipment implements Serializable {
   }
 
   private HashMap<ItemSlot, Item> equipped;
-  private ArrayList<Weapon> equippedWeapons = new ArrayList<Weapon>();
+  private ArrayList<Weapon> equippedWeapons = new ArrayList<>();
 
   public Equipment() {
-    this.equipped = new HashMap<Equipment.ItemSlot, Item>();
+    this.equipped = new HashMap<>();
     this.equippedWeapons.add(null);
     this.equippedWeapons.add(null);
   }

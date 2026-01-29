@@ -8,7 +8,7 @@ import roguelike.util.Log;
 
 public class AStarPathfinder {
   /** The set of nodes that have been searched through */
-  private ArrayList<Node> closed = new ArrayList<Node>();
+  private ArrayList<Node> closed = new ArrayList<>();
   /** The set of nodes that we do not yet consider fully searched */
   private SortedList open = new SortedList();
 

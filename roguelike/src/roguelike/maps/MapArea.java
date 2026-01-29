@@ -33,7 +33,7 @@ public class MapArea implements Serializable {
   protected String name;
 
   protected MapArea(int width, int height, MapBuilderBase mapBuilder) {
-    actors = new CurrentItemTracker<Actor>();
+    actors = new CurrentItemTracker<>();
     this.width = width;
     this.height = height;
     this.difficulty = 1;

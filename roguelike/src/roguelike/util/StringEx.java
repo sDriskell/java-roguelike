@@ -65,7 +65,7 @@ public class StringEx extends ArrayList<CharEx> {
   }
 
   public StringEx[] wordWrap(int lineWidth) {
-    List<StringEx> lines = new ArrayList<StringEx>();
+    List<StringEx> lines = new ArrayList<>();
     StringEx line;
 
     int lastWrapPoint = 0;
@@ -148,7 +148,7 @@ public class StringEx extends ArrayList<CharEx> {
     CharacterParseResult res = new CharacterParseResult();
     if (c == '`') {
       if (read == null) {
-        res.parsedColor = new ArrayList<Character>();
+        res.parsedColor = new ArrayList<>();
       }
       else {
         // we're done reading the string

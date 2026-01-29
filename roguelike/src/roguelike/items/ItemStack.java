@@ -19,7 +19,7 @@ public class ItemStack extends Item {
   private ItemStack(String name, Item item) {
     super(true);
     this.name = name;
-    this.items = new ArrayList<Item>();
+    this.items = new ArrayList<>();
 
     items.add(item);
   }
@@ -27,11 +27,11 @@ public class ItemStack extends Item {
   private ItemStack(String name, List<Item> items) {
     super(true);
     this.name = name;
-    this.items = new ArrayList<Item>(items);
+    this.items = new ArrayList<>(items);
   }
 
   public static List<Item> getItemStack(List<Item> items) {
-    List<Item> stacks = new ArrayList<Item>();
+    List<Item> stacks = new ArrayList<>();
     items.stream().filter(i -> !i.stackable).forEach(i -> stacks.add(i));
 
     Map<Object, List<Item>> groups = items.stream()
@@ -101,7 +101,7 @@ public class ItemStack extends Item {
     if (items.isEmpty())
       return null;
 
-    return new Pair<Item, Boolean>(items.remove(items.size() - 1), items.isEmpty());
+    return new Pair<>(items.remove(items.size() - 1), items.isEmpty());
   }
 
   public List<Item> unstack() {

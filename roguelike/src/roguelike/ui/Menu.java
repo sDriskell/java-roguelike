@@ -27,7 +27,7 @@ public abstract class Menu<T> {
   }
 
   public Menu(List<T> items, int pageSize) {
-    this.items = new ArrayList<T>(items);
+    this.items = new ArrayList<>(items);
     this.activeIndex = 0;
     this.currentPage = 1;
     this.pageSize = pageSize;
@@ -108,7 +108,7 @@ public abstract class Menu<T> {
   }
 
   public List<MenuItem<T>> currentPageItems() {
-    ArrayList<MenuItem<T>> menuItems = new ArrayList<MenuItem<T>>();
+    ArrayList<MenuItem<T>> menuItems = new ArrayList<>();
     int firstIndex = getFirstItemIndex();
     int lastIndex = getLastItemIndex();
 
@@ -118,7 +118,7 @@ public abstract class Menu<T> {
         break;
 
       boolean isActive = (x == activeIndex);
-      menuItems.add(new MenuItem<T>(getTextFor(item, x - firstIndex), item, isActive));
+      menuItems.add(new MenuItem<>(getTextFor(item, x - firstIndex), item, isActive));
     }
     return menuItems;
   }

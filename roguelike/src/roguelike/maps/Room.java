@@ -23,8 +23,8 @@ public class Room {
 
   public Room(Rectangle area) {
     this.area = area;
-    doors = new ArrayList<ConnectionPoint>();
-    floorTiles = new ArrayList<Point>();
+    doors = new ArrayList<>();
+    floorTiles = new ArrayList<>();
   }
 
   public int bottom() {

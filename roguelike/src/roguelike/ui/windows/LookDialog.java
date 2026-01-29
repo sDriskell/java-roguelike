@@ -37,7 +37,7 @@ public class LookDialog extends Dialog<InputCommand> {
     TerminalBase background = terminal.withColor(menuBgColor, menuBgColor);
     TerminalBase text = terminal.withColor(SColor.WHITE, menuBgColor);
 
-    ArrayList<String> textList = new ArrayList<String>();
+    ArrayList<String> textList = new ArrayList<>();
     background.fill(0, 0, size.width, size.height, ' ');
 
     Actor actor = mapArea.getActorAt(x, y);

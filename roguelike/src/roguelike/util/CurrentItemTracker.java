@@ -12,7 +12,7 @@ public class CurrentItemTracker<T> implements Serializable {
   private int currentItem;
 
   public CurrentItemTracker() {
-    list = new ArrayList<T>();
+    list = new ArrayList<>();
   }
 
   public int count() {

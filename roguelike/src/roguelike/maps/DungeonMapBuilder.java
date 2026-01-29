@@ -55,13 +55,13 @@ public class DungeonMapBuilder extends MapBuilderBase {
 
   public DungeonMapBuilder(int level) {
     super("Dungeon, floor " + level);
-    rooms = new ArrayList<Room>();
+    rooms = new ArrayList<>();
     this.level = level;
   }
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
-    rooms = new ArrayList<Room>();
+    rooms = new ArrayList<>();
   }
 
   @Override
@@ -74,7 +74,7 @@ public class DungeonMapBuilder extends MapBuilderBase {
       rooms.clear();
 
       /* Initialize map sections */
-      mapSections = new ArrayList<DungeonMapBuilder.MapSection>();
+      mapSections = new ArrayList<>();
       mapSections.add(new MapSection(getSubRectangle(mapRect, 0, 0, .25, .25)));
       mapSections.add(new MapSection(getSubRectangle(mapRect, mapRect.width / 4, 0, .25, .25)));
       mapSections.add(new MapSection(
@@ -124,7 +124,7 @@ public class DungeonMapBuilder extends MapBuilderBase {
     int maxRooms = 15;
     Room currentRoom = null;
 
-    Stack<Room> roomsOnPath = new Stack<Room>();
+    Stack<Room> roomsOnPath = new Stack<>();
     roomsOnPath.push(startRoom);
 
     currentRoom = startRoom;
@@ -407,7 +407,7 @@ public class DungeonMapBuilder extends MapBuilderBase {
   }
 
   private MapSection randomMapSection() {
-    ProbabilityTable<MapSection> sections = new ProbabilityTable<MapSection>();
+    ProbabilityTable<MapSection> sections = new ProbabilityTable<>();
 
     for (MapSection section : mapSections) {
       sections.add(section,

@@ -16,7 +16,7 @@ import roguelike.items.Equipment.ItemSlot;
 public abstract class Weapon extends Item {
   private static final long serialVersionUID = 1L;
 
-  protected Map<DamageType, int[]> damage = new HashMap<DamageType, int[]>();
+  protected Map<DamageType, int[]> damage = new HashMap<>();
   protected WeaponCategory weaponCategory;
 
   protected DamageType defaultDamageType;
