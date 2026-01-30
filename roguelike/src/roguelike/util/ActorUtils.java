@@ -9,48 +9,53 @@ import squidpony.squidgrid.los.LOSSolver;
 import squidpony.squidgrid.util.BasicRadiusStrategy;
 
 public class ActorUtils {
-	private static LOSSolver losSolver = new BresenhamLOS();
+  private static LOSSolver losSolver = new BresenhamLOS();
 
-	private ActorUtils() {
-	}
+  private ActorUtils() {
+  }
 
-	public static boolean canSee(Actor actor, Actor other, MapArea mapArea) {
-		Point position = actor.getPosition();
-		int startx = position.x, starty = position.y, targetx = other.getPosition().x, targety = other.getPosition().y;
-		float force = 1;
-		float decay = 1 / actor.getVisionRadius();
-		boolean visible = losSolver.isReachable(mapArea.getLightValues(), startx, starty, targetx, targety, force, decay, BasicRadiusStrategy.CIRCLE);
+  public static boolean canSee(Actor actor, Actor other, MapArea mapArea) {
+    Point position = actor.getPosition();
+    int startx = position.x, starty = position.y, targetx = other.getPosition().x,
+        targety = other.getPosition().y;
+    float force = 1;
+    float decay = 1f / actor.getVisionRadius();
+    boolean visible = losSolver.isReachable(mapArea.getLightValues(), startx, starty, targetx,
+        targety, force, decay, BasicRadiusStrategy.CIRCLE);
 
-		Log.verboseDebug(actor.getName() + " canSee " + other.getName() + "=" + visible);
+    Log.verboseDebug(actor.getName() + " canSee " + other.getName() + "=" + visible);
 
-		return visible;
-	}
+    return visible;
+  }
 
-	public static String makePlayerText(String text) {
-		String[] words = text.split(" ");
+  public static String makePlayerText(String text) {
+    String[] words = text.split(" ");
 
-		if (words[0].equals("has")) {
-			words[0] = "have";
+    if (words[0].equals("has")) {
+      words[0] = "have";
 
-		} else if (words[0].endsWith("Es")) {
-			words[0] = words[0].substring(0, words[0].length() - 1);
+    }
+    else if (words[0].endsWith("Es")) {
+      words[0] = words[0].substring(0, words[0].length() - 1);
 
-		} else if (words[0].endsWith("es")) {
-			words[0] = words[0].substring(0, words[0].length() - 2);
+    }
+    else if (words[0].endsWith("es")) {
+      words[0] = words[0].substring(0, words[0].length() - 2);
 
-		}
-		else if (words[0].endsWith("s")) {
-			words[0] = words[0].substring(0, words[0].length() - 1);
-		} else if (words[0].equals("'s")) {
-			words[0] = "r"; // xxx's = your
-		}
+    }
+    else if (words[0].endsWith("s")) {
+      words[0] = words[0].substring(0, words[0].length() - 1);
+    }
+    else if (words[0].equals("'s")) {
+      words[0] = "r"; // xxx's = your
+    }
 
-		StringBuilder builder = new StringBuilder();
-		for (String word : words) {
-			builder.append(" ");
-			builder.append(word);
-		}
+    StringBuilder builder = new StringBuilder();
+    for (String word : words) {
+      builder.append(" ");
+      builder.append(word);
+    }
 
-		return builder.toString().trim();
-	}
+    return builder.toString().trim();
+  }
 }

@@ -89,7 +89,7 @@ public abstract class Dialog<T> extends TextWindow {
 	}
 
 	protected KeyMap getKeyBindings() {
-		return Menu.KeyBindings;
+		return Menu.KEY_BINDINGS;
 	}
 
 	protected void onShow() {

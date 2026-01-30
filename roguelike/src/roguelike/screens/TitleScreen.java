@@ -14,67 +14,65 @@ import squidpony.squidcolor.SColor;
 
 public class TitleScreen extends Screen {
 
-	public static KeyMap KeyBindings = new KeyMap("Menu")
-			.bindKey(KeyEvent.VK_ENTER, InputCommand.CONFIRM)
-			.bindKey(KeyEvent.VK_ESCAPE, InputCommand.CANCEL)
-			.bindKey(KeyEvent.VK_N, InputCommand.NEW)
-			.bindKey(KeyEvent.VK_L, InputCommand.LOAD)
-			.bindKey(KeyEvent.VK_UP, InputCommand.UP)
-			.bindKey(KeyEvent.VK_DOWN, InputCommand.DOWN)
-			.bindKey(KeyEvent.VK_LEFT, InputCommand.PREVIOUS_PAGE)
-			.bindKey(KeyEvent.VK_RIGHT, InputCommand.NEXT_PAGE);
+  public static final KeyMap KEY_BINDINGS = new KeyMap("Menu")
+      .bindKey(KeyEvent.VK_ENTER, InputCommand.CONFIRM)
+      .bindKey(KeyEvent.VK_ESCAPE, InputCommand.CANCEL).bindKey(KeyEvent.VK_N, InputCommand.NEW)
+      .bindKey(KeyEvent.VK_L, InputCommand.LOAD).bindKey(KeyEvent.VK_UP, InputCommand.UP)
+      .bindKey(KeyEvent.VK_DOWN, InputCommand.DOWN)
+      .bindKey(KeyEvent.VK_LEFT, InputCommand.PREVIOUS_PAGE)
+      .bindKey(KeyEvent.VK_RIGHT, InputCommand.NEXT_PAGE);
 
-	public TitleScreen(TerminalBase terminal) {
-		super(terminal);
+  public TitleScreen(TerminalBase terminal) {
+    super(terminal);
 
-		DisplayManager.instance().getTerminalView();
+    DisplayManager.instance().getTerminalView();
 
-		Log.debug("TitleScreen: terminal size " + terminal.size().width + "x" + terminal.size().height);
+    Log.debug("TitleScreen: terminal size " + terminal.size().width + "x" + terminal.size().height);
 
-		this.terminal = terminal.withColor(SColor.WHITE, SColor.BLACK);
+    this.terminal = terminal.withColor(SColor.WHITE, SColor.BLACK);
 
-		terminal.fill(0, 0, terminal.size().width, terminal.size().height, ' ');
+    terminal.fill(0, 0, terminal.size().width, terminal.size().height, ' ');
 
-		InputManager.setInputEnabled(true);
-		InputManager.setActiveKeybindings(KeyBindings);
-		DisplayManager.instance().setDirty();
-	}
+    InputManager.setInputEnabled(true);
+    InputManager.setActiveKeybindings(KEY_BINDINGS);
+    DisplayManager.instance().setDirty();
+  }
 
-	@Override
-	public void onDraw() {
-		String title = "Title Screen";
-		int x = (int) ((terminal.size().width / 2f) - (title.length() / 2f));
+  @Override
+  public void onDraw() {
+    String title = "Title Screen";
+    int x = (int) ((terminal.size().width / 2f) - (title.length() / 2f));
 
-		terminal.write(x, 10, "`Yellow`" + title);
-		terminal.write(x, 15, "`Yellow`n) `White`New");
-		terminal.write(x, 16, "`Yellow`l) `White`Load");
-	}
+    terminal.write(x, 10, "`Yellow`" + title);
+    terminal.write(x, 15, "`Yellow`n) `White`New");
+    terminal.write(x, 16, "`Yellow`l) `White`Load");
+  }
 
-	@Override
-	public void process() {
-		// TODO: change key mapping for title screen
+  @Override
+  public void process() {
+    // TODO: change key mapping for title screen
 
-		InputCommand cmd = InputManager.nextCommandPreserveKeyData();
-		if (cmd != null) {
-			switch (cmd) {
+    InputCommand cmd = InputManager.nextCommandPreserveKeyData();
+    if (cmd != null) {
+      switch (cmd) {
 
-			case NEW:
-				setNextScreen(new NewGameScreen(terminal));
-				break;
+        case NEW:
+          setNextScreen(new NewGameScreen(terminal));
+          break;
 
-			case LOAD:
-				setNextScreen(new MainScreen(this.terminal, loadGame()), false);
-				break;
+        case LOAD:
+          setNextScreen(new MainScreen(this.terminal, loadGame()), false);
+          break;
 
-			case CANCEL:
-				System.exit(0);
+        case CANCEL:
+          System.exit(0);
 
-			default:
-			}
-		}
-	}
+        default:
+      }
+    }
+  }
 
-	private Game loadGame() {
-		return GameLoader.load();
-	}
+  private Game loadGame() {
+    return GameLoader.load();
+  }
 }
