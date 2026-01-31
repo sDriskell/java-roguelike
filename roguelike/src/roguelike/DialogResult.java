@@ -1,27 +1,55 @@
 package roguelike;
 
+/**
+ * 
+ * @param <T>
+ */
 public class DialogResult<T> {
 
-  private boolean canceled;
+  private boolean isCanceled;
   private T item;
 
-  private DialogResult(T item, boolean closed) {
-    this.item = item;
-    this.canceled = closed;
+  /**
+   * 
+   * @param argItm
+   * @param argIsClosed
+   */
+  private DialogResult(T argItm, boolean argIsClosed) {
+    item = argItm;
+    isCanceled = argIsClosed;
   }
 
+  /**
+   * 
+   * @return
+   */
   public boolean isCanceled() {
-    return canceled;
+    return isCanceled;
   }
 
+  /**
+   * 
+   * @return
+   */
   public T item() {
     return item;
   }
 
-  public static <T> DialogResult<T> ok(T item) {
-    return new DialogResult<>(item, false);
+  /**
+   * 
+   * @param <T>
+   * @param argItm
+   * @return
+   */
+  public static <T> DialogResult<T> ok(T argItm) {
+    return new DialogResult<>(argItm, false);
   }
 
+  /**
+   * 
+   * @param <T>
+   * @return
+   */
   public static <T> DialogResult<T> cancel() {
     return new DialogResult<>(null, true);
   }

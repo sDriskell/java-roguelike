@@ -15,7 +15,7 @@ public class LookCursor extends Cursor {
 
 	public void setLookScreen(LookScreen lookScreen) {
 		this.lookScreen = lookScreen;
-		setCurrentLookPoint(position);
+		setCurrentLookPoint(pos);
 	}
 
 	@Override

@@ -2,20 +2,36 @@ package roguelike;
 
 import roguelike.util.Coordinate;
 
+/**
+ * 
+ */
 public class CursorResult {
-	private Coordinate position;
-	private boolean canceled;
+  private Coordinate pos;
+  private boolean isCanx;
 
-	public CursorResult(Coordinate position, boolean canceled) {
-		this.position = position;
-		this.canceled = canceled;
-	}
+  /**
+   * 
+   * @param argPos
+   * @param argIsCanx
+   */
+  public CursorResult(Coordinate argPos, boolean argIsCanx) {
+    pos = argPos;
+    isCanx = argIsCanx;
+  }
 
-	public Coordinate position() {
-		return position;
-	}
+  /**
+   * 
+   * @return
+   */
+  public Coordinate getPosition() {
+    return pos;
+  }
 
-	public boolean isCanceled() {
-		return canceled;
-	}
+  /**
+   * 
+   * @return
+   */
+  public boolean isCanceled() {
+    return isCanx;
+  }
 }

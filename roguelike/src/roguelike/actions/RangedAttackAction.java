@@ -39,8 +39,8 @@ public class RangedAttackAction extends CursorInputRequiredAction<InputCommand> 
 		if (result.isCanceled())
 			return ActionResult.failure().setMessage("Canceled");
 
-		int x = result.position().x;
-		int y = result.position().y;
+		int x = result.getPosition().x;
+		int y = result.getPosition().y;
 
 		target = mapArea.getActorAt(x, y);
 		if (target != null && target != actor) {

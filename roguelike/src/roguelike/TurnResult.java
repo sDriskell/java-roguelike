@@ -12,68 +12,114 @@ import squidpony.squidutility.Pair;
 public class TurnResult implements Serializable {
   private static final long serialVersionUID = 1L;
 
-  boolean running;
-  boolean playerActed;
+  boolean isRunning;
+  boolean hasPlayerActed;
   ArrayList<MessageDisplayProperties> messages;
   transient ArrayList<TurnEvent> events;
   transient Pair<Point, Boolean> currentLook = new Pair<>(null, false);
 
-  private TurnResult(boolean running) {
-    this.running = running;
-    this.messages = new ArrayList<>();
-    this.events = new ArrayList<>();
+  /**
+   * 
+   * @param argIsRunning
+   */
+  private TurnResult(boolean argIsRunning) {
+    isRunning = argIsRunning;
+    messages = new ArrayList<>();
+    events = new ArrayList<>();
   }
 
-  private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
-    in.defaultReadObject();
+  /**
+   * 
+   * @param argIn
+   * @throws ClassNotFoundException
+   * @throws IOException
+   */
+  private void readObject(ObjectInputStream argIn) throws ClassNotFoundException, IOException {
+    argIn.defaultReadObject();
 
-    this.currentLook = new Pair<>(null, false);
-    this.events = new ArrayList<>();
+    currentLook = new Pair<>(null, false);
+    events = new ArrayList<>();
   }
 
-  public static TurnResult reset(TurnResult result, boolean running) {
-    if (result == null)
-      result = new TurnResult(running);
+  /**
+   * 
+   * @param argResult
+   * @param argIsRunning
+   * @return
+   */
+  public static TurnResult reset(TurnResult argResult, boolean argIsRunning) {
+    if (argResult == null) {
+      argResult = new TurnResult(argIsRunning);
+    }
 
-    result.running = running;
-    result.playerActed = false;
-    result.messages.clear();
-    result.events.clear();
-    result.currentLook.setFirst(null);
-    result.currentLook.setSecond(true);
+    argResult.isRunning = argIsRunning;
+    argResult.hasPlayerActed = false;
+    argResult.messages.clear();
+    argResult.events.clear();
+    argResult.currentLook.setFirst(null);
+    argResult.currentLook.setSecond(true);
 
-    return result;
+    return argResult;
   }
 
+  /**
+   * 
+   * @return
+   */
   public boolean playerActedThisTurn() {
-    return this.playerActed;
+    return hasPlayerActed;
   }
 
+  /**
+   * 
+   */
   public void playerActed() {
-    this.playerActed = true;
+    hasPlayerActed = true;
   }
 
-  public TurnResult addEvent(TurnEvent event) {
-    if (event != null) {
-      events.add(event);
+  /**
+   * 
+   * @param argEvent
+   * @return
+   */
+  public TurnResult addEvent(TurnEvent argEvent) {
+    if (argEvent != null) {
+      events.add(argEvent);
     }
     return this;
   }
 
+  /**
+   * 
+   * @return
+   */
   public boolean isRunning() {
-    return this.running;
+    return this.isRunning;
   }
 
+  /**
+   * 
+   * @return
+   */
   public List<TurnEvent> getEvents() {
     return events;
   }
 
+  /**
+   * 
+   * @return
+   */
   public Pair<Point, Boolean> getCurrentLook() {
     return currentLook;
   }
 
-  public void setCurrentLook(Point point, boolean drawActor) {
-    this.currentLook.setFirst(point);
-    this.currentLook.setSecond(drawActor);
+  /**
+   * 
+   * @param argPoint
+   * @param argDrawActor
+   */
+  public void setCurrentLook(Point argPoint, boolean argDrawActor) {
+    this.currentLook.setFirst(argPoint);
+    this.currentLook.setSecond(argDrawActor);
   }
 }

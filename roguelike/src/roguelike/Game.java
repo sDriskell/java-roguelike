@@ -21,13 +21,10 @@ import squidpony.squidcolor.SColor;
 import squidpony.squidmath.RNG;
 
 /**
- * Setting - sword and sorcery version of 17th century caribbean/pirate setting.
- * port towns, swashbucklers, black powder weapons, jungle temples, fanatical
- * cultists, lost treasures, etc
+ * ...
  * 
- * win condition - leaving the island alive with as much wealth as you can carry
- * 
- * @author john
+ * @author John - jrdrg
+ * @author Shane - sDriskell
  * 
  */
 public class Game implements Serializable {
@@ -39,8 +36,8 @@ public class Game implements Serializable {
   private static Game currentGame;
 
   private RNG rng;
-  private boolean running;
-  private boolean playerDead;
+  private boolean isRunning;
+  private boolean isPlayerDead;
   private Player player;
   private MapArea currentMapArea;
   private Queue<Action> queuedActions;
@@ -55,17 +52,21 @@ public class Game implements Serializable {
    * @param gameLoader
    */
   Game() {
-    this.queuedActions = new LinkedList<>();
-    this.rng = GameLoader.getRandom();
-
+    queuedActions = new LinkedList<>();
+    rng = GameLoader.getRandom();
     currentGame = this;
     Log.debug("Created Game");
 
-    this.messages = new MessageLog();
-
-    this.player = GameLoader.createPlayer();
+    messages = new MessageLog();
+    player = GameLoader.createPlayer();
   }
 
+  /**
+   * 
+   * @param in
+   * @throws ClassNotFoundException
+   * @throws IOException
+   */
   private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
     in.defaultReadObject();
     currentGame = this;
@@ -80,90 +81,153 @@ public class Game implements Serializable {
     return currentGame;
   }
 
+  /**
+   * 
+   * @return
+   */
   public MessageLog messages() {
     return messages;
   }
 
+  /**
+   * 
+   * @return
+   */
   public RNG random() {
     return rng;
   }
 
+  /**
+   * 
+   * @return
+   */
   public boolean isRunning() {
-    return running;
+    return isRunning;
   }
 
+  /**
+   * 
+   * @return
+   */
   public boolean isPlayerDead() {
-    if (playerDead) {
-      playerDead = false;
+    if (isPlayerDead) {
+      isPlayerDead = false;
       return true;
     }
     return false;
   }
 
+  /**
+   * 
+   * @return
+   */
   public Player getPlayer() {
     return player;
   }
 
+  /**
+   * 
+   * @return
+   */
   public Coordinate getCenterScreenPosition() {
     return player.position;
   }
 
+  /**
+   * 
+   * @return
+   */
   public MapArea getCurrentMapArea() {
     return currentMapArea;
   }
 
-  public void setCurrentMapArea(MapArea mapArea) {
-    if (mapArea == null)
+  /**
+   * 
+   * @param argMapArea
+   */
+  public void setCurrentMapArea(MapArea argMapArea) {
+    if (argMapArea == null) {
       return;
+    }
 
-    currentMapArea = mapArea;
+    currentMapArea = argMapArea;
   }
 
+  /**
+   * 
+   */
   public void initialize() {
     Log.debug("Initializing Game");
-
-    running = true;
+    isRunning = true;
   }
 
+  /**
+   * 
+   * @return
+   */
   public TurnResult processTurn() {
-    if (running) {
+    if (isRunning) {
       currentTurnResult = onProcessing();
       return currentTurnResult;
     }
     return TurnResult.reset(currentTurnResult, false);
   }
 
+  /**
+   * 
+   */
   public void stopGame() {
-    running = false;
+    isRunning = false;
   }
 
+  /**
+   * 
+   */
   public void reset() {
-    playerDead = true;
+    isPlayerDead = true;
   }
 
   /**
    * Displays a message in the bottom pane of the UI
    * 
-   * @param message
+   * @param msg
    */
-  public void displayMessage(String message) {
-    messages.add(message);
+  public void displayMessage(String msg) {
+    messages.add(msg);
   }
 
-  public void displayMessage(String message, SColor color) {
-    messages.add(new MessageDisplayProperties(message, color));
+  /**
+   * 
+   * @param argMsg
+   * @param argColor
+   */
+  public void displayMessage(String argMsg, SColor argColor) {
+    messages.add(new MessageDisplayProperties(argMsg, argColor));
   }
 
-  public void addEvent(TurnEvent event) {
-    currentTurnResult.addEvent(event);
+  /**
+   * 
+   * @param argEvent
+   */
+  public void addEvent(TurnEvent argEvent) {
+    currentTurnResult.addEvent(argEvent);
   }
 
-  public void setCurrentlyLookingAt(Point point) {
-    setCurrentlyLookingAt(point, true);
+  /**
+   * 
+   * @param argPoint
+   */
+  public void setCurrentlyLookingAt(Point argPoint) {
+    setCurrentlyLookingAt(argPoint, true);
   }
 
-  public void setCurrentlyLookingAt(Point point, boolean drawActor) {
-    currentTurnResult.setCurrentLook(point, drawActor);
+  /**
+   * 
+   * @param argPoint
+   * @param argShouldDrawActor
+   */
+  public void setCurrentlyLookingAt(Point argPoint, boolean argShouldDrawActor) {
+    currentTurnResult.setCurrentLook(argPoint, argShouldDrawActor);
   }
 
   /**
@@ -174,7 +238,7 @@ public class Game implements Serializable {
   private TurnResult onProcessing() {
     TurnResult turnResult = null;
 
-    turnResult = TurnResult.reset(currentTurnResult, running);
+    turnResult = TurnResult.reset(currentTurnResult, isRunning);
     currentTurnResult = turnResult;
 
     showItemsOnPlayerSquare();
@@ -193,7 +257,7 @@ public class Game implements Serializable {
         }
       }
 
-      if (playerDead)
+      if (isPlayerDead)
         return turnResult;
 
     }
@@ -202,10 +266,10 @@ public class Game implements Serializable {
   /**
    * Queues an action for the current actor
    * 
-   * @param turnResult
+   * @param argTurnResult
    * @return
    */
-  private TurnResult getCurrentActions(TurnResult turnResult) {
+  private TurnResult getCurrentActions(TurnResult argTurnResult) {
     Actor actor = currentMapArea.getCurrentActor();
 
     while (!actor.isAlive()) {
@@ -222,7 +286,7 @@ public class Game implements Serializable {
         queuedActions.add(action);
       }
       else {
-        return turnResult;
+        return argTurnResult;
       }
     }
     else { // advance to next actor
@@ -241,17 +305,17 @@ public class Game implements Serializable {
   /**
    * Executes the current action in the queue
    * 
-   * @param turnResult
+   * @param argTurnResult
    * @return
    */
-  private TurnResult executeQueuedActions(TurnResult turnResult) {
+  private TurnResult executeQueuedActions(TurnResult argTurnResult) {
     Action currentAction = queuedActions.remove();
 
     // don't perform the action if the actor is dead
     if (!currentAction.getActor().isAlive()) {
       currentMapArea.nextActor("executeQueuedActions, currentAction actor !isAlive: "
           + currentAction.getActor().getName());
-      return turnResult;
+      return argTurnResult;
     }
 
     ActionResult result = currentAction.perform();
@@ -280,7 +344,7 @@ public class Game implements Serializable {
         }
         else {
           currentMapArea.nextActor("executeQueuedActions, !currentActor.canAct && !success");
-          return turnResult;
+          return argTurnResult;
         }
 
       }
@@ -300,7 +364,7 @@ public class Game implements Serializable {
         if (!result.isSuccess())
           currentMapArea.nextActor("executeQueueActions, can act but not success");
 
-        return turnResult;
+        return argTurnResult;
       }
 
     }
@@ -311,13 +375,16 @@ public class Game implements Serializable {
 
     /* return when player's actions are performed so we can redraw */
     if (Player.isPlayer(currentAction.getActor())) {
-      turnResult.playerActed();
-      return turnResult;
+      argTurnResult.playerActed();
+      return argTurnResult;
     }
 
     return null;
   }
 
+  /**
+   * 
+   */
   private void showItemsOnPlayerSquare() {
     if (currentTurnResult.getCurrentLook().getFirst() != null)
       return;

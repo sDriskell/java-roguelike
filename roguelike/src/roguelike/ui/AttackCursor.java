@@ -88,7 +88,7 @@ public class AttackCursor extends Cursor {
 
     Actor tgt = targets.getCurrent();
     if (tgt != null)
-      position.setLocation(tgt.getPosition());
+      pos.setLocation(tgt.getPosition());
 
     return null;
   }
@@ -149,7 +149,7 @@ public class AttackCursor extends Cursor {
     }).findFirst().orElse(null);
 
     if (startTarget != null) {
-      position.setLocation(startTarget.getPosition());
+      pos.setLocation(startTarget.getPosition());
     }
   }
 }

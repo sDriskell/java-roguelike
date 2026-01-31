@@ -8,71 +8,131 @@ import roguelike.ui.animations.AttackAnimation;
 import roguelike.ui.animations.AttackMissedAnimation;
 import roguelike.ui.animations.RangedAttackAnimation;
 
+/**
+ * 
+ */
 public class TurnEvent {
-	public static final int ATTACKED = 1;
-	public static final int ATTACK_MISSED = 2;
-	public static final int RANGED_ATTACKED = 3;
+  public static final int ATTACKED = 1;
+  public static final int ATTACK_MISSED = 2;
+  public static final int RANGED_ATTACKED = 3;
 
-	private Actor initiator;
-	private Actor target;
-	private String message;
-	private Animation animation;
+  private Actor initiator;
+  private Actor target;
+  private String message;
+  private Animation animation;
+  private int type;
 
-	private int type;
+  /**
+   * 
+   * @param argInitiator
+   * @param argTarget
+   * @param argType
+   */
+  private TurnEvent(Actor argInitiator, Actor argTarget, int argType) {
+    initiator = argInitiator;
+    target = argTarget;
+    type = argType;
+  }
 
-	private TurnEvent(Actor initiator, Actor target, int type) {
-		this.initiator = initiator;
-		this.target = target;
-		this.type = type;
-	}
+  /**
+   * 
+   * @param argInitiator
+   * @param argTgt
+   * @param argMsg
+   * @param argAttack
+   * @return
+   */
+  public static TurnEvent attack(Actor argInitiator, Actor argTgt, String argMsg,
+      Attack argAttack) {
+    if (argAttack instanceof RangedAttack) {
+      return rangedAttack(argInitiator, argTgt, argAttack);
+    }
 
-	public static TurnEvent attack(Actor initiator, Actor target, String message, Attack attack) {
-		if (attack instanceof RangedAttack)
-			return rangedAttack(initiator, target, attack);
+    return new TurnEvent(argInitiator, argTgt, ATTACKED).setMessage(argMsg)
+        .setAnimation(new AttackAnimation(argInitiator, argTgt, "" + argAttack.getDamage()));
+  }
 
-		return new TurnEvent(initiator, target, ATTACKED)
-				.setMessage(message)
-				.setAnimation(new AttackAnimation(initiator, target, "" + attack.getDamage()));
-	}
+  /**
+   * 
+   * @param initiator
+   * @param target
+   * @param message
+   * @return
+   */
+  public static TurnEvent attackMissed(Actor argInitiator, Actor argTgt, String argMsg) {
+    return new TurnEvent(argInitiator, argTgt, ATTACK_MISSED).setMessage(argMsg)
+        .setAnimation(new AttackMissedAnimation(argTgt));
+  }
 
-	public static TurnEvent attackMissed(Actor initiator, Actor target, String message) {
-		return new TurnEvent(initiator, target, ATTACK_MISSED)
-				.setMessage(message)
-				.setAnimation(new AttackMissedAnimation(target));
-	}
+  /**
+   * 
+   * @param argInitiator
+   * @param argTgt
+   * @param argAttack
+   * @return
+   */
+  public static TurnEvent rangedAttack(Actor argInitiator, Actor argTgt, Attack argAttack) {
+    return new TurnEvent(argInitiator, argTgt, RANGED_ATTACKED)
+        .setAnimation(new RangedAttackAnimation(argInitiator, argTgt, "" + argAttack.getDamage()));
+  }
 
-	public static TurnEvent rangedAttack(Actor initiator, Actor target, Attack attack) {
-		return new TurnEvent(initiator, target, RANGED_ATTACKED)
-				.setAnimation(new RangedAttackAnimation(initiator, target, "" + attack.getDamage()));
-	}
+  /**
+   * 
+   * @return
+   */
+  public int getType() {
+    return type;
+  }
 
-	public int getType() {
-		return type;
-	}
+  /**
+   * 
+   * @return
+   */
+  public Actor getInitiator() {
+    return initiator;
+  }
 
-	public Actor getInitiator() {
-		return initiator;
-	}
+  /**
+   * 
+   * @return
+   */
+  public Actor getTarget() {
+    return target;
+  }
 
-	public Actor getTarget() {
-		return target;
-	}
+  /**
+   * 
+   * @return
+   */
+  public String getMessage() {
+    return message;
+  }
 
-	public String getMessage() {
-		return message;
-	}
+  /**
+   * 
+   * @param argAnimation
+   * @return
+   */
+  public TurnEvent setAnimation(Animation argAnimation) {
+    animation = argAnimation;
+    return this;
+  }
 
-	public TurnEvent setAnimation(Animation animation) {
-		this.animation = animation;
-		return this;
-	}
+  /**
+   * 
+   * @return
+   */
+  public Animation getAnimation() {
+    return this.animation;
+  }
 
-	public Animation getAnimation() {
-		return this.animation;
-	}
-
-	private TurnEvent setMessage(String message) {
-		this.message = message;
-		return this;
-	}
+  /**
+   * 
+   * @param argMsg
+   * @return
+   */
+  private TurnEvent setMessage(String argMsg) {
+    message = argMsg;
+    return this;
+  }
 }

@@ -12,149 +12,185 @@ import squidpony.squidgrid.util.BasicRadiusStrategy;
 import squidpony.squidgrid.util.DirectionIntercardinal;
 import squidpony.squidgrid.util.RadiusStrategy;
 
+/**
+ * 
+ */
 public class Cursor {
 
-	private boolean isActive;
+  private boolean isActive;
 
-	protected RadiusStrategy radiusStrategy = BasicRadiusStrategy.SQUARE;
-	protected char symbol;
-	protected SColor color;
-	protected Coordinate position;
-	protected MapArea mapArea;
-	protected CursorResult result;
+  protected RadiusStrategy radiusStrategy = BasicRadiusStrategy.SQUARE;
+  protected char symbol;
+  protected SColor color;
+  protected Coordinate pos;
+  protected MapArea mapArea;
+  protected CursorResult result;
+  protected int maxRadius = 0;
 
-	protected int maxRadius = 0;
+  /**
+   * 
+   * @param argInitPos
+   * @param argMapArea
+   */
+  public Cursor(Coordinate argInitPos, MapArea argMapArea) {
+    mapArea = argMapArea;
+    symbol = '_';
+    color = SColor.INDIGO_DYE;
+    pos = new Coordinate(argInitPos.x, argInitPos.y);
+  }
 
-	public Cursor(Coordinate initialPosition, MapArea mapArea) {
-		this.mapArea = mapArea;
-		this.symbol = '_';
-		this.color = SColor.INDIGO_DYE;
-		this.position = new Coordinate(initialPosition.x, initialPosition.y);
-	}
+  /**
+   * 
+   * @param argInitPos
+   * @param argMapArea
+   * @param argMaxRadius
+   */
+  public Cursor(Coordinate argInitPos, MapArea argMapArea, int argMaxRadius) {
+    this(argInitPos, argMapArea);
+    maxRadius = argMaxRadius;
+  }
 
-	public Cursor(Coordinate initialPosition, MapArea mapArea, int maxRadius) {
-		this(initialPosition, mapArea);
-		this.maxRadius = maxRadius;
-	}
+  /**
+   * 
+   * @return
+   */
+  public final boolean waitingForResult() {
+    return isActive;
+  }
 
-	public final boolean waitingForResult() {
-		return isActive;
-	}
+  /**
+   * 
+   */
+  public final void show() {
+    isActive = true;
+    onShow();
+  }
 
-	public final void show() {
-		isActive = true;
-		onShow();
-	}
+  /**
+   * 
+   * @param argTerm
+   * @param argScrnArea
+   */
+  public final void draw(TerminalBase argTerm, Rectangle argScrnArea) {
+    if (argTerm == null) {
+      throw new IllegalArgumentException("terminal cannot be null");
+    }
 
-	public final void draw(TerminalBase terminal, Rectangle screenArea) {
-		if (terminal == null)
-			throw new IllegalArgumentException("terminal cannot be null");
+    if (!argScrnArea.contains(pos)) {
+      int px = (int) Math.max(argScrnArea.getMinX(), Math.min(pos.x, argScrnArea.getMaxX() - 1));
+      int py = (int) Math.max(argScrnArea.getMinY(), Math.min(pos.y, argScrnArea.getMaxY() - 1));
+      setPosition(px, py);
+    }
 
-		if (!screenArea.contains(position)) {
-			int px = (int) Math.max(screenArea.getMinX(), Math.min(position.x, screenArea.getMaxX() - 1));
-			int py = (int) Math.max(screenArea.getMinY(), Math.min(position.y, screenArea.getMaxY() - 1));
+    int sx = pos.x - argScrnArea.x;
+    int sy = pos.y - argScrnArea.y;
+    onDraw(argTerm, sx, sy);
+  }
 
-			setPosition(px, py);
-		}
+  /**
+   * 
+   * @return
+   */
+  public final boolean process() {
+    CursorResult processed = onProcess();
 
-		int sx = position.x - screenArea.x;
-		int sy = position.y - screenArea.y;
+    if (processed != null) {
+      isActive = false;
+      this.result = processed;
+    }
+    return !isActive;
+  }
 
-		onDraw(terminal, sx, sy);
-	}
+  /**
+   * 
+   * @return
+   */
+  public final CursorResult result() {
+    return result;
+  }
 
-	public final boolean process() {
-		CursorResult processed = onProcess();
+  protected void onShow() {
+    // TODO: is this necessary and what to do with it?
+  }
 
-		if (processed != null) {
-			isActive = false;
-			this.result = processed;
-		}
-		return !isActive;
-	}
+  protected void onDraw(TerminalBase terminal, int sx, int sy) {
+    terminal.withColor(SColor.TRANSPARENT, color).fill(sx, sy, 1, 1);
+    MapArea mapArea = Game.current().getCurrentMapArea();
 
-	public final CursorResult result() {
-		return result;
-	}
+    if (!mapArea.getTileAt(pos).isExplored()) {
+      terminal.withColor(SColor.TRANSPARENT, color).put(sx, sy, ' ');
+    }
+  }
 
-	protected void onShow() {
-	}
+  protected final CursorResult onProcess() {
+    InputCommand cmd = InputManager.nextCommand();
+    if (cmd != null) {
+      DirectionIntercardinal direction = cmd.toDirection();
 
-	protected void onDraw(TerminalBase terminal, int sx, int sy) {
-		terminal.withColor(SColor.TRANSPARENT, color).fill(sx, sy, 1, 1);
-		MapArea mapArea = Game.current().getCurrentMapArea();
-		if (!mapArea.getTileAt(position).isExplored())
-			terminal.withColor(SColor.TRANSPARENT, color).put(sx, sy, ' ');
-	}
+      if (direction != DirectionIntercardinal.NONE) {
+        Coordinate newPosition = pos.createOffsetPosition(direction);
 
-	protected final CursorResult onProcess() {
-		InputCommand cmd = InputManager.nextCommand();
-		if (cmd != null) {
+        if (isWithinBounds(newPosition)) {
+          setPosition(newPosition);
+        }
 
-			DirectionIntercardinal direction = cmd.toDirection();
-			if (direction != DirectionIntercardinal.NONE) {
+      }
+      else {
+        switch (cmd) {
+          case CONFIRM:
+            result = new CursorResult(pos, false);
+            break;
+          case CANCEL:
+            result = new CursorResult(pos, true);
+            break;
+          default:
+            result = onProcessCommand(cmd);
+        }
+      }
+    }
+    return result;
+  }
 
-				Coordinate newPosition = position.createOffsetPosition(direction);
-				if (isWithinBounds(newPosition)) {
-					setPosition(newPosition);
-				}
+  private void setPosition(int x, int y) {
+    pos.x = x;
+    pos.y = y;
+  }
 
-			} else {
-				switch (cmd) {
-				case CONFIRM:
-					result = new CursorResult(position, false);
-					break;
+  private void setPosition(Coordinate argPos) {
+    pos.x = argPos.x;
+    pos.y = argPos.y;
+  }
 
-				case CANCEL:
-					result = new CursorResult(position, true);
-					break;
+  private boolean isWithinBounds(Coordinate argPos) {
+    if (mapArea.isWithinBounds(argPos.x, argPos.y) && onUpdatePosition(argPos)) {
+      if (maxRadius > 0) {
+        Coordinate playerLocation = Game.current().getPlayer().getPosition();
+        float distance = playerLocation.distance(argPos, radiusStrategy);
+        return distance <= maxRadius;
+      }
+      return true;
+    }
+    return false;
+  }
 
-				default:
-					result = onProcessCommand(cmd);
-				}
-			}
-		}
-		return result;
-	}
+  /**
+   * Return false if the cursor can't be moved to the desired position, i.e.
+   * outside field of vision
+   * 
+   * @return
+   */
+  protected boolean onUpdatePosition(Coordinate argPos) {
+    return true;
+  }
 
-	private void setPosition(int x, int y) {
-		position.x = x;
-		position.y = y;
-	}
-
-	private void setPosition(Coordinate position) {
-		this.position.x = position.x;
-		this.position.y = position.y;
-	}
-
-	private boolean isWithinBounds(Coordinate position) {
-		if (mapArea.isWithinBounds(position.x, position.y) && onUpdatePosition(position)) {
-			if (maxRadius > 0) {
-				Coordinate playerLocation = Game.current().getPlayer().getPosition();
-				float distance = playerLocation.distance(position, radiusStrategy);
-				return distance <= maxRadius;
-			}
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Return false if the cursor can't be moved to the desired position, i.e. outside field of vision
-	 * 
-	 * @return
-	 */
-	protected boolean onUpdatePosition(Coordinate position) {
-		return true;
-	}
-
-	/**
-	 * Allow derived cursors to implement additional commands (for instance, to select a target)
-	 * 
-	 * @param command
-	 * @return
-	 */
-	protected CursorResult onProcessCommand(InputCommand command) {
-		return null;
-	}
+  /**
+   * Allow derived cursors to implement additional commands (for instance, to
+   * select a target)
+   * 
+   * @param cmd
+   * @return
+   */
+  protected CursorResult onProcessCommand(InputCommand cmd) {
+    return null;
+  }
 }

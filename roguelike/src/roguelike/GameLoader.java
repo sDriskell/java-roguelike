@@ -26,79 +26,105 @@ import roguelike.maps.MapArea;
 import roguelike.util.Log;
 import squidpony.squidmath.RNG;
 
+/**
+ * 
+ */
 public class GameLoader {
 
-	private GameLoader() {
-	}
+  private GameLoader() {
+    // Utility class
+  }
 
-	public static Game newGame() {
+  /**
+   * 
+   * @return
+   */
+  public static Game newGame() {
 
-		Game game = new Game();
-		Player player = game.getPlayer();
-		MapArea currentMapArea = MapArea.build(Game.MAP_WIDTH, Game.MAP_HEIGHT, new DungeonMapBuilder());
-		currentMapArea.addActor(player);
+    Game game = new Game();
+    Player player = game.getPlayer();
+    MapArea currentMapArea = MapArea.build(Game.MAP_WIDTH, Game.MAP_HEIGHT,
+        new DungeonMapBuilder());
+    currentMapArea.addActor(player);
 
-		game.setCurrentMapArea(currentMapArea);
-		return game;
-	}
+    game.setCurrentMapArea(currentMapArea);
+    return game;
+  }
 
-	public static void save(Game game) {
-		try {
-			OutputStream file = new FileOutputStream("saves/game.ser");
-			GZIPOutputStream gzip = new GZIPOutputStream(file);
-			ObjectOutput output = new ObjectOutputStream(gzip);
+  /**
+   * 
+   * @param game
+   */
+  public static void save(Game game) {
+    try {
+      OutputStream file = new FileOutputStream("saves/game.ser");
+      GZIPOutputStream gzip = new GZIPOutputStream(file);
+      ObjectOutput output = new ObjectOutputStream(gzip);
 
-			output.writeObject(game);
+      output.writeObject(game);
 
-			output.close();
+      output.close();
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			Log.warning(e.toString());
-		}
-	}
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      Log.warning(e.toString());
+    }
+  }
 
-	public static Game load() {
-		Game game = new Game();
-		try {
-			InputStream file = new FileInputStream("saves/game.ser");
-			GZIPInputStream gzip = new GZIPInputStream(file);
-			ObjectInput input = new ObjectInputStream(gzip);
+  /**
+   * 
+   * @return
+   */
+  public static Game load() {
+    Game game = new Game();
+    try {
+      InputStream file = new FileInputStream("saves/game.ser");
+      GZIPInputStream gzip = new GZIPInputStream(file);
+      ObjectInput input = new ObjectInputStream(gzip);
 
-			game = (Game) input.readObject();
+      game = (Game) input.readObject();
+      input.close();
 
-			input.close();
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      Log.warning(e.toString());
+      return null;
+    }
+    return game;
+  }
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			Log.warning(e.toString());
-			return null;
-		}
-		return game;
-	}
+  /**
+   * 
+   * @return
+   */
+  public static Player createPlayer() {
+    Player player = new Player();
 
-	public static Player createPlayer() {
-		Player player = new Player();
+    MeleeWeapon sword = (MeleeWeapon) WeaponFactory.create(WeaponType.SHORT_SWORD);
+    MeleeWeapon spear = (MeleeWeapon) WeaponFactory.create(WeaponType.SPEAR);
+    RangedWeapon bow = (RangedWeapon) WeaponFactory.create(WeaponType.SHORT_BOW);
+    Projectile arrow = (Projectile) WeaponFactory.create(WeaponType.ARROW);
 
-		MeleeWeapon sword = (MeleeWeapon) WeaponFactory.create(WeaponType.SHORT_SWORD);
-		MeleeWeapon spear = (MeleeWeapon) WeaponFactory.create(WeaponType.SPEAR);
-		RangedWeapon bow = (RangedWeapon) WeaponFactory.create(WeaponType.SHORT_BOW);
-		Projectile arrow = (Projectile) WeaponFactory.create(WeaponType.ARROW);
+    player.inventory().add(spear);
+    player.inventory().add(bow);
+    player.inventory().add(arrow);
 
-		player.inventory().add(spear);
-		player.inventory().add(bow);
-		player.inventory().add(arrow);
+    ItemSlot.RIGHT_HAND.equipItem(player, sword);
 
-		ItemSlot.RIGHT_HAND.equipItem(player, sword);
+    player.addCondition(new Poisoned(10));
+    player.addCondition(new Stunned(5));
+    player.addCondition(new ReducedVision(114));
 
-		player.addCondition(new Poisoned(10));
-		player.addCondition(new Stunned(5));
-		player.addCondition(new ReducedVision(114));
+    return player;
+  }
 
-		return player;
-	}
-
-	public static RNG getRandom() {
-		return new RNG();
-	}
+  /**
+   * 
+   * @return
+   */
+  public static RNG getRandom() {
+    return new RNG();
+  }
 }
