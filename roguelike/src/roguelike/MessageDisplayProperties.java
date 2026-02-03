@@ -49,7 +49,7 @@ public class MessageDisplayProperties implements Serializable {
    * 
    * @return
    */
-  SColor getColor() {
+  public SColor getColor() {
     return color;
   }
 }

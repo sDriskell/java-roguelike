@@ -3,17 +3,24 @@ package roguelike.actions;
 import roguelike.Game;
 import roguelike.actors.Actor;
 
+/**
+ * 
+ */
 public class QuitAction extends Action {
 
-	public QuitAction(Actor actor) {
-		super(actor);
-		this.usesEnergy = false;
-	}
+  /**
+   * 
+   * @param argAct
+   */
+  public QuitAction(Actor argAct) {
+    super(argAct);
+    usesEnergy = false;
+  }
 
-	@Override
-	public ActionResult onPerform() {
-		Game.current().stopGame();
-		return ActionResult.success();
-	}
+  @Override
+  public ActionResult onPerform() {
+    Game.current().stopGame();
+    return ActionResult.success();
+  }
 
 }

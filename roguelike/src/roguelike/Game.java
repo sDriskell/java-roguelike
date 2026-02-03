@@ -338,7 +338,7 @@ public class Game implements Serializable {
       Actor currentActor = currentAction.getActor();
       if (currentActor != null && !currentActor.energy().canAct()) {
 
-        if (result.isSuccess()) {
+        if (result.isSuccessful()) {
           currentActor.finishTurn();
           DisplayManager.instance().setDirty(); // make sure we show the result of the action
         }
@@ -354,14 +354,14 @@ public class Game implements Serializable {
             currentActor.isAlive(), currentAction));
         Log.warning(
             "Game: Remaining energy: " + currentActor.energy().getCurrent() + " Result=" + result);
-        Log.warning("Game: M=" + result.getMessage() + ", S=" + result.isSuccess() + ", C="
+        Log.warning("Game: M=" + result.getMessage() + ", S=" + result.isSuccessful() + ", C="
             + result.isCompleted());
 
         /*
          * bug fix for infinite loop with enemy pathfinding where they can't move to a
          * square they want to and fail the walk action
          */
-        if (!result.isSuccess())
+        if (!result.isSuccessful())
           currentMapArea.nextActor("executeQueueActions, can act but not success");
 
         return argTurnResult;

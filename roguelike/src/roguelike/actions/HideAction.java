@@ -17,8 +17,8 @@ import roguelike.actors.Actor;
  */
 public class HideAction extends Action {
 
-	protected HideAction(Actor actor) {
-		super(actor);
+	protected HideAction(Actor argAct) {
+		super(argAct);
 		// TODO create HideAction
 	}
 
