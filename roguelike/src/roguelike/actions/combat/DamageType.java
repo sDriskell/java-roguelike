@@ -2,16 +2,29 @@ package roguelike.actions.combat;
 
 import roguelike.items.Weapon;
 
+/**
+ * 
+ */
 public enum DamageType {
-	SLASHING,
-	PIERCING,
-	BLUNT;
+  SLASHING,
+  PIERCING,
+  BLUNT;
 
-	public int getTargetNumber(Weapon weapon) {
-		return weapon.getTargetNumber(this);
-	}
+  /**
+   * 
+   * @param argWpn
+   * @return
+   */
+  public int getTargetNumber(Weapon argWpn) {
+    return argWpn.getTargetNumber(this);
+  }
 
-	public int getDamageRating(Weapon weapon) {
-		return weapon.getDamageRating(this);
-	}
+  /**
+   * 
+   * @param argWpn
+   * @return
+   */
+  public int getDamageRating(Weapon argWpn) {
+    return argWpn.getDamageRating(this);
+  }
 }
