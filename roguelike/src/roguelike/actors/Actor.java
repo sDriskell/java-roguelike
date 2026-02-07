@@ -25,11 +25,15 @@ import roguelike.util.Log;
 import squidpony.squidcolor.SColor;
 import squidpony.squidcolor.SColorFactory;
 
+//TODO: Remove serializable implementation and create an Actor interface.
+/**
+ * 
+ */
 public abstract class Actor implements Serializable {
+
   private static final long serialVersionUID = 1L;
 
   protected transient Game game = Game.current();
-
   protected UUID actorId = UUID.randomUUID();
 
   protected char symbol;
@@ -51,232 +55,392 @@ public abstract class Actor implements Serializable {
 
   public final Coordinate position;
 
-  protected Actor(char symbol, SColor color) {
-    if (color == null)
-      throw new IllegalArgumentException("color cannot be null: " + symbol);
+  /**
+   * 
+   * @param argSym
+   * @param argCol
+   */
+  protected Actor(char argSym, SColor argCol) {
+    if (argCol == null) {
+      throw new IllegalArgumentException("color cannot be null: " + argSym);
+    }
 
-    this.symbol = symbol;
-    this.color = color;
-    this.position = new Coordinate();
-
-    this.energy = new Energy();
-    this.statistics = new Statistics();
-    this.combat = new CombatHandler(this);
-    this.health = new Health(20);
-    this.inventory = new Inventory();
-    this.equipment = new Equipment();
-
+    symbol = argSym;
+    color = argCol;
+    position = new Coordinate();
+    energy = new Energy();
+    statistics = new Statistics();
+    combat = new CombatHandler(this);
+    health = new Health(20);
+    inventory = new Inventory();
+    equipment = new Equipment();
     attacked = new Stack<>();
     attackedBy = new Stack<>();
-
     conditions = new ArrayList<>();
-
     visionRadius = 15;
   }
 
-  private void writeObject(ObjectOutputStream out) throws IOException {
-    out.defaultWriteObject();
-
-    out.writeInt(color.getRGB());
+  /**
+   * 
+   * @param argOut
+   * @throws IOException
+   */
+  private void writeObject(ObjectOutputStream argOut) throws IOException {
+    argOut.defaultWriteObject();
+    argOut.writeInt(color.getRGB());
     Log.debug("writing actor: " + actorId);
   }
 
-  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.defaultReadObject();
+  /**
+   * 
+   * @param argIn
+   * @throws IOException
+   * @throws ClassNotFoundException
+   */
+  private void readObject(ObjectInputStream argIn) throws IOException, ClassNotFoundException {
+    argIn.defaultReadObject();
 
     game = Game.current();
-    color = SColorFactory.asSColor(in.readInt());
+    color = SColorFactory.asSColor(argIn.readInt());
 
     Log.debug("reading actor: " + actorId);
     Log.debug("game=" + game.toString());
   }
 
+  /**
+   * 
+   * @return
+   */
   public char symbol() {
-    return this.symbol;
+    return symbol;
   }
 
+  /**
+   * 
+   * @return
+   */
   public SColor color() {
-    return this.color;
+    return color;
   }
 
+  /**
+   * 
+   * @return
+   */
   public List<Condition> conditions() {
     return conditions;
   }
 
-  public void addCondition(Condition condition) {
-    conditions.add(condition);
-    condition.onConditionAdded(this);
+  /**
+   * 
+   * @param argCon
+   */
+  public void addCondition(Condition argCon) {
+    conditions.add(argCon);
+    argCon.onConditionAdded(this);
   }
 
+  /**
+   * 
+   * @return
+   */
   public Behavior behavior() {
-    return this.behavior;
+    return behavior;
   }
 
+  /**
+   * 
+   * @return
+   */
   public Energy energy() {
-    return this.energy;
+    return energy;
   }
 
+  /**
+   * 
+   * @return
+   */
   public Statistics statistics() {
-    return this.statistics;
+    return statistics;
   }
 
+  /**
+   * 
+   * @return
+   */
   public Health health() {
-    return this.health;
+    return health;
   }
 
+  /**
+   * 
+   * @return
+   */
   public Inventory inventory() {
-    return this.inventory;
+    return inventory;
   }
 
+  /**
+   * 
+   * @return
+   */
   public Equipment equipment() {
-    return this.equipment;
+    return equipment;
   }
 
+  /**
+   * 
+   * @return
+   */
   public boolean isAlive() {
     return health().getCurrent() > 0;
   }
 
-  public int effectiveSpeed(MapArea map) {
-    int tileSpeedModifier = map.getSpeedModifier(getPosition());
+  /**
+   * 
+   * @param argMap
+   * @return
+   */
+  public int effectiveSpeed(MapArea argMap) {
+    int tileSpdMod = argMap.getSpeedModifier(getPosition());
     int speed = statistics.speed.getTotalValue();
-    speed = Math.max(1, speed + tileSpeedModifier); // always at least 1 speed even if 0 or negative
+    speed = Math.max(1, speed + tileSpdMod); // always at least 1 speed even if 0 or negative
 
     return speed;
   }
 
+  /**
+   * 
+   * @return
+   */
   public boolean wasAttackedThisRound() {
     return attackedThisRound;
   }
 
+  /**
+   * 
+   * @return
+   */
   public CombatHandler combatHandler() {
     return this.combat;
   }
 
+  /**
+   * 
+   * @return
+   */
   public Coordinate getPosition() {
     return position;
   }
 
+  /**
+   * 
+   * @param x
+   * @param y
+   */
   public void setPosition(int x, int y) {
     position.setPosition(x, y);
   }
 
-  public void offsetPosition(int xAmount, int yAmount) {
-    position.offsetPosition(xAmount, yAmount);
+  /**
+   * 
+   * @param argXAmt
+   * @param argYAmt
+   */
+  public void offsetPosition(int argXAmt, int argYAmt) {
+    position.offsetPosition(argXAmt, argYAmt);
   }
 
+  /**
+   * 
+   * @return
+   */
   public String getDescription() {
     return getName();
   }
 
+  /**
+   * 
+   * @return
+   */
   public int getVisionRadius() {
     return visionRadius;
   }
 
-  public void setVisionRadius(int radius) {
-    visionRadius = Math.max(1, radius);
+  /**
+   * 
+   * @param argRad
+   */
+  public void setVisionRadius(int argRad) {
+    visionRadius = Math.max(1, argRad);
   }
 
-  public boolean isAdjacentTo(Actor other) {
+  /**
+   * 
+   * @param argOther
+   * @return
+   */
+  public boolean isAdjacentTo(Actor argOther) {
     Point actorPos = position;
-    Point otherPos = other.position;
+    Point otherPos = argOther.position;
 
     return Math.floor(actorPos.distance(otherPos)) <= 1;
   }
 
-  public boolean canSee(Actor other, MapArea mapArea) {
-    if (!other.isAlive())
+  /**
+   * 
+   * @param argOther
+   * @param argMap
+   * @return
+   */
+  public boolean canSee(Actor argOther, MapArea argMap) {
+    if (!argOther.isAlive()) {
       return false;
+    }
 
-    return ActorUtils.canSee(this, other, mapArea);
+    return ActorUtils.canSee(this, argOther, argMap);
   }
 
+  /**
+   * 
+   * @return
+   */
   public AttackAttempt getLastAttacked() {
     return attacked.isEmpty() ? attacked.pop() : null;
   }
 
+  /**
+   * 
+   * @return
+   */
   public AttackAttempt getLastAttackedBy() {
     return attackedBy.isEmpty() ? attackedBy.pop() : null;
   }
 
+  /**
+   * 
+   * @return
+   */
   public String getMessageName() {
     return "the " + getName();
   }
 
+  /**
+   * 
+   * @return
+   */
   public String getVerbSuffix() {
     return "s";
   }
 
-  public String doAction(String action, Object... params) {
+  /**
+   * 
+   * @param argAct
+   * @param argParams
+   * @return
+   */
+  public String doAction(String argAct, Object... argParams) {
     try {
-      return getMessageName() + " " + makeCorrectVerb(String.format(action, params));
+      return getMessageName() + " " + makeCorrectVerb(String.format(argAct, argParams));
     }
     catch (Exception e) {
-      return "ERROR: " + action;
+      return "ERROR: " + argAct;
     }
   }
 
+  /**
+   * 
+   */
   public final void applyConditions() {
     ArrayList<Condition> toRemove = new ArrayList<>();
+
     for (Condition condition : conditions) {
-      if (condition.process(this))
+      if (condition.process(this)) {
         toRemove.add(condition);
+      }
     }
     conditions.removeAll(toRemove);
   }
 
+  /**
+   * 
+   */
   public final void finishTurn() {
-    while (attacked.size() > 1)
+    while (attacked.size() > 1) {
       ((Stack<AttackAttempt>) attacked).remove(0);
-    while (attackedBy.size() > 1)
+    }
+
+    while (attackedBy.size() > 1) {
       ((Stack<AttackAttempt>) attackedBy).remove(0);
+    }
 
     attackedThisRound = false;
-
     Log.verboseDebug("Actor.finishTurn(): " + getName());
 
     applyConditions();
-
     onTurnFinished();
   }
 
+  /**
+   * 
+   */
   public final void dead() {
     game = Game.current();
-
     onKilled();
 
     MapArea currentArea = game.getCurrentMapArea();
+
     if (Player.isPlayer(this)) {
-      this.finishTurn();
+      finishTurn();
       game.reset();
     }
-    currentArea.removeActor(this);
 
+    currentArea.removeActor(this);
     /* display bloodstain */
     currentArea.getTileAt(this.getPosition()).setBackground(SColorFactory.dimmer(SColor.DARK_RED));
-
     game.displayMessage("Target is dead");
   }
 
-  public final void onAttacked(Actor attacker) {
-    attackedBy.add(new AttackAttempt(attacker));
+  /**
+   * 
+   * @param argAtkr
+   */
+  public final void onAttacked(Actor argAtkr) {
+    attackedBy.add(new AttackAttempt(argAtkr));
     attackedThisRound = true;
 
-    if (behavior != null)
-      behavior.onAttacked(attacker);
+    if (behavior != null) {
+      behavior.onAttacked(argAtkr);
+    }
 
-    onAttackedInternal(attacker);
+    onAttackedInternal(argAtkr);
   }
 
-  public final void onDamaged(int amount) {
-    if (health.damage(amount)) {
+  /**
+   * 
+   * @param argAmt
+   */
+  public final void onDamaged(int argAmt) {
+    if (health.damage(argAmt)) {
       dead();
     }
   }
 
+  /**
+   * 
+   * @return
+   */
   public abstract String getName();
 
+  /**
+   * 
+   * @return
+   */
   public abstract Action getNextAction();
 
+  /**
+   * 
+   */
   protected void onKilled() {
   }
 
@@ -285,19 +449,31 @@ public abstract class Actor implements Serializable {
    * actor a final chance to prevent the move (for example, moving over certain
    * tiles or opening doors could be disabled based on the actor type)
    * 
-   * @param mapArea
-   * @param tile
+   * @param argMap
+   * @param argTile
    * @return
    */
-  public boolean onMoveAttempting(MapArea mapArea, Tile tile) {
+  public boolean onMoveAttempting(MapArea argMap, Tile argTile) {
     // TODO: check for things like moving over certain tiles, opening doors
     return true;
   }
 
+  /**
+   * 
+   */
   protected void onTurnFinished() {
   }
 
-  protected abstract void onAttackedInternal(Actor attacker);
+  /**
+   * 
+   * @param argAtkr
+   */
+  protected abstract void onAttackedInternal(Actor argAtkr);
 
-  protected abstract String makeCorrectVerb(String message);
+  /**
+   * 
+   * @param argMsg
+   * @return
+   */
+  protected abstract String makeCorrectVerb(String argMsg);
 }

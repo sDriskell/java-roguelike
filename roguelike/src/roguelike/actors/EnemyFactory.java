@@ -14,17 +14,20 @@ import roguelike.items.WeaponType;
 import roguelike.util.CollectionUtils;
 import squidpony.squidcolor.SColor;
 
-public class EnemyFactory {
+//TODO: Refactor - make this abstract, and remove hard-coded values.
 
-  private interface NpcBuilderFactory {
-    public Npc create();
-  }
+/**
+ * 
+ */
+public class EnemyFactory {
 
   private static EnemyFactory factory = new EnemyFactory();
   private static InventoryBuilder inventoryBuilder = new InventoryBuilder();
-
   private Map<EnemyType, NpcBuilderFactory> npcBuilders = new HashMap<>();
 
+  /**
+   * 
+   */
   private EnemyFactory() {
 
     npcBuilders.put(EnemyType.WOLF, () -> NpcBuilder
@@ -72,12 +75,20 @@ public class EnemyFactory {
 
   }
 
-  public static Actor createEnemy(int x, int y, int difficulty) {
-    Npc npc = factory.getRandomEnemyByDifficulty(difficulty);
+  /**
+   * 
+   * @param x
+   * @param y
+   * @param argDif int value for difficulty modifier
+   * @return
+   */
+  public static Actor createEnemy(int x, int y, int argDif) {
+    Npc npc = factory.getRandomEnemyByDifficulty(argDif);
 
     /* if we have any items, equip the first weapon */
     if (npc.inventory().getCount() > 0) {
       Item first = npc.inventory().getItem(0);
+
       if (first instanceof Weapon) {
         ItemSlot.RIGHT_HAND.equipItem(npc, first);
       }
@@ -87,7 +98,12 @@ public class EnemyFactory {
     return npc;
   }
 
-  private Npc getRandomEnemyByDifficulty(int difficulty) {
+  /**
+   * 
+   * @param argDif int value for difficulty modifier
+   * @return
+   */
+  private Npc getRandomEnemyByDifficulty(int argDif) {
     EnemyType[] types = new EnemyType[] { EnemyType.WOLF, EnemyType.FIRE_ANT, EnemyType.BANDIT,
         EnemyType.SNAKE, EnemyType.ARCHER };
 
@@ -95,6 +111,13 @@ public class EnemyFactory {
     NpcBuilderFactory factory = npcBuilders.get(randomType);
 
     return factory.create();
+  }
+
+  /**
+   * 
+   */
+  private interface NpcBuilderFactory {
+    public Npc create();
   }
 
 }
