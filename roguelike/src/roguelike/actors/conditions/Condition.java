@@ -5,43 +5,80 @@ import java.io.Serializable;
 import roguelike.actors.Actor;
 import roguelike.util.StringEx;
 
+/**
+ * 
+ */
 public abstract class Condition implements Serializable {
-	private static final long serialVersionUID = 1L;
 
-	protected StringEx identifier;
-	protected int duration, initialDuration;
+  private static final long serialVersionUID = 1L;
 
-	protected Condition(StringEx identifier, int duration) {
-		this.identifier = identifier;
-		this.duration = duration;
-		this.initialDuration = duration;
-	}
+  protected StringEx identifier;
+  protected int duration;
+  protected int initialDuration;
 
-	public int getDuration() {
-		return duration;
-	}
+  /**
+   * 
+   * @param argIdent
+   * @param argDur
+   */
+  protected Condition(StringEx argIdent, int argDur) {
+    identifier = argIdent;
+    duration = argDur;
+    initialDuration = argDur;
+  }
 
-	public final boolean process(Actor actor) {
-		if (duration > 0) {
-			duration--;
-			onProcess(actor);
-		}
-		if (duration == 0) {
-			onConditionRemoved(actor);
-			return true;
-		}
-		return false;
-	}
+  /**
+   * 
+   * @return
+   */
+  public int getDuration() {
+    return duration;
+  }
 
-	public StringEx identifier() {
-		return identifier;
-	}
+  /**
+   * 
+   * @param argAct
+   * @return
+   */
+  public final boolean process(Actor argAct) {
+    if (duration > 0) {
+      duration--;
+      onProcess(argAct);
+    }
 
-	public void onConditionAdded(Actor actor) {
-	}
+    if (duration == 0) {
+      onConditionRemoved(argAct);
+      return true;
+    }
 
-	protected abstract void onProcess(Actor actor);
+    return false;
+  }
 
-	protected void onConditionRemoved(Actor actor) {
-	}
+  /**
+   * 
+   * @return
+   */
+  public StringEx identifier() {
+    return identifier;
+  }
+
+  /**
+   * 
+   * @param argAct
+   */
+  public void onConditionAdded(Actor argAct) {
+  }
+
+  /**
+   * 
+   * @param argAct
+   */
+  protected abstract void onProcess(Actor argAct);
+
+  /**
+   * 
+   * @param argAct
+   */
+  protected void onConditionRemoved(Actor argAct) {
+  }
 }

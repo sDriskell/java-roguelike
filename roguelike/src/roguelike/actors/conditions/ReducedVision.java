@@ -4,29 +4,37 @@ import roguelike.actors.Actor;
 import roguelike.util.StringEx;
 import squidpony.squidcolor.SColor;
 
+/**
+ * 
+ */
 public class ReducedVision extends Condition {
-	private static final long serialVersionUID = 7729159918086465466L;
 
-	private int oldVisionRadius;
+  private static final long serialVersionUID = 7729159918086465466L;
 
-	public ReducedVision(int duration) {
-		super(new StringEx("Reduced Vision", SColor.BLUE_VIOLET, SColor.BLACK), duration);
-	}
+  private int oldVisRad;
 
-	@Override
-	public void onConditionAdded(Actor actor) {
-		oldVisionRadius = actor.getVisionRadius();
-		actor.setVisionRadius((int) (oldVisionRadius * 0.33));
-		actor.doAction("can no longer see as well.");
-	}
+  /**
+   * 
+   * @param argDur
+   */
+  public ReducedVision(int argDur) {
+    super(new StringEx("Reduced Vision", SColor.BLUE_VIOLET, SColor.BLACK), argDur);
+  }
 
-	@Override
-	protected void onProcess(Actor actor) {
-	}
+  @Override
+  public void onConditionAdded(Actor argAct) {
+    oldVisRad = argAct.getVisionRadius();
+    argAct.setVisionRadius((int) (oldVisRad * 0.33));
+    argAct.doAction("can no longer see as well.");
+  }
 
-	@Override
-	protected void onConditionRemoved(Actor actor) {
-		actor.setVisionRadius(oldVisionRadius);
-		actor.doAction("'s vision has returned to normal.");
-	}
+  @Override
+  protected void onProcess(Actor argAct) {
+  }
+
+  @Override
+  protected void onConditionRemoved(Actor argAct) {
+    argAct.setVisionRadius(oldVisRad);
+    argAct.doAction("'s vision has returned to normal.");
+  }
 }
