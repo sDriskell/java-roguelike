@@ -2,6 +2,15 @@ package roguelike.functionalinterfaces;
 
 import roguelike.DialogResult;
 
+/**
+ * 
+ * @param <T>
+ */
 public interface DialogCallback<T> {
-	public void setResult(DialogResult<T> result);
+
+  /**
+   * 
+   * @param argRes
+   */
+  public void setResult(DialogResult<T> argRes);
 }

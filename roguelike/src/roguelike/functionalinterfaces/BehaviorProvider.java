@@ -3,6 +3,15 @@ package roguelike.functionalinterfaces;
 import roguelike.actors.Actor;
 import roguelike.actors.behaviors.Behavior;
 
+/**
+ * 
+ */
 public interface BehaviorProvider {
-	public Behavior create(Actor actor);
+
+  /**
+   * 
+   * @param argAct
+   * @return
+   */
+  public Behavior create(Actor argAct);
 }

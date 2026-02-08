@@ -2,6 +2,14 @@ package roguelike.functionalinterfaces;
 
 import roguelike.actors.Actor;
 
+/**
+ * 
+ */
 public interface ActorProvider {
-	public Actor get();
+
+  /**
+   * 
+   * @return
+   */
+  public Actor get();
 }

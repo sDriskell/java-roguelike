@@ -1,7 +1,17 @@
+
 package roguelike.functionalinterfaces;
 
 import roguelike.actors.conditions.Condition;
 
+/**
+ * 
+ */
 public interface ConditionProvider {
-	public Condition get(int duration);
+
+  /**
+   * 
+   * @param argDur
+   * @return
+   */
+  public Condition get(int argDur);
 }
