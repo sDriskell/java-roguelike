@@ -16,99 +16,118 @@ import roguelike.maps.Path.Step;
 import roguelike.util.Log;
 import squidpony.squidgrid.util.DirectionIntercardinal;
 
+/**
+ * 
+ */
 public class SearchForPlayerBehavior extends EnemyBehavior {
-	private static final long serialVersionUID = 1L;
 
-	private Point lastPlayerLocation;
-	private transient AStarPathfinder pathfinder;
-	private transient Path pathToTarget;
-	private MapArea map;
+  private static final long serialVersionUID = 1L;
 
-	public SearchForPlayerBehavior(Actor actor) {
-		super(actor);
-		this.map = Game.current().getCurrentMapArea();
+  private static final String LOOKING_FOR_YOU = "Looking for you";
 
-		pathfinder = new AStarPathfinder(map, actor.getVisionRadius() * 2);
-	}
+  private Point lastPlayerLocation;
+  private transient AStarPathfinder pathfinder;
+  private transient Path pathToTarget;
+  private MapArea map;
 
-	private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
-		in.defaultReadObject();
+  /**
+   * 
+   * @param argAct
+   */
+  public SearchForPlayerBehavior(Actor argAct) {
+    super(argAct);
+    map = Game.current().getCurrentMapArea();
+    pathfinder = new AStarPathfinder(map, argAct.getVisionRadius() * 2);
+  }
 
-		pathfinder = new AStarPathfinder(map, actor.getVisionRadius() * 2);
-	}
+  /**
+   * 
+   * @param in
+   * @throws ClassNotFoundException
+   * @throws IOException
+   */
+  private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
+    in.defaultReadObject();
+    pathfinder = new AStarPathfinder(map, actor.getVisionRadius() * 2);
+  }
 
-	@Override
-	public boolean isHostile() {
-		return true;
-	}
+  @Override
+  public boolean isHostile() {
+    return true;
+  }
 
-	@Override
-	public Action getAction() {
+  @Override
+  public Action getAction() {
+    /*
+     * if the NPC can see the player, just walk in his direction. if blocked or out
+     * of sight range find a path to the last place it saw the player
+     */
 
-		// if the NPC can see the player, just walk in his direction. if blocked or out of sight range,
-		// find a path to the last place it saw the player
+    if (lastPlayerLocation != null && lastPlayerLocation.equals(actor.getPosition())) {
+      lastPlayerLocation = null;
+    }
 
-		if (lastPlayerLocation != null && lastPlayerLocation.equals(actor.getPosition())) {
-			lastPlayerLocation = null;
-		}
+    Actor player = Game.current().getPlayer();
 
-		Actor player = Game.current().getPlayer();
-		if (actor.canSee(player, map)) {
-			lastPlayerLocation = player.getPosition();
-		}
+    if (actor.canSee(player, map)) {
+      lastPlayerLocation = player.getPosition();
+    }
 
-		// go towards player location
-		if (lastPlayerLocation != null) {
+    // go towards player location
+    if (lastPlayerLocation != null) {
+      int sx = actor.getPosition().x;
+      int sy = actor.getPosition().y;
+      int tx = lastPlayerLocation.x;
+      int ty = lastPlayerLocation.y;
+      pathToTarget = pathfinder.findPath(map, sx, sy, tx, ty);
 
-			int sx = actor.getPosition().x;
-			int sy = actor.getPosition().y;
-			int tx = lastPlayerLocation.x;
-			int ty = lastPlayerLocation.y;
-			pathToTarget = pathfinder.findPath(map, sx, sy, tx, ty);
-			if (pathToTarget != null) {
-				pathToTarget.nextStep();
-				Step step = pathToTarget.getCurrentStep();
-				if (step != null) {
-					nextBehavior = this;
+      if (pathToTarget != null) {
+        pathToTarget.nextStep();
+        Step step = pathToTarget.getCurrentStep();
 
-					pathToTarget.nextStep();
-					int ssx = (step.getX()) - sx;
-					int ssy = (step.getY()) - sy;
-					return new WalkAction(actor, map, DirectionIntercardinal.getDirection(ssx, ssy));
-				}
-			}
-		}
-		Log.verboseDebug("Resting, no path to player...");
-		nextBehavior = new MoveToRandomPointBehavior(actor);
-		return new WaitAction(actor);
-	}
+        if (step != null) {
+          nextBehavior = this;
+          pathToTarget.nextStep();
+          int ssx = (step.getX()) - sx;
+          int ssy = (step.getY()) - sy;
 
-	@Override
-	public void onAttacked(Actor attacker) {
-		Log.debug("SearchForPlayerBehavior: Switching to targeted attack behavior");
-		nextBehavior = new TargetedAttackBehavior(actor, attacker);
-	}
+          return new WalkAction(actor, map, DirectionIntercardinal.getDirection(ssx, ssy));
+        }
+      }
+    }
 
-	@Override
-	public Behavior getNextBehavior() {
+    Log.verboseDebug("Resting, no path to player...");
+    nextBehavior = new MoveToRandomPointBehavior(actor);
 
-		Actor player = Game.current().getPlayer();
-		if (actor.canSee(player, map)) {
-			if (canAttackTarget(player))
-				nextBehavior = new TargetedAttackBehavior(actor, player);
-		}
+    return new WaitAction(actor);
+  }
 
-		if (actor.isAdjacentTo(player)) {
+  @Override
+  public void onAttacked(Actor attacker) {
+    Log.debug("SearchForPlayerBehavior: Switching to targeted attack behavior");
+    nextBehavior = new TargetedAttackBehavior(actor, attacker);
+  }
 
-			Log.debug("Attacking Player");
-			return new TargetedAttackBehavior(actor, player);
-		}
+  @Override
+  public Behavior getNextBehavior() {
+    Actor player = Game.current().getPlayer();
 
-		return nextBehavior;
-	}
+    if (actor.canSee(player, map)) {
+      if (canAttackTarget(player)) {
+        nextBehavior = new TargetedAttackBehavior(actor, player);
+      }
+    }
 
-	@Override
-	public String getDescription() {
-		return "Looking for you";
-	}
+    if (actor.isAdjacentTo(player)) {
+      Log.debug("Attacking Player");
+      return new TargetedAttackBehavior(actor, player);
+    }
+
+    return nextBehavior;
+  }
+
+  @Override
+  public String getDescription() {
+    return LOOKING_FOR_YOU;
+  }
 }

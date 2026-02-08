@@ -17,7 +17,7 @@ public class Inventory implements Serializable {
   }
 
   public boolean any() {
-    return items.isEmpty();
+    return items != null && items.isEmpty() && items.size() > 0;
   }
 
   public int getCount() {

@@ -82,26 +82,26 @@ public abstract class Actor implements Serializable {
 
   /**
    * 
-   * @param argOut
+   * @param out
    * @throws IOException
    */
-  private void writeObject(ObjectOutputStream argOut) throws IOException {
-    argOut.defaultWriteObject();
-    argOut.writeInt(color.getRGB());
+  private void writeObject(ObjectOutputStream out) throws IOException {
+    out.defaultWriteObject();
+    out.writeInt(color.getRGB());
     Log.debug("writing actor: " + actorId);
   }
 
   /**
    * 
-   * @param argIn
+   * @param in
    * @throws IOException
    * @throws ClassNotFoundException
    */
-  private void readObject(ObjectInputStream argIn) throws IOException, ClassNotFoundException {
-    argIn.defaultReadObject();
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
 
     game = Game.current();
-    color = SColorFactory.asSColor(argIn.readInt());
+    color = SColorFactory.asSColor(in.readInt());
 
     Log.debug("reading actor: " + actorId);
     Log.debug("game=" + game.toString());

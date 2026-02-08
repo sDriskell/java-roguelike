@@ -30,12 +30,12 @@ public class TurnResult implements Serializable {
 
   /**
    * 
-   * @param argIn
+   * @param in
    * @throws ClassNotFoundException
    * @throws IOException
    */
-  private void readObject(ObjectInputStream argIn) throws ClassNotFoundException, IOException {
-    argIn.defaultReadObject();
+  private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
+    in.defaultReadObject();
 
     currentLook = new Pair<>(null, false);
     events = new ArrayList<>();
