@@ -71,7 +71,7 @@ public class LookDisplay extends TextWindow {
       add(textList, actor.getDescription());
       Weapon equipped = ItemSlot.RIGHT_HAND.getEquippedWeapon(actor);
       add(textList, " `Gray`Weapon");
-      add(textList, "`White`" + equipped.name() + " (" + equipped.defaultDamageType().name() + ")");
+      add(textList, "`White`" + equipped.getName() + " (" + equipped.defaultDamageType().getName() + ")");
       add(textList, "");
       Statistics stats = actor.statistics();
       add(textList,

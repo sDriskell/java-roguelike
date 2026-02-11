@@ -49,12 +49,12 @@ public class ChooseItemCommandAction extends DialogInputRequiredAction<InputComm
           if (selectedItem.type() == ItemType.RANGED_WEAPON) {
             ItemSlot.RANGED.equipItem(actor, selectedItem);
             res = ActionResult.success()
-                .setMessage(actor.doAction("equips the %s", selectedItem.name()));
+                .setMessage(actor.doAction("equips the %s", selectedItem.getName()));
           }
           else {
             ItemSlot.RIGHT_HAND.equipItem(actor, selectedItem);
             res = ActionResult.success()
-                .setMessage(actor.doAction("equips the %s", selectedItem.name()));
+                .setMessage(actor.doAction("equips the %s", selectedItem.getName()));
           }
           break;
 

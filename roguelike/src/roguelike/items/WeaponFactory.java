@@ -9,37 +9,52 @@ import roguelike.actors.conditions.Poisoned;
 import roguelike.items.Equipment.ItemSlot;
 import squidpony.squidcolor.SColor;
 
+//TODO: Refactor hardcoded values
+/**
+ * 
+ */
 public class WeaponFactory {
-
-  private interface WeaponBuilderFactory {
-    public Weapon create();
-  }
 
   private static WeaponFactory factory = new WeaponFactory();
 
   private transient Map<WeaponType, WeaponBuilderFactory> weaponBuilders = new HashMap<>();
 
+  /**
+   * 
+   */
+  private interface WeaponBuilderFactory {
+    public Weapon create();
+  }
+
+  /**
+   * 
+   */
   private WeaponFactory() {
     createNaturalWeapons();
-
     createMeleeWeapons();
-
     createRangedWeapons();
-
     createProjectiles();
   }
 
-  public static Weapon create(WeaponType type) {
-    WeaponBuilderFactory builderFactory = factory.weaponBuilders.get(type);
+  /**
+   * 
+   * @param argType
+   * @return
+   */
+  public static Weapon create(WeaponType argType) {
+    WeaponBuilderFactory builderFactory = factory.weaponBuilders.get(argType);
 
     if (builderFactory != null) {
       return builderFactory.create();
     }
+
     return null;
   }
 
+  /**
+   * 
+   */
   private void createMeleeWeapons() {
-
     weaponBuilders.put(WeaponType.AXE,
         () -> WeaponBuilder.melee("axe", "slashes at %s", ']', SColor.LIGHT_BLUE)
             .withDescription("A heavy axe, serviceable but dull.").withCategory(WeaponCategory.AXE)
@@ -73,8 +88,10 @@ public class WeaponFactory {
             .withDroppable(true).withDefenseTargetNumber(8).build());
   }
 
+  /**
+   * 
+   */
   private void createRangedWeapons() {
-
     weaponBuilders.put(WeaponType.SHORT_BOW, () -> WeaponBuilder
         .ranged("short bow", "swings the bow at %s", ')', SColor.BRONZE, 15, WeaponCategory.ARROW)
         .withDescription("A short bow, able to send arrows flying a respectable distance.")
@@ -83,8 +100,10 @@ public class WeaponFactory {
         .withDroppable(true).withDefenseTargetNumber(9).withRange(10).build());
   }
 
+  /**
+   * 
+   */
   private void createProjectiles() {
-
     weaponBuilders.put(WeaponType.ARROW,
         () -> WeaponBuilder.projectile("arrow", "shoots %s", '/', SColor.BRONZE)
             .withDescription("A normal-looking arrow.").withCategory(WeaponCategory.BOW)
@@ -93,8 +112,10 @@ public class WeaponFactory {
             .withDroppable(true).canEquip(ItemSlot.PROJECTILE).build());
   }
 
+  /**
+   * 
+   */
   private void createNaturalWeapons() {
-
     weaponBuilders.put(WeaponType.BITE,
         () -> WeaponBuilder.melee("bite", "bites %s", 'b', SColor.YELLOW)
             .withDescription("A vicious bite that can cause serious damage.")

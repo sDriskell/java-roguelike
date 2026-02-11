@@ -42,7 +42,7 @@ public class GetItemAction extends Action {
 
     if (item != null) {
       Inventory inv = map.getItemsAt(actor.getPosition().x, actor.getPosition().y);
-      Item pickUp = inv.getItem(this.item.itemId());
+      Item pickUp = inv.getItem(this.item.getItemId());
       return pickUpItem(inv, pickUp);
     }
 
@@ -70,7 +70,7 @@ public class GetItemAction extends Action {
       actor.inventory().add(argPickUp);
       argInv.remove(argPickUp);
 
-      String msg = actor.doAction("picks up the %s", argPickUp.name());
+      String msg = actor.doAction("picks up the %s", argPickUp.getName());
       Game.current().displayMessage(msg, SColor.LIGHT_BLUE);
 
       return ActionResult.success();

@@ -7,123 +7,215 @@ import roguelike.functionalinterfaces.StatisticProvider;
 import roguelike.items.Equipment.ItemSlot;
 import squidpony.squidcolor.SColor;
 
+//TODO: A builder pattern might be a good approach here.  Trim down arg count for factory methods
+
+/**
+ * 
+ */
 public class WeaponBuilder extends ItemBuilder {
 
   private Weapon weapon;
 
-  private WeaponBuilder(Weapon weapon) {
-    super(weapon);
-
-    this.weapon = weapon;
+  /**
+   * 
+   * @param argWpn
+   */
+  private WeaponBuilder(Weapon argWpn) {
+    super(argWpn);
+    weapon = argWpn;
   }
 
+  /**
+   * 
+   * @return
+   */
   private Weapon weapon() {
     return (Weapon) item;
   }
 
-  public static WeaponBuilder melee(String name, String attackDescription, char symbol,
-      SColor color) {
-    Weapon weapon = new MeleeWeapon();
-    weapon.name = name;
-    weapon.attackDescription = attackDescription;
-    weapon.symbol = symbol;
-    weapon.color = color;
+  /**
+   * 
+   * @param argName
+   * @param argAtkDesc
+   * @param argSym
+   * @param argCol
+   * @return
+   */
+  public static WeaponBuilder melee(String argName, String argAtkDesc, char argSym, SColor argCol) {
+    Weapon wpn = new MeleeWeapon();
 
-    return new WeaponBuilder(weapon);
+    wpn.name = argName;
+    wpn.attackDescription = argAtkDesc;
+    wpn.symbol = argSym;
+    wpn.color = argCol;
+
+    return new WeaponBuilder(wpn);
   }
 
-  public static WeaponBuilder ranged(String name, String attackDescription, char symbol,
-      SColor color, int maxRange, WeaponCategory projectileType) {
-    RangedWeapon w = new RangedWeapon();
-    w.name = name;
-    w.attackDescription = attackDescription;
-    w.symbol = symbol;
-    w.color = color;
-    w.maxRange = maxRange;
+  /**
+   * 
+   * @param argName
+   * @param argAtkDesc
+   * @param argSym
+   * @param argCol
+   * @param argMaxRange
+   * @param argProjType
+   * @return
+   */
+  public static WeaponBuilder ranged(String argName, String argAtkDesc, char argSym, SColor argCol,
+      int argMaxRange, WeaponCategory argProjType) {
+    RangedWeapon rwpn = new RangedWeapon();
+    rwpn.name = argName;
+    rwpn.attackDescription = argAtkDesc;
+    rwpn.symbol = argSym;
+    rwpn.color = argCol;
+    rwpn.maxRange = argMaxRange;
 
-    if (projectileType == null) {
-      w.projectileType = null;
-      w.requiresProjectiles = false;
+    if (argProjType == null) {
+      rwpn.projectileType = null;
+      rwpn.requiresProjectiles = false;
     }
     else {
-      w.projectileType = projectileType;
-      w.requiresProjectiles = true;
+      rwpn.projectileType = argProjType;
+      rwpn.requiresProjectiles = true;
     }
 
-    return new WeaponBuilder(w);
+    return new WeaponBuilder(rwpn);
   }
 
-  public static WeaponBuilder projectile(String name, String attackDescription, char symbol,
-      SColor color) {
-    Projectile w = new Projectile();
-    w.name = name;
-    w.attackDescription = attackDescription;
-    w.symbol = symbol;
-    w.color = color;
+  /**
+   * 
+   * @param argName
+   * @param argAtkDesc
+   * @param argSym
+   * @param argCol
+   * @return
+   */
+  public static WeaponBuilder projectile(String argName, String argAtkDesc, char argSym,
+      SColor argCol) {
+    Projectile proj = new Projectile();
+    proj.name = argName;
+    proj.attackDescription = argAtkDesc;
+    proj.symbol = argSym;
+    proj.color = argCol;
 
-    return new WeaponBuilder(w);
+    return new WeaponBuilder(proj);
   }
 
-  public WeaponBuilder withDescription(String description) {
-    weapon.description = description;
+  /**
+   * 
+   * @param argDesc
+   * @return
+   */
+  public WeaponBuilder withDescription(String argDesc) {
+    weapon.description = argDesc;
     return this;
   }
 
-  public WeaponBuilder withCategory(WeaponCategory category) {
-    weapon.weaponCategory = category;
+  /**
+   * 
+   * @param argCat
+   * @return
+   */
+  public WeaponBuilder withCategory(WeaponCategory argCat) {
+    weapon.weaponCategory = argCat;
     return this;
   }
 
-  public WeaponBuilder withTargetNumberAndDamageValue(DamageType damageType, int targetNumber,
-      int damageValue) {
-    weapon.damage.put(damageType, new int[] { targetNumber, damageValue });
+  /**
+   * 
+   * @param argDmgType
+   * @param argTgtNum
+   * @param argDmgVal
+   * @return
+   */
+  public WeaponBuilder withTargetNumberAndDamageValue(DamageType argDmgType, int argTgtNum,
+      int argDmgVal) {
+    weapon.damage.put(argDmgType, new int[] { argTgtNum, argDmgVal });
     return this;
   }
 
-  public WeaponBuilder withDefenseTargetNumber(int targetNumber) {
-    weapon.defenseTargetNumber = targetNumber;
+  /**
+   * 
+   * @param argTgtNum
+   * @return
+   */
+  public WeaponBuilder withDefenseTargetNumber(int argTgtNum) {
+    weapon.defenseTargetNumber = argTgtNum;
     return this;
   }
 
-  public WeaponBuilder canCauseCondition(Condition condition, int attackSuccesses,
-      StatisticProvider statistic, int attributeSuccesses) {
-    weapon.canCauseCondition = condition;
-    weapon.attackSuccessesToCause = attackSuccesses;
-    weapon.defenseAgainstConditionStat = statistic;
-    weapon.attributeSuccessesToDefend = attributeSuccesses;
+  /**
+   * 
+   * @param argCond
+   * @param argAtkSucc
+   * @param argStat
+   * @param argAttrSucc
+   * @return
+   */
+  public WeaponBuilder canCauseCondition(Condition argCond, int argAtkSucc,
+      StatisticProvider argStat, int argAttrSucc) {
+    weapon.canCauseCondition = argCond;
+    weapon.attackSuccessesToCause = argAtkSucc;
+    weapon.defenseAgainstConditionStat = argStat;
+    weapon.attributeSuccessesToDefend = argAttrSucc;
     return this;
   }
 
-  public WeaponBuilder canEquip(ItemSlot equippable) {
-    weapon.equippable = equippable;
+  /**
+   * 
+   * @param argIsEquippable
+   * @return
+   */
+  public WeaponBuilder canEquip(ItemSlot argIsEquippable) {
+    weapon.equippable = argIsEquippable;
     return this;
   }
 
-  public WeaponBuilder withReach(MeleeRange reach) {
-    weapon.reach = reach.reach;
+  /**
+   * 
+   * @param argReach
+   * @return
+   */
+  public WeaponBuilder withReach(MeleeRange argReach) {
+    weapon.reach = argReach.reach;
     return this;
   }
 
-  public WeaponBuilder withRange(int range) {
-    ((RangedWeapon) weapon).maxRange = range;
+  /**
+   * 
+   * @param argRange
+   * @return
+   */
+  public WeaponBuilder withRange(int argRange) {
+    ((RangedWeapon) weapon).maxRange = argRange;
     return this;
   }
 
-  public WeaponBuilder withDefaultDamageType(DamageType damageType) {
-    weapon.defaultDamageType = damageType;
+  /**
+   * 
+   * @param argDmgType
+   * @return
+   */
+  public WeaponBuilder withDefaultDamageType(DamageType argDmgType) {
+    weapon.defaultDamageType = argDmgType;
     return this;
   }
 
   @Override
-  public WeaponBuilder withDroppable(boolean droppable) {
-    return (WeaponBuilder) super.withDroppable(droppable);
+  public WeaponBuilder withDroppable(boolean argIsDroppable) {
+    return (WeaponBuilder) super.withDroppable(argIsDroppable);
   }
 
   @Override
-  public WeaponBuilder withWeight(int weight) {
-    return (WeaponBuilder) super.withWeight(weight);
+  public WeaponBuilder withWeight(int argWt) {
+    return (WeaponBuilder) super.withWeight(argWt);
   }
 
+  /**
+   * 
+   * @return
+   */
   public Weapon build() {
     /* validate */
     if (weapon.defaultDamageType == null)

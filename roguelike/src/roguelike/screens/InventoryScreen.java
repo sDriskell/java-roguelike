@@ -27,7 +27,7 @@ public class InventoryScreen extends Screen {
 
     menu = new Menu<Item>(inventory.allItems()) {
       protected StringEx getTextFor(Item item, int position) {
-        String textLine = String.format("%-40s %12d", item.name(), 111);
+        String textLine = String.format("%-40s %12d", item.getName(), 111);
 
         return new StringEx(getCharForIndex(position) + ") " + textLine);
       }
@@ -101,7 +101,7 @@ public class InventoryScreen extends Screen {
     for (int i = 0; i < slots.length; i++) {
       if (item.canEquip(slots[i])) {
         slots[i].equipItem(actor, item);
-        Game.current().displayMessage(actor.doAction("equips the %s", item.name()));
+        Game.current().displayMessage(actor.doAction("equips the %s", item.getName()));
         break;
       }
     }
@@ -110,6 +110,6 @@ public class InventoryScreen extends Screen {
   public void equipItem(Item item, ItemSlot slot) {
     Actor actor = Game.current().getPlayer();
     slot.equipItem(actor, item);
-    Game.current().displayMessage(actor.doAction("equips the %s", item.name()));
+    Game.current().displayMessage(actor.doAction("equips the %s", item.getName()));
   }
 }

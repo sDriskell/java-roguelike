@@ -86,7 +86,7 @@ public class Npc extends Actor {
         Item i = droppableItems.get(x);
         map.addItem(i, getPosition().x, getPosition().y);
 
-        game.displayMessage("Dropped " + i.name(), SColor.GREEN);
+        game.displayMessage("Dropped " + i.getName(), SColor.GREEN);
       }
 
     }

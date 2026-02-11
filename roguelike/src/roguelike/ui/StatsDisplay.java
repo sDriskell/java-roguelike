@@ -99,16 +99,16 @@ public class StatsDisplay extends TextWindow {
     Weapon ammo = ItemSlot.PROJECTILE.getEquippedWeapon(player);
 
     if (left != null)
-      terminal.write(leftX, startY, String.format("%1$-15s", left.name()));
+      terminal.write(leftX, startY, String.format("%1$-15s", left.getName()));
 
     if (right != null)
-      terminal.write(leftX, startY + 1, String.format("%1$-15s", right.name()));
+      terminal.write(leftX, startY + 1, String.format("%1$-15s", right.getName()));
 
     if (ranged != null)
-      terminal.write(leftX, startY + 3, String.format("%1$-15s", ranged.name()));
+      terminal.write(leftX, startY + 3, String.format("%1$-15s", ranged.getName()));
 
     if (ammo != null)
-      terminal.write(leftX, startY + 4, String.format("%1$-15s", ammo.name()));
+      terminal.write(leftX, startY + 4, String.format("%1$-15s", ammo.getName()));
 
     headerTerm.write(leftX + 14, startY + 6, "MP");
     int weaponProficiency = 0; // TODO: calculate this

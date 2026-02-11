@@ -7,37 +7,70 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * 
+ */
 public class Inventory implements Serializable {
+
   private static final long serialVersionUID = 2003563004618547276L;
 
   private List<Item> items;
 
+  /**
+   * 
+   */
   public Inventory() {
     items = new ArrayList<>();
   }
 
+  /**
+   * 
+   * @return
+   */
   public boolean any() {
+    // TODO: this method might require a size compare for other purposes
     return items != null && items.isEmpty() && items.size() > 0;
   }
 
+  /**
+   * 
+   * @return
+   */
   public int getCount() {
     return items.size();
   }
 
-  public Item getItem(int index) {
-    return items.get(index);
+  /**
+   * 
+   * @param argIdx
+   * @return
+   */
+  public Item getItem(int argIdx) {
+    return items.get(argIdx);
   }
 
-  public Item getItem(UUID itemId) {
-    for (Item i : items)
-      if (i.isSameItem(itemId)) {
+  /**
+   * 
+   * @param argItmId
+   * @return
+   */
+  public Item getItem(UUID argItmId) {
+    for (Item i : items) {
+      if (i.isSameItem(argItmId)) {
         return i;
       }
+    }
+
     return null;
   }
 
+  /**
+   * 
+   * @return
+   */
   public List<Item> getDroppableItems() {
     ArrayList<Item> droppable = new ArrayList<>();
+
     for (Item i : items) {
       if (i.isDroppable()) {
         droppable.add(i);
@@ -50,35 +83,53 @@ public class Inventory implements Serializable {
     return items;
   }
 
-  public void add(Item item) {
-    if (item == null)
+  /**
+   * 
+   * @param argItm
+   */
+  public void add(Item argItm) {
+    if (argItm == null) {
       throw new IllegalArgumentException("item cannot be null");
+    }
 
-    items.add(item);
-
+    items.add(argItm);
     items = ItemStack.getItemStack(items);
   }
 
-  public boolean remove(Item item) {
-    if (item == null)
+  /**
+   * 
+   * @param argItm
+   * @return
+   */
+  public boolean remove(Item argItm) {
+    if (argItm == null) {
       throw new IllegalArgumentException("item cannot be null");
+    }
 
-    return items.remove(item);
+    return items.remove(argItm);
   }
 
-  public String[] getGroupedItemListAsText(int maxSize) {
-
+  /**
+   * 
+   * @param argMaxSize
+   * @return
+   */
+  public String[] getGroupedItemListAsText(int argMaxSize) {
     Map<Object, List<Item>> groupedItems = this.items.stream()
-        .collect(Collectors.groupingBy(i -> i.name()));
+        .collect(Collectors.groupingBy(i -> i.getName()));
 
-    String[] items = new String[Math.min(maxSize, groupedItems.size())];
+    String[] items = new String[Math.min(argMaxSize, groupedItems.size())];
     boolean displayEllipsis = false;
-    if (maxSize < groupedItems.size()) {
+
+    if (argMaxSize < groupedItems.size()) {
       displayEllipsis = true;
     }
+
     Object[] keys = groupedItems.keySet().toArray();
+
     for (int i = 0; i < groupedItems.size(); i++) {
       int size = groupedItems.get(keys[i]).size();
+
       if (size == 1) {
         items[i] = keys[i].toString();
       }
@@ -86,24 +137,35 @@ public class Inventory implements Serializable {
         items[i] = keys[i].toString() + " (x" + size + ")";
       }
     }
-    if (displayEllipsis)
-      items[items.length - 1] = String.format("(%d more)", groupedItems.size() - maxSize);
+
+    if (displayEllipsis) {
+      items[items.length - 1] = String.format("(%d more)", groupedItems.size() - argMaxSize);
+    }
 
     return items;
   }
 
-  public String[] getItemListAsText(int maxSize) {
+  /**
+   * 
+   * @param argMaxSize
+   * @return
+   */
+  public String[] getItemListAsText(int argMaxSize) {
     boolean displayEllipsis = false;
-    if (maxSize < this.items.size()) {
+
+    if (argMaxSize < this.items.size()) {
       displayEllipsis = true;
     }
-    String[] items = new String[Math.min(maxSize, this.items.size())];
+
+    String[] items = new String[Math.min(argMaxSize, this.items.size())];
 
     for (int i = 0; i < items.length; i++) {
-      items[i] = this.items.get(i).name();
+      items[i] = this.items.get(i).getName();
     }
-    if (displayEllipsis)
-      items[items.length - 1] = String.format("(%d more)", this.items.size() - maxSize);
+
+    if (displayEllipsis) {
+      items[items.length - 1] = String.format("(%d more)", this.items.size() - argMaxSize);
+    }
 
     return items;
   }

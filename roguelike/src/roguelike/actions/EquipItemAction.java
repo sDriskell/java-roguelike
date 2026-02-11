@@ -31,11 +31,11 @@ public class EquipItemAction extends Action {
 
     if (item.type() == ItemType.RANGED_WEAPON) {
       ItemSlot.RANGED.equipItem(actor, item);
-      res = ActionResult.success().setMessage("Equipped ranged weapon: " + item.name());
+      res = ActionResult.success().setMessage("Equipped ranged weapon: " + item.getName());
     }
     else {
       itemSlot.equipItem(actor, item);
-      res = ActionResult.success().setMessage("Selected item: " + item.name());
+      res = ActionResult.success().setMessage("Selected item: " + item.getName());
     }
 
     return res;

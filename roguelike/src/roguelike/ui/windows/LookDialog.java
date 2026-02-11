@@ -72,7 +72,7 @@ public class LookDialog extends Dialog<InputCommand> {
     textList.add("On ground:");
     if (inventory != null && inventory.any()) {
       for (Item i : inventory.allItems()) {
-        textList.add(i.name());
+        textList.add(i.getName());
       }
     }
 

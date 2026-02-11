@@ -11,108 +11,122 @@ import roguelike.actors.Actor;
 import roguelike.util.Log;
 import squidpony.squidutility.Pair;
 
+/**
+ * 
+ */
 public class ItemStack extends Item {
+
   private static final long serialVersionUID = -3935638455081216485L;
 
   private List<Item> items;
 
-  private ItemStack(String name, Item item) {
+  /**
+   * 
+   * @param argName
+   * @param artItm
+   */
+  private ItemStack(String argName, Item artItm) {
     super(true);
-    this.name = name;
-    this.items = new ArrayList<>();
-
-    items.add(item);
+    name = argName;
+    items = new ArrayList<>();
+    items.add(artItm);
   }
 
-  private ItemStack(String name, List<Item> items) {
+  /**
+   * 
+   * @param argName
+   * @param argItms
+   */
+  private ItemStack(String argName, List<Item> argItms) {
     super(true);
-    this.name = name;
-    this.items = new ArrayList<>(items);
+    name = argName;
+    items = new ArrayList<>(argItms);
   }
 
-  public static List<Item> getItemStack(List<Item> items) {
+  /**
+   * 
+   * @param argItms
+   * @return
+   */
+  public static List<Item> getItemStack(List<Item> argItms) {
     List<Item> stacks = new ArrayList<>();
-    items.stream().filter(i -> !i.stackable).forEach(i -> stacks.add(i));
+    argItms.stream().filter(i -> !i.stackable).forEach(i -> stacks.add(i));
 
-    Map<Object, List<Item>> groups = items.stream()
+    Map<Object, List<Item>> groups = argItms.stream()
         .flatMap(
             i -> (i instanceof ItemStack ? ((ItemStack) i).unstack() : Arrays.asList(i)).stream())
         .filter(i -> i.stackable).collect(Collectors.groupingBy(i -> i.name));
 
     for (Object key : groups.keySet()) {
       List<Item> groupedItems = groups.get(key);
-
       stacks.add(new ItemStack(key.toString(), groupedItems));
     }
+
     Log.debug("Item stack count: " + stacks.size());
     return stacks;
   }
 
+  // TODO: check to see if this leads to an out of bounds index
   @Override
   public Weapon asWeapon() {
-    if (items.isEmpty())
-      return null;
-    return items.get(0).as(Weapon.class);
+    return items.isEmpty() ? null : items.get(0).as(Weapon.class);
   }
 
+  // TODO: check to see if this leads to an out of bounds index
   @Override
   public Projectile asProjectile() {
-    if (items.isEmpty())
-      return null;
-    return items.get(0).asProjectile();
+    return items.isEmpty() ? null : items.get(0).asProjectile();
   }
 
+  // TODO: check to see if this leads to an out of bounds index
   @Override
   public ItemType type() {
-    if (items.isEmpty())
-      return ItemType.UNDEFINED;
-
-    return items.get(0).type();
+    return items.isEmpty() ? ItemType.UNDEFINED : items.get(0).type();
   }
 
   @Override
-  public String name() {
-    return super.name() + " x" + items.size();
+  public String getName() {
+    return super.getName() + " x" + items.size();
   }
 
   @Override
   public String getDescription() {
-    if (items.isEmpty()) {
-      return "empty";
-    }
-    return items.get(0).getDescription();
+    return items.isEmpty() ? "empty" : items.get(0).getDescription();
   }
 
   @Override
   public boolean isSameItem(UUID otherId) {
-    if (this.itemId().equals(otherId))
+    if (this.getItemId().equals(otherId)) {
       return true;
+    }
 
     for (Item i : items) {
-      if (i.isSameItem(otherId))
+      if (i.isSameItem(otherId)) {
         return true;
-      Log.debug("i.id=" + i.itemId() + ", other.id=" + otherId);
+      }
+
+      Log.debug("i.id=" + i.getItemId() + ", other.id=" + otherId);
     }
     return false;
   }
 
+  // TODO: check to see if this leads to an out of bounds index
   @Override
   public Pair<Item, Boolean> onUsed() {
-    if (items.isEmpty())
-      return null;
-
-    return new Pair<>(items.remove(items.size() - 1), items.isEmpty());
+    return items.isEmpty() ? null : new Pair<>(items.remove(items.size() - 1), items.isEmpty());
   }
 
+  /**
+   * 
+   * @return
+   */
   public List<Item> unstack() {
     return items;
   }
 
+  // TODO: check to see if this leads to an out of bounds index
   @Override
-  public boolean canUse(Actor user, Actor target) {
-    if (items.isEmpty())
-      return false;
-
-    return items.get(0).canUse(user, target);
+  public boolean canUse(Actor argUsr, Actor argTgt) {
+    return items.isEmpty() ? false : items.get(0).canUse(argUsr, argTgt);
   }
 }

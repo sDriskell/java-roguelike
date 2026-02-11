@@ -9,20 +9,26 @@ import roguelike.util.Coordinate;
 import squidpony.squidgrid.util.BasicRadiusStrategy;
 import squidpony.squidutility.Pair;
 
+/**
+ * 
+ */
 public class Projectile extends Weapon {
+
   private static final long serialVersionUID = -5440292549086531435L;
 
+  /**
+   * 
+   */
   protected Projectile() {
     super(true);
   }
 
   @Override
-  public boolean canUse(Actor user, Actor target) {
-    Coordinate userPos = user.getPosition();
-    Coordinate targetPos = target.getPosition();
-
-    float distance = targetPos.distance(userPos, BasicRadiusStrategy.CIRCLE);
-    return distance <= 1;
+  public boolean canUse(Actor argUsr, Actor argTgt) {
+    Coordinate userPos = argUsr.getPosition();
+    Coordinate tgtPos = argTgt.getPosition();
+    float dist = tgtPos.distance(userPos, BasicRadiusStrategy.CIRCLE);
+    return dist <= 1;
   }
 
   @Override
@@ -31,8 +37,8 @@ public class Projectile extends Weapon {
   }
 
   @Override
-  public boolean canEquip(ItemSlot slot) {
-    return super.canEquip(slot) || slot == ItemSlot.PROJECTILE;
+  public boolean canEquip(ItemSlot argSlt) {
+    return super.canEquip(argSlt) || argSlt == ItemSlot.PROJECTILE;
   }
 
   @Override
@@ -42,11 +48,9 @@ public class Projectile extends Weapon {
 
   @Override
   public Attack getAttack() {
-
-    double randomFactor = Game.current().random().nextDouble() * baseDamage;
-    int totalDamage = (int) (baseDamage + randomFactor / 2);
-
-    return new RangedAttack(attackDescription, totalDamage, this);
+    double rndFact = Game.current().random().nextDouble() * baseDamage;
+    int totDmg = (int) (baseDamage + rndFact / 2);
+    return new RangedAttack(attackDescription, totDmg, this);
   }
 
   @Override
@@ -55,11 +59,11 @@ public class Projectile extends Weapon {
   }
 
   @Override
-  public void onEquipped(Actor actor) {
+  public void onEquipped(Actor argAct) {
   }
 
   @Override
-  public void onRemoved(Actor actor) {
+  public void onRemoved(Actor argAct) {
   }
 
   @Override
