@@ -4,49 +4,86 @@ import java.awt.Point;
 
 import squidpony.squidgrid.util.DirectionCardinal;
 
+/**
+ * 
+ */
 public class ConnectionPoint extends Point {
-	private static final long serialVersionUID = 6448455982964320426L;
 
-	private DirectionCardinal direction;
-	private boolean connected;
-	private Room room;
-	private Room connectedRoom;
+  private static final long serialVersionUID = 6448455982964320426L;
 
-	public boolean isDoor;
+  private DirectionCardinal direction;
+  private boolean isConnected;
+  private Room room;
+  private Room connectedRoom;
+  public boolean isDoor;
 
-	public ConnectionPoint(int x, int y, DirectionCardinal direction, Room room) {
-		super(x, y);
-		this.direction = direction;
-		this.room = room;
-	}
+  /**
+   * 
+   * @param x
+   * @param y
+   * @param argDir
+   * @param argRoom
+   */
+  public ConnectionPoint(int x, int y, DirectionCardinal argDir, Room argRoom) {
+    super(x, y);
+    direction = argDir;
+    room = argRoom;
+  }
 
-	public ConnectionPoint(Point point, DirectionCardinal direction, Room room) {
-		super(point);
-		this.direction = direction;
-		this.room = room;
-	}
+  /**
+   * 
+   * @param argPnt
+   * @param argDir
+   * @param argRoom
+   */
+  public ConnectionPoint(Point argPnt, DirectionCardinal argDir, Room argRoom) {
+    super(argPnt);
+    direction = argDir;
+    room = argRoom;
+  }
 
-	public void connectTo(Room room) {
-		if (room == null)
-			throw new IllegalArgumentException("connectTo room cannot be null");
+  /**
+   * 
+   * @param argRoom
+   */
+  public void connectTo(Room argRoom) {
+    if (argRoom == null) {
+      throw new IllegalArgumentException("connectTo room cannot be null");
+    }
 
-		connectedRoom = room;
-		connected = true;
-	}
+    connectedRoom = argRoom;
+    isConnected = true;
+  }
 
-	public DirectionCardinal direction() {
-		return this.direction;
-	}
+  /**
+   * 
+   * @return
+   */
+  public DirectionCardinal direction() {
+    return direction;
+  }
 
-	public boolean isConnected() {
-		return connected;
-	}
+  /**
+   * 
+   * @return
+   */
+  public boolean isConnected() {
+    return isConnected;
+  }
 
-	public Room room() {
-		return this.room;
-	}
+  /**
+   * 
+   * @return
+   */
+  public Room room() {
+    return room;
+  }
 
-	public Room connectedRoom() {
-		return this.connectedRoom;
-	}
+  /**
+   * 
+   * @return
+   */
+  public Room connectedRoom() {
+    return connectedRoom;
+  }
 }

@@ -45,7 +45,7 @@ public class StatsDisplay extends TextWindow {
     terminal.write(leftMargin, 1,
         String.format("P:%3d,%3d", player.getPosition().x, player.getPosition().y));
     terminal.write(leftMargin, 2, String.format("E:%3d", player.energy().getCurrent()));
-    terminal.write(leftMargin, 3, String.format("%s", Game.current().getCurrentMapArea().name()));
+    terminal.write(leftMargin, 3, String.format("%s", Game.current().getCurrentMapArea().getName()));
 
     drawHealth();
     drawEquipped();

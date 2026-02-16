@@ -1,38 +1,50 @@
 package roguelike.maps;
 
+/**
+ * 
+ */
 public class Door extends Tile {
-	private static final long serialVersionUID = 1L;
 
-	private boolean isOpen;
+  private static final long serialVersionUID = 1L;
 
-	public void open(MapArea map) {
-		if (!isOpen) {
-			isOpen = true;
-			isPassable = true;
-			wall = false;
-			lighting = 0f;
+  private boolean isOpen;
 
-			map.updateValues(); // visibility changed, update
-		}
-	}
+  /**
+   * 
+   * @param argMap
+   */
+  public void open(MapArea argMap) {
+    if (!isOpen) {
+      isOpen = true;
+      isPassable = true;
+      wall = false;
+      lighting = 0f;
 
-	public void close(MapArea map) {
-		if (isOpen) {
-			isOpen = false;
-			isPassable = false;
-			wall = true;
-			lighting = 1f;
+      argMap.updateValues();
+    }
+  }
 
-			map.updateValues(); // visibility changed, update
-		}
-	}
+  /**
+   * 
+   * @param argMap
+   */
+  public void close(MapArea argMap) {
+    if (isOpen) {
+      isOpen = false;
+      isPassable = false;
+      wall = true;
+      lighting = 1f;
 
-	@Override
-	public char getSymbol() {
-		if (getActor() != null && visible) {
-			return getActor().symbol();
-		}
+      argMap.updateValues();
+    }
+  }
 
-		return isOpen ? '/' : symbol;
-	}
+  @Override
+  public char getSymbol() {
+    if (getActor() != null && visible) {
+      return getActor().symbol();
+    }
+
+    return isOpen ? '/' : symbol;
+  }
 }

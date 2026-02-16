@@ -3,67 +3,82 @@ package roguelike.maps;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import roguelike.util.Log;
 
+/**
+ * 
+ * TODO: javadoc for attribute notes
+ * <li><b>closed</b> set of nodes that have been searched through</li>
+ * <li><b>open</b> set of nodes that we do not yet consider fully searched</li>
+ * <li><b>map</b> the map being searched</li>
+ * <li><b>maxSearchDistance</b> the maximum depth of search we're willing to
+ * accept before giving up</li>
+ * <li><b>nodes</b> the complete set of nodes across the map</li>
+ */
 public class AStarPathfinder {
-  /** The set of nodes that have been searched through */
+
   private ArrayList<Node> closed = new ArrayList<>();
-  /** The set of nodes that we do not yet consider fully searched */
   private SortedList open = new SortedList();
-
-  /** The map being searched */
   private MapArea map;
-  /** The maximum depth of search we're willing to accept before giving up */
   private int maxSearchDistance;
-
-  /** The complete set of nodes across the map */
   private Node[][] nodes;
 
   /**
    * Create a path finder
    * 
    * @param heuristic The heuristic used to determine the search order of the map
-   * @param map The map to be searched
-   * @param maxSearchDistance The maximum depth we'll search before giving up
-   * @param allowDiagMovement True if the search should try diaganol movement
+   * @param argMap The map to be searched
+   * @param argMaxDist The maximum depth we'll search before giving up
+   * @param allowDiagMovement True if the search should try diag movement
    */
-  public AStarPathfinder(MapArea map, int maxSearchDistance) {
-    this.map = map;
-    this.maxSearchDistance = maxSearchDistance;
-    nodes = new Node[map.width()][map.height()];
+  public AStarPathfinder(MapArea argMap, int argMaxDist) {
+    map = argMap;
+    maxSearchDistance = argMaxDist;
+    nodes = new Node[argMap.getWidth()][argMap.getHeight()];
 
-    for (int x = 0; x < map.width(); x++) {
-      for (int y = 0; y < map.height(); y++) {
+    for (int x = 0; x < argMap.getWidth(); x++) {
+      for (int y = 0; y < argMap.getHeight(); y++) {
         nodes[x][y] = new Node(x, y);
       }
     }
   }
 
   /**
+   * 
    * @see PathFinder#findPath(Mover, int, int, int, int)
+   * @param argMap
+   * @param sx
+   * @param sy
+   * @param tx
+   * @param ty
+   * @return
    */
-  public Path findPath(MapArea map, int sx, int sy, int tx, int ty) {
-
+  public Path findPath(MapArea argMap, int sx, int sy, int tx, int ty) {
     Log.verboseDebug("Finding path from " + sx + "," + sy + " to " + tx + "," + ty);
-    // initial state for A*. The closed group is empty. Only the starting
-    // tile is in the open list and it's cost is zero, i.e. we're already
-    // there
+
+    /*
+     * initial state for A*. The closed group is empty. Only the starting tile is in
+     * the open list and it's cost is zero, i.e. we're already there
+     */
     nodes[sx][sy].cost = 0;
     nodes[sx][sy].depth = 0;
     closed.clear();
     open.clear();
     open.add(nodes[sx][sy]);
-
     nodes[tx][ty].parent = null;
 
-    // while we haven't found the goal and haven't exceeded our max search
-    // depth
+    // while we haven't found the goal and haven't exceeded our max search depth
     int maxDepth = 0;
+
     while ((maxDepth < maxSearchDistance) && (open.size() != 0)) {
-      // pull out the first node in our open list, this is determined to
-      // be the most likely to be the next step based on our heuristic
+      /*
+       * pull out the first node in our open list, this is determined to be the most
+       * likely to be the next step based on our heuristic
+       */
       Node current = getFirstInOpen();
+
       if (current == nodes[tx][ty]) {
         break;
       }
@@ -71,20 +86,29 @@ public class AStarPathfinder {
       removeFromOpen(current);
       addToClosed(current);
 
-      ArrayList<Point> neighbors = MapHelpers.getNeighbors(map, current.x, current.y, 1);
-      // search through all the neighbours of the current node evaluating
-      // them as next steps
+      List<Point> neighbors = MapHelpers.getNeighbors(argMap, current.x, current.y, 1);
+
+      /*
+       * search through all the neighbours of the current node evaluating them as next
+       * steps
+       */
       for (Point n : neighbors) {
         int xp = n.x;
         int yp = n.y;
+
         float nextStepCost = current.cost + getMovementCost(current.x, current.y, xp, yp);
         Node neighbor = nodes[xp][yp];
+
         if (nextStepCost < neighbor.cost) {
-          if (inOpenList(neighbor))
+          if (inOpenList(neighbor)) {
             removeFromOpen(neighbor);
-          if (inClosedList(neighbor))
+          }
+
+          if (inClosedList(neighbor)) {
             removeFromClosed(neighbor);
+          }
         }
+
         if (!inOpenList(neighbor) && !inClosedList(neighbor)) {
           neighbor.cost = nextStepCost;
           neighbor.heuristic = (float) MapHelpers.distance(xp, yp, tx, ty);
@@ -94,24 +118,28 @@ public class AStarPathfinder {
       }
     }
 
-    // since we've got an empty open list or we've run out of search
-    // there was no path. Just return null
+    /*
+     * since we've got an empty open list or we've run out of search there was no
+     * path. Just return null
+     */
     if (nodes[tx][ty].parent == null) {
       return null;
     }
 
-    // At this point we've definitely found a path so we can uses the parent
-    // references of the nodes to find out way from the target location back
-    // to the start recording the nodes on the way.
+    /*
+     * At this point we've definitely found a path so we can uses the parent
+     * references of the nodes to find out way from the target location back to the
+     * start recording the nodes on the way.
+     */
     Path path = new Path();
-    Node target = nodes[tx][ty];
-    while (target != nodes[sx][sy]) {
-      path.prependStep(target.x, target.y);
-      target = target.parent;
-    }
-    path.prependStep(sx, sy);
+    Node tgt = nodes[tx][ty];
 
-    // thats it, we have our path
+    while (tgt != nodes[sx][sy]) {
+      path.prependStep(tgt.x, tgt.y);
+      tgt = tgt.parent;
+    }
+
+    path.prependStep(sx, sy);
     return path;
   }
 
@@ -128,59 +156,60 @@ public class AStarPathfinder {
   /**
    * Add a node to the open list
    * 
-   * @param node The node to be added to the open list
+   * @param argNode The node to be added to the open list
    */
-  protected void addToOpen(Node node) {
-    open.add(node);
+  protected void addToOpen(Node argNode) {
+    open.add(argNode);
   }
 
   /**
    * Check if a node is in the open list
    * 
-   * @param node The node to check for
+   * @param argNode The node to check for
    * @return True if the node given is in the open list
    */
-  protected boolean inOpenList(Node node) {
-    return open.contains(node);
+  protected boolean inOpenList(Node argNode) {
+    return open.contains(argNode);
   }
 
   /**
    * Remove a node from the open list
    * 
-   * @param node The node to remove from the open list
+   * @param argNode The node to remove from the open list
    */
-  protected void removeFromOpen(Node node) {
-    open.remove(node);
+  protected void removeFromOpen(Node argNode) {
+    open.remove(argNode);
   }
 
   /**
    * Add a node to the closed list
    * 
-   * @param node The node to add to the closed list
+   * @param argNode The node to add to the closed list
    */
-  protected void addToClosed(Node node) {
-    closed.add(node);
+  protected void addToClosed(Node argNode) {
+    closed.add(argNode);
   }
 
   /**
    * Check if the node supplied is in the closed list
    * 
-   * @param node The node to search for
+   * @param argNode The node to search for
    * @return True if the node specified is in the closed list
    */
-  protected boolean inClosedList(Node node) {
-    return closed.contains(node);
+  protected boolean inClosedList(Node argNode) {
+    return closed.contains(argNode);
   }
 
   /**
    * Remove a node from the closed list
    * 
-   * @param node The node to remove from the closed list
+   * @param agNode The node to remove from the closed list
    */
-  protected void removeFromClosed(Node node) {
-    closed.remove(node);
+  protected void removeFromClosed(Node agNode) {
+    closed.remove(agNode);
   }
 
+  // TODO: this is very obtuse to read, should rewrite in the affirmative
   /**
    * Check if a given location is valid for the supplied mover
    * 
@@ -233,10 +262,10 @@ public class AStarPathfinder {
   /**
    * A simple sorted list
    * 
-   * @author kevin
+   * @author Kevin (who is Kevin?)
    */
   private class SortedList {
-    /** The list of elements */
+
     private ArrayList<Node> list = new ArrayList<>();
 
     /**
@@ -258,20 +287,20 @@ public class AStarPathfinder {
     /**
      * Add an element to the list - causes sorting
      * 
-     * @param o The element to add
+     * @param argNode The element to add
      */
-    public void add(Node o) {
-      list.add(o);
+    public void add(Node argNode) {
+      list.add(argNode);
       Collections.sort(list);
     }
 
     /**
      * Remove an element from the list
      * 
-     * @param o The element to remove
+     * @param argNode The element to remove
      */
-    public void remove(Node o) {
-      list.remove(o);
+    public void remove(Node argNode) {
+      list.remove(argNode);
     }
 
     /**
@@ -286,60 +315,60 @@ public class AStarPathfinder {
     /**
      * Check if an element is in the list
      * 
-     * @param o The element to search for
+     * @param argNode The element to search for
      * @return True if the element is in the list
      */
-    public boolean contains(Node o) {
-      return list.contains(o);
+    public boolean contains(Node argNode) {
+      return list.contains(argNode);
     }
   }
 
   /**
    * A single node in the search graph
+   * <li><b>x</b> coord of the node</li>
+   * <li><b>y</b> coord of the node</li>
+   * <li><b>cost</b> path cost for this node</li>
+   * <li><b>parent</b> node's parent, how we reached it in the search</li>
+   * <li><b>heuristic</b> heuristic cost of this node</li>
+   * <li><b>depth</b> the search depth of this node</li>
+   * 
    */
   private class Node implements Comparable<Node> {
-    /** The x coordinate of the node */
     private int x;
-    /** The y coordinate of the node */
     private int y;
-    /** The path cost for this node */
     private float cost;
-    /** The parent of this node, how we reached it in the search */
     private Node parent;
-    /** The heuristic cost of this node */
     private float heuristic;
-    /** The search depth of this node */
     private int depth;
 
     /**
      * Create a new node
      * 
-     * @param x The x coordinate of the node
-     * @param y The y coordinate of the node
+     * @param argX The x coordinate of the node
+     * @param argY The y coordinate of the node
      */
-    public Node(int x, int y) {
-      this.x = x;
-      this.y = y;
+    public Node(int argX, int argY) {
+      x = argX;
+      y = argY;
     }
 
     /**
      * Set the parent of this node
      * 
-     * @param parent The parent node which lead us to this node
+     * @param argParent The parent node which lead us to this node
      * @return The depth we have no reached in searching
      */
-    public int setParent(Node parent) {
-      depth = parent.depth + 1;
-      this.parent = parent;
-
+    public int setParent(Node argParent) {
+      depth = argParent.depth + 1;
+      parent = argParent;
       return depth;
     }
 
     /**
      * @see Comparable#compareTo(Node)
      */
-    public int compareTo(Node other) {
-      Node o = other;
+    public int compareTo(Node argOther) {
+      Node o = argOther;
 
       float f = heuristic + cost;
       float of = o.heuristic + o.cost;
@@ -358,10 +387,9 @@ public class AStarPathfinder {
     /**
      * @see Object#equals(Object)
      */
-    public boolean equals(Object other) {
-      if (other instanceof Node) {
-        Node o = (Node) other;
-
+    public boolean equals(Object argOther) {
+      if (argOther instanceof Node) {
+        Node o = (Node) argOther;
         return (o.x == x) && (o.y == y);
       }
 

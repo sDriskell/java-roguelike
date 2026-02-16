@@ -314,7 +314,7 @@ public abstract class Actor implements Serializable {
    * @return
    */
   public AttackAttempt getLastAttackedBy() {
-    return attackedBy.isEmpty() ? attackedBy.pop() : null;
+    return attackedBy.isEmpty() ? null : attackedBy.pop();
   }
 
   /**

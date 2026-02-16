@@ -91,7 +91,7 @@ public class LookScreen extends CursorScreen {
         Weapon equipped = ItemSlot.RIGHT_HAND.getEquippedWeapon(actor);
         add(textList, " `Gray`Weapon");
         add(textList,
-            "`White`" + equipped.getName() + " (" + equipped.defaultDamageType().getName() + ")");
+            "`White`" + equipped.getName() + " (" + equipped.defaultDamageType().name() + ")");
         add(textList, "");
         Statistics stats = actor.statistics();
         add(textList,

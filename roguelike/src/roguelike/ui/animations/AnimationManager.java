@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import roguelike.ui.InputManager;
 import roguelike.ui.windows.TerminalBase;
-import roguelike.util.Log;
 
 public class AnimationManager {
 
@@ -24,7 +23,7 @@ public class AnimationManager {
 
   public boolean shouldRefresh() {
     if (refresh) {
-      Log.debug("AnimationManager refresh=true");
+      // Log.debug("AnimationManager refresh=true");
       refresh = false;
       return true;
     }
