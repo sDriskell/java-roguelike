@@ -20,21 +20,84 @@ import roguelike.util.StringEx;
 import squidpony.squidcolor.SColor;
 import squidpony.squidcolor.SColorFactory;
 
+/**
+ * 
+ */
 public class LookScreen extends CursorScreen {
 
+  private InformationPanel lookDisplay;
+  private Point lookPoint;
+
+  /**
+   * 
+   * @param argTrm
+   * @param argCur
+   * @param argResult
+   */
+  public LookScreen(TerminalBase argTrm, LookCursor argCur, CursorCallback argResult) {
+    super(argTrm, argCur, argResult);
+
+    lookDisplay = new InformationPanel(40, 20);
+    argCur.setLookScreen(this);
+  }
+
+  /**
+   * Sets the map coordinates that the LookDisplay should show information about.
+   * If this is null, then the LookDisplay will be hidden.
+   * 
+   * @param argMap
+   * @param argPos
+   */
+  public void lookAt(MapArea argMap, Point argPos) {
+    lookPoint = argPos;
+  }
+
+  @Override
+  protected void onDrawAdditional(MapArea argCurrent, Coordinate argCentPos, Rectangle argScnArea) {
+    /* draw the look description box if there's anything here */
+    drawLookDisplay(argCurrent);
+  }
+
+  /**
+   * 
+   * @param argCurrent
+   */
+  private void drawLookDisplay(MapArea argCurrent) {
+    if (lookPoint == null) {
+      return;
+    }
+
+    lookDisplay.draw(terminal, argCurrent, lookPoint.x, lookPoint.y);
+  }
+
+  /**
+   * 
+   */
   private class InformationPanel extends TextWindow {
     private static final int BOTTOM_MARGIN = 1;
     private static final int TOP_MARGIN = 1;
 
-    public InformationPanel(int width, int height) {
-      super(width, height);
+    /**
+     * 
+     * @param argWidth
+     * @param argHeight
+     */
+    public InformationPanel(int argWidth, int argHeight) {
+      super(argWidth, argHeight);
     }
 
-    public void draw(TerminalBase terminal, MapArea map, int x, int y) {
+    /**
+     * 
+     * @param argTerm
+     * @param argMap
+     * @param x
+     * @param y
+     */
+    public void draw(TerminalBase argTerm, MapArea argMap, int x, int y) {
       Rectangle bounds = new Rectangle(lookPoint.x + 1, lookPoint.y + 1, size.width, size.height);
+
       if (isWithinTerminalBounds((int) bounds.getMaxX(), 1)) {
         // draw the box to the right
-
       }
       else {
         // draw the box to the left
@@ -49,126 +112,123 @@ public class LookScreen extends CursorScreen {
         bounds.y -= (bounds.height + 1);
       }
 
-      TerminalBase lookTerm = terminal.getWindow(bounds.x, bounds.y, bounds.width, bounds.height);
-      this.drawBoxShape(lookTerm);
-
-      ArrayList<StringEx> lines = getTextLines(map, x, y, true);
+      TerminalBase lookTerm = argTerm.getWindow(bounds.x, bounds.y, bounds.width, bounds.height);
+      drawBoxShape(lookTerm);
+      ArrayList<StringEx> lines = getTextLines(argMap, x, y, true);
       drawInfo(lookTerm, lines, 0, bounds.height);
-
     }
 
+    /**
+     * 
+     * @param x
+     * @param y
+     * @return
+     */
     private boolean isWithinTerminalBounds(int x, int y) {
       Rectangle terminalBounds = terminal.size();
       return terminalBounds.contains(x, y);
     }
 
-    private void drawInfo(TerminalBase terminal, ArrayList<StringEx> textLines, int top,
-        int height) {
+    /**
+     * 
+     * @param argTerm
+     * @param argTxtln
+     * @param argTop
+     * @param argHeight
+     */
+    private void drawInfo(TerminalBase argTerm, ArrayList<StringEx> argTxtln, int argTop,
+        int argHeight) {
       SColor menuBgColor = SColorFactory.asSColor(30, 30, 30);
-      TerminalBase background = terminal.withColor(menuBgColor, menuBgColor);
-      TerminalBase text = terminal.withColor(SColor.WHITE, menuBgColor);
-      int textY = TOP_MARGIN + top;
+      TerminalBase background = argTerm.withColor(menuBgColor, menuBgColor);
+      TerminalBase text = argTerm.withColor(SColor.WHITE, menuBgColor);
+      int textY = TOP_MARGIN + argTop;
+      background.fill(1, 1 + argTop, size.width - 2, argHeight - 2, ' ');
 
-      background.fill(1, 1 + top, size.width - 2, height - 2, ' ');
+      for (int i = 0; i < argTxtln.size(); i++) {
+        text.write(2, i + textY, argTxtln.get(i));
 
-      for (int i = 0; i < textLines.size(); i++) {
-        text.write(2, i + textY, textLines.get(i));
-        if ((i + textY) >= (height + top)) {
+        if ((i + textY) >= (argHeight + argTop)) {
           text.write(3, i + textY + 2, "...");
           break;
         }
       }
     }
 
-    private ArrayList<StringEx> getTextLines(MapArea map, int x, int y, boolean drawActor) {
-      ArrayList<StringEx> textList = new ArrayList<>();
+    /**
+     * 
+     * @param argMap
+     * @param x
+     * @param y
+     * @param argDrawActor
+     * @return
+     */
+    private ArrayList<StringEx> getTextLines(MapArea argMap, int x, int y, boolean argDrawActor) {
+      ArrayList<StringEx> txtLns = new ArrayList<>();
+      Actor actor = argDrawActor ? argMap.getActorAt(x, y) : null;
 
-      Actor actor = drawActor ? map.getActorAt(x, y) : null;
       if (actor != null) {
-        add(textList, "`" + actor.color().getName() + "`" + actor.getName() + " ="
+        add(txtLns, "`" + actor.color().getName() + "`" + actor.getName() + " ="
             + actor.behavior().getDescription());
-        add(textList, actor.getDescription());
-        Weapon equipped = ItemSlot.RIGHT_HAND.getEquippedWeapon(actor);
-        add(textList, " `Gray`Weapon");
-        add(textList,
-            "`White`" + equipped.getName() + " (" + equipped.defaultDamageType().name() + ")");
-        add(textList, "");
-        Statistics stats = actor.statistics();
-        add(textList,
-            String.format("`Bronze`Ref:`White`%3d `Bronze`Aim:`White`%3d `Bronze`Spd:`White`%3d",
-                stats.reflexes(), stats.aiming(), actor.effectiveSpeed(map)));
+        add(txtLns, actor.getDescription());
 
-        add(textList,
+        Weapon equipped = ItemSlot.RIGHT_HAND.getEquippedWeapon(actor);
+
+        add(txtLns, " `Gray`Weapon");
+        add(txtLns,
+            "`White`" + equipped.getName() + " (" + equipped.defaultDamageType().name() + ")");
+        add(txtLns, "");
+
+        Statistics stats = actor.statistics();
+
+        add(txtLns,
+            String.format("`Bronze`Ref:`White`%3d `Bronze`Aim:`White`%3d `Bronze`Spd:`White`%3d",
+                stats.reflexes(), stats.aiming(), actor.effectiveSpeed(argMap)));
+
+        add(txtLns,
             String.format(" `Bronze`To:`White`%3d `Bronze`Co:`White`%3d `Bronze`Pe:`White`%3d ",
                 stats.toughness.getTotalValue(), stats.conditioning.getTotalValue(),
                 stats.perception.getTotalValue()));
-        add(textList,
+        add(txtLns,
             String.format(" `Bronze`Qu:`White`%3d `Bronze`Wi:`White`%3d `Bronze`Pr:`White`%3d",
                 stats.agility.getTotalValue(), stats.willpower.getTotalValue(),
                 stats.presence.getTotalValue()));
 
-        add(textList,
+        add(txtLns,
             String.format(" `Red`H:`White`%3d  `Bronze`MP:`White`%3d `Bronze`RP:`White`%3d ",
                 actor.health().getCurrent(), stats.baseMeleePool(0), stats.baseRangedPool(0)));
-        add(textList, String.format(" Can see player? `Red`%s",
-            actor.canSee(Game.current().getPlayer(), map)));
+        add(txtLns, String.format(" Can see player? `Red`%s",
+            actor.canSee(Game.current().getPlayer(), argMap)));
       }
-      Inventory inventory = map.getItemsAt(x, y);
-      add(textList, "");
 
-      if (drawActor)
-        add(textList, "On ground:");
+      Inventory inventory = argMap.getItemsAt(x, y);
+      add(txtLns, "");
 
-      int itemSize = (this.size.height - (BOTTOM_MARGIN + TOP_MARGIN)) - textList.size();
+      if (argDrawActor) {
+        add(txtLns, "On ground:");
+      }
+
+      int itemSize = (this.size.height - (BOTTOM_MARGIN + TOP_MARGIN)) - txtLns.size();
       String[] itemDescriptions = inventory.getGroupedItemListAsText(itemSize - BOTTOM_MARGIN);
 
-      for (String string : itemDescriptions)
-        add(textList, " " + string);
+      for (String string : itemDescriptions) {
+        add(txtLns, " " + string);
+      }
 
-      return textList;
+      return txtLns;
     }
 
-    private void add(ArrayList<StringEx> list, String string) {
-      StringEx str = new StringEx(string);
+    /**
+     * 
+     * @param argList
+     * @param argStr
+     */
+    private void add(ArrayList<StringEx> argList, String argStr) {
+      StringEx str = new StringEx(argStr);
       StringEx[] lines = str.wordWrap(size.width - 2);
+
       for (StringEx line : lines) {
-        list.add(line);
+        argList.add(line);
       }
     }
-  }
-
-  private InformationPanel lookDisplay;
-  private Point lookPoint;
-
-  public LookScreen(TerminalBase terminal, LookCursor cursor, CursorCallback resultCallback) {
-    super(terminal, cursor, resultCallback);
-
-    lookDisplay = new InformationPanel(40, 20);
-    cursor.setLookScreen(this);
-  }
-
-  /**
-   * Sets the map coordinates that the LookDisplay should show information about.
-   * If this is null, then the LookDisplay will be hidden.
-   * 
-   * @param map
-   * @param position
-   */
-  public void lookAt(MapArea map, Point position) {
-    lookPoint = position;
-  }
-
-  @Override
-  protected void onDrawAdditional(MapArea currentMap, Coordinate centerPosition,
-      Rectangle screenArea) {
-    /* draw the look description box if there's anything here */
-    drawLookDisplay(currentMap);
-  }
-
-  private void drawLookDisplay(MapArea currentMap) {
-    if (lookPoint == null)
-      return;
-
-    lookDisplay.draw(terminal, currentMap, lookPoint.x, lookPoint.y);
   }
 }

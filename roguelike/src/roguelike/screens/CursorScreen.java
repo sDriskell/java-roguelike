@@ -9,54 +9,68 @@ import roguelike.maps.MapArea;
 import roguelike.ui.windows.TerminalBase;
 import roguelike.util.Coordinate;
 
+/**
+ * 
+ */
 public class CursorScreen extends Screen {
 
-	protected Cursor cursor;
-	protected CursorCallback resultCallback;
+  protected Cursor cursor;
+  protected CursorCallback resultCallback;
+  protected TerminalBase cloneTerminal;
 
-	protected TerminalBase cloneTerminal;
+  /**
+   * 
+   * @param argTerm
+   * @param argCur
+   * @param argCallBack
+   */
+  public CursorScreen(TerminalBase argTerm, Cursor argCur, CursorCallback argCallBack) {
+    super(argTerm);
 
-	public CursorScreen(TerminalBase terminal, Cursor cursor, CursorCallback resultCallback) {
-		super(terminal);
-		if (cursor == null)
-			throw new IllegalArgumentException("cursor cannot be null");
-		if (resultCallback == null)
-			throw new IllegalArgumentException("resultCallback cannot be null");
+    if (argCur == null) {
+      throw new IllegalArgumentException("cursor cannot be null");
+    }
 
-		this.cursor = cursor;
-		this.resultCallback = resultCallback;
+    if (argCallBack == null) {
+      throw new IllegalArgumentException("resultCallback cannot be null");
+    }
 
-		this.cloneTerminal = terminal.cloneTerminal();
+    cursor = argCur;
+    resultCallback = argCallBack;
+    cloneTerminal = argTerm.cloneTerminal();
+    cursor.show();
+  }
 
-		this.cursor.show();
-	}
+  @Override
+  public void process() {
+    if (cursor.process()) {
+      resultCallback.setResult(cursor.result());
+      restorePreviousScreen();
+    }
+  }
 
-	@Override
-	public void process() {
-		if (cursor.process()) {
-			resultCallback.setResult(cursor.result());
-			restorePreviousScreen();
-		}
-	}
+  @Override
+  protected final void onDraw() {
+    Rectangle drawableArea = getDrawableArea();
+    Game game = Game.current();
+    MapArea currentMap = game.getCurrentMapArea();
+    Coordinate centerPos = game.getCenterScreenPosition();
+    Rectangle screenArea = currentMap.getVisibleAreaInTiles(drawableArea.width, drawableArea.height,
+        centerPos);
 
-	@Override
-	protected final void onDraw() {
-		Rectangle drawableArea = getDrawableArea();
-		Game game = Game.current();
+    /* redraw the previous terminal data */
+    cloneTerminal.refresh(screenArea.x, screenArea.y, screenArea.width, screenArea.height);
+    onDrawAdditional(currentMap, centerPos, screenArea);
+    cursor.draw(terminal, screenArea);
+  }
 
-		MapArea currentMap = game.getCurrentMapArea();
-		Coordinate centerPosition = game.getCenterScreenPosition();
-		Rectangle screenArea = currentMap
-				.getVisibleAreaInTiles(drawableArea.width, drawableArea.height, centerPosition);
-
-		/* redraw the previous terminal data */
-		cloneTerminal.refresh(screenArea.x, screenArea.y, screenArea.width, screenArea.height);
-
-		onDrawAdditional(currentMap, centerPosition, screenArea);
-
-		cursor.draw(terminal, screenArea);
-	}
-
-	protected void onDrawAdditional(MapArea currentMap, Coordinate centerPosition, Rectangle screenArea) {
-	}
+  /**
+   * 
+   * @param argCurMap
+   * @param argCntrPos
+   * @param argScreenArea
+   */
+  protected void onDrawAdditional(MapArea argCurMap, Coordinate argCntrPos,
+      Rectangle argScreenArea) {
+  }
 }
