@@ -8,22 +8,28 @@ import roguelike.ui.windows.TerminalBase;
 import squidpony.squidcolor.SColor;
 import squidpony.squidmath.Bresenham;
 
+/**
+ * 
+ */
 public class RangedAttackAnimation extends Animation {
+
+  private static final int RANGED_FRAMES = 8;
 
   private Actor target;
   private Queue<Point> path;
-
-  private int rangedFrames = 8;
-
   private AttackAnimation damageAnim;
 
-  public RangedAttackAnimation(Actor attacker, Actor target, String damage) {
-    this.target = target;
-
-    path = Bresenham.line2D(attacker.getPosition(), target.getPosition());
-
-    damageAnim = new AttackAnimation(attacker, target, damage);
-    this.totalFrames = damageAnim.totalFrames + rangedFrames;
+  /**
+   * 
+   * @param argAtkr
+   * @param argTgt
+   * @param argDmg
+   */
+  public RangedAttackAnimation(Actor argAtkr, Actor argTgt, String argDmg) {
+    target = argTgt;
+    path = Bresenham.line2D(argAtkr.getPosition(), argTgt.getPosition());
+    damageAnim = new AttackAnimation(argAtkr, argTgt, argDmg);
+    totalFrames = damageAnim.totalFrames + RANGED_FRAMES;
   }
 
   @Override
@@ -37,11 +43,12 @@ public class RangedAttackAnimation extends Animation {
     int x = offsetPos.x - target.getPosition().x;
     int y = offsetPos.y - target.getPosition().y;
 
-    if (this.currentFrame < rangedFrames) {
+    if (this.currentFrame < RANGED_FRAMES) {
       int numTiles = (int) Math.ceil(path.size() / (float) 8.0f);
-      for (int i = 0; i < numTiles; i++) {
 
+      for (int i = 0; i < numTiles; i++) {
         Point p = path.poll();
+
         if (p != null) {
           terminal.withColor(SColor.LIGHT_GRAY).put(p.x + x, p.y + y, '`');
         }

@@ -8,6 +8,9 @@ import roguelike.actors.Actor;
 import roguelike.ui.windows.TerminalBase;
 import roguelike.util.Coordinate;
 
+/**
+ * 
+ */
 public abstract class Animation {
 
   protected int currentFrame = 0;
@@ -23,31 +26,47 @@ public abstract class Animation {
   /**
    * Draws the current frame of the animation and advances to the next one.
    * 
-   * @param terminal
+   * @param argTerm
    * @return True if the last frame was just drawn and the animation should be
    * removed.
    */
-  public final boolean nextFrame(TerminalBase terminal) {
+  public final boolean nextFrame(TerminalBase argTerm) {
     if (currentFrame < totalFrames) {
-      onNextFrame(terminal);
+      onNextFrame(argTerm);
     }
-    currentFrame++;
-    return currentFrame > totalFrames;
+
+    return ++currentFrame > totalFrames;
   }
 
-  protected Point getOffsetPosition(TerminalBase terminal, Actor target) {
-    Coordinate targetPos = target.getPosition();
-    return getOffsetPosition(terminal, targetPos);
+  /**
+   * 
+   * @param argTerm
+   * @param argTgt
+   * @return
+   */
+  protected Point getOffsetPosition(TerminalBase argTerm, Actor argTgt) {
+    Coordinate targetPos = argTgt.getPosition();
+    return getOffsetPosition(argTerm, targetPos);
   }
 
-  protected Point getOffsetPosition(TerminalBase terminal, Coordinate targetPos) {
+  /**
+   * 
+   * @param argTerm
+   * @param argTgtPos
+   * @return
+   */
+  protected Point getOffsetPosition(TerminalBase argTerm, Coordinate argTgtPos) {
     Game g = Game.current();
-    Rectangle termSize = terminal.size();
+    Rectangle termSize = argTerm.size();
     Point upperLeft = g.getCurrentMapArea().getUpperLeftScreenTile(termSize.width, termSize.height,
         g.getPlayer().getPosition());
 
-    return new Point(targetPos.x - upperLeft.x, targetPos.y - upperLeft.y);
+    return new Point(argTgtPos.x - upperLeft.x, argTgtPos.y - upperLeft.y);
   }
 
-  public abstract void onNextFrame(TerminalBase terminal);
+  /**
+   * 
+   * @param argTerm
+   */
+  public abstract void onNextFrame(TerminalBase argTerm);
 }

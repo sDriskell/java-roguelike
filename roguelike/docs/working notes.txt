@@ -9,5 +9,12 @@ ABBREVIATIONS:
 	-h		height
 	-w		width
 	-msg	message
-	-trm	terminal
-	-
+	-term	terminal
+	-plyr	player
+	-tgt	target
+	-pos	position
+	-atk	attack
+	-act	actor
+	-dmg	damage
+	-atkr	attacker
+	-def	defense
