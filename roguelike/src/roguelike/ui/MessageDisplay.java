@@ -8,50 +8,80 @@ import roguelike.util.StringEx;
 import squidpony.squidcolor.SColor;
 import squidpony.squidcolor.SColorFactory;
 
+/**
+ * 
+ */
 public class MessageDisplay {
-	private TerminalBase terminal;
-	private int numLines;
-	private MessageLog messages;
 
-	public MessageDisplay(MessageLog messages, TerminalBase terminal, int numLines) {
-		this.terminal = terminal;
-		this.numLines = numLines;
-		this.messages = messages;
+  private TerminalBase terminal;
+  private int numLines;
+  private MessageLog messages;
 
-		Log.debug("MessageDisplay w=" + terminal.size().width + ", h=" + terminal.size().height);
-	}
+  /**
+   * 
+   * @param argMsgs
+   * @param argTrm
+   * @param argNumLn
+   */
+  public MessageDisplay(MessageLog argMsgs, TerminalBase argTrm, int argNumLn) {
+    terminal = argTrm;
+    numLines = argNumLn;
+    messages = argMsgs;
 
-	public void display(String message) {
-		display(new MessageDisplayProperties(message));
-	}
+    Log.debug("MessageDisplay w=" + argTrm.size().width + ", h=" + argTrm.size().height);
+  }
 
-	public void display(String message, SColor color) {
-		display(new MessageDisplayProperties(message, color));
-	}
+  /**
+   * 
+   * @param argMsg
+   */
+  public void display(String argMsg) {
+    display(new MessageDisplayProperties(argMsg));
+  }
 
-	public void display(MessageDisplayProperties message) {
+  /**
+   * 
+   * @param argMsg
+   * @param argColor
+   */
+  public void display(String argMsg, SColor argColor) {
+    display(new MessageDisplayProperties(argMsg, argColor));
+  }
 
-		messages.add(message);
-	}
+  /**
+   * 
+   * @param argMsg
+   */
+  public void display(MessageDisplayProperties argMsg) {
 
-	public void draw() {
-		terminal.withColor(SColor.RED).fill(0, 0, terminal.size().width, terminal.size().height, ' ');
-		int msgCount = 0;
-		int maxSize = messages.size(numLines);
-		for (int x = 0; x < maxSize; x++) {
-			MessageDisplayProperties props = messages.get(x);
-			StringEx[] lines = props.getText().wordWrap(terminal.size().width - 6);
-			TerminalBase colorTerm = terminal.withColor(SColorFactory.blend(props.getColor(), SColor.BLACK_CHESTNUT_OAK, (x / (float) numLines)));
-			String prefix = "> ";
+    messages.add(argMsg);
+  }
 
-			int startIdx = maxSize - msgCount - lines.length + 1;
-			for (int i = 0; (i < lines.length) && (msgCount < maxSize); i++) {
-				if (i > 0)
-					prefix = "";
+  /**
+   * 
+   */
+  public void draw() {
+    terminal.withColor(SColor.RED).fill(0, 0, terminal.size().width, terminal.size().height, ' ');
+    int msgCount = 0;
+    int maxSize = messages.size(numLines);
 
-				colorTerm.write(0, startIdx + i, prefix + lines[i].toString());
-				msgCount++;
-			}
-		}
-	}
+    for (int x = 0; x < maxSize; x++) {
+      MessageDisplayProperties props = messages.get(x);
+      StringEx[] lines = props.getText().wordWrap(terminal.size().width - 6);
+      TerminalBase colorTerm = terminal.withColor(
+          SColorFactory.blend(props.getColor(), SColor.BLACK_CHESTNUT_OAK, (x / (float) numLines)));
+
+      String prefix = "> ";
+      int startIdx = maxSize - msgCount - lines.length + 1;
+
+      for (int i = 0; (i < lines.length) && (msgCount < maxSize); i++) {
+        if (i > 0) {
+          prefix = "";
+        }
+
+        colorTerm.write(0, startIdx + i, prefix + lines[i].toString());
+        msgCount++;
+      }
+    }
+  }
 }

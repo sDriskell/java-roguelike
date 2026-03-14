@@ -14,14 +14,14 @@ public class Dungeon extends MapArea {
 
   /**
    * 
-   * @param argWth
-   * @param argHgt
+   * @param argWidth
+   * @param argHeight
    * @param argMapBuild
    * @param argDif
    * @param argTotFlrs
    */
-  public Dungeon(int argWth, int argHgt, MapBuilderBase argMapBuild, int argDif, int argTotFlrs) {
-    super(argWth, argHgt, argMapBuild);
+  public Dungeon(int argWidth, int argHeight, MapBuilderBase argMapBuild, int argDif, int argTotFlrs) {
+    super(argWidth, argHeight, argMapBuild);
     difficulty = argDif;
     currentFloor = 1;
     totalFloors = argTotFlrs;

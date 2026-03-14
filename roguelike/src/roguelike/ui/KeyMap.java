@@ -4,6 +4,9 @@ import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 
+ */
 public class KeyMap {
 
   private Map<Integer, InputCommand> keyBindings;
@@ -11,39 +14,67 @@ public class KeyMap {
 
   private String name;
 
-  public KeyMap(String name) {
-    this.name = name;
-    this.keyBindings = new HashMap<>();
-    this.shiftKeyBindings = new HashMap<>();
+  /**
+   * 
+   * @param argName
+   */
+  public KeyMap(String argName) {
+    name = argName;
+    keyBindings = new HashMap<>();
+    shiftKeyBindings = new HashMap<>();
   }
 
+  /**
+   * 
+   * @return
+   */
   public String getName() {
     return name;
   }
 
-  public KeyMap bindKey(Integer key, InputCommand command) {
-    return bindKey(key, false, command);
+  /**
+   * 
+   * @param argKey
+   * @param argCmd
+   * @return
+   */
+  public KeyMap bindKey(Integer argKey, InputCommand argCmd) {
+    return bindKey(argKey, false, argCmd);
   }
 
-  public KeyMap bindKey(Integer key, boolean shift, InputCommand command) {
-    if (shift) {
-      shiftKeyBindings.put(key, command);
+  /**
+   * 
+   * @param argKey
+   * @param isShiftKey
+   * @param argCmd
+   * @return
+   */
+  public KeyMap bindKey(Integer argKey, boolean isShiftKey, InputCommand argCmd) {
+    if (isShiftKey) {
+      shiftKeyBindings.put(argKey, argCmd);
     }
     else {
-      keyBindings.put(key, command);
+      keyBindings.put(argKey, argCmd);
     }
+
     return this;
   }
 
-  public InputCommand getCommand(KeyEvent key) {
-    if (key == null)
+  /**
+   * 
+   * @param argKey
+   * @return
+   */
+  public InputCommand getCommand(KeyEvent argKey) {
+    if (argKey == null) {
       return null;
+    }
 
-    if (key.isShiftDown()) {
-      return shiftKeyBindings.getOrDefault(key.getKeyCode(), null);
+    if (argKey.isShiftDown()) {
+      return shiftKeyBindings.getOrDefault(argKey.getKeyCode(), null);
     }
     else {
-      return keyBindings.getOrDefault(key.getKeyCode(), null);
+      return keyBindings.getOrDefault(argKey.getKeyCode(), null);
     }
   }
 }

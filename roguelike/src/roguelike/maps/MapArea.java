@@ -37,27 +37,27 @@ public class MapArea implements Serializable {
 
   /**
    * 
-   * @param argW
-   * @param argH
+   * @param argWidth
+   * @param argHeight
    * @param argMapBldr
    */
-  protected MapArea(int argW, int argH, MapBuilderBase argMapBldr) {
+  protected MapArea(int argWidth, int argHeight, MapBuilderBase argMapBldr) {
     actors = new CurrentItemTracker<>();
-    width = argW;
-    height = argH;
+    width = argWidth;
+    height = argHeight;
     difficulty = 1;
     buildMapArea(argMapBldr);
   }
 
   /**
    * 
-   * @param argW
-   * @param argH
+   * @param arghWidth
+   * @param argHeight
    * @param argMapBldr
    * @return
    */
-  public static MapArea build(int argW, int argH, MapBuilderBase argMapBldr) {
-    return new Dungeon(argW, argH, argMapBldr, 1, 10);
+  public static MapArea build(int arghWidth, int argHeight, MapBuilderBase argMapBldr) {
+    return new Dungeon(arghWidth, argHeight, argMapBldr, 1, 10);
   }
 
   /**

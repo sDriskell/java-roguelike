@@ -20,6 +20,9 @@ import squidpony.squidgrid.fov.ShadowFOV;
 import squidpony.squidgrid.util.BasicRadiusStrategy;
 import squidpony.squidgrid.util.RadiusStrategy;
 
+/**
+ * 
+ */
 public class AttackCursor extends Cursor {
 
   private SColor background;
@@ -34,44 +37,49 @@ public class AttackCursor extends Cursor {
   private CurrentItemTracker<Actor> targets;
   private Actor startTarget = null;
 
-  public AttackCursor(Coordinate initialPosition, MapArea mapArea, int maxRadius,
-      RadiusStrategy radiusStrategy) {
-    super(initialPosition, mapArea, maxRadius);
-    this.radiusStrategy = BasicRadiusStrategy.CIRCLE;
-    this.background = SColor.DARK_CORAL;
-    this.initialPosition = initialPosition;
+  /**
+   * 
+   * @param argInitPos
+   * @param argMap
+   * @param argMaxRad
+   * @param argRadStrat
+   */
+  public AttackCursor(Coordinate argInitPos, MapArea argMap, int argMaxRad,
+      RadiusStrategy argRadStrat) {
+    super(argInitPos, argMap, argMaxRad);
 
-    this.radiusStrategy = radiusStrategy;
-    this.targets = new CurrentItemTracker<>();
+    radiusStrategy = BasicRadiusStrategy.CIRCLE;
+    background = SColor.DARK_CORAL;
+    initialPosition = argInitPos;
+    radiusStrategy = argRadStrat;
+    targets = new CurrentItemTracker<>();
   }
 
   @Override
-  protected void onDraw(TerminalBase terminal, int sx, int sy) {
+  protected void onDraw(TerminalBase argTerm, int sx, int sy) {
     // TODO: maybe some effects here, draw a line or something
-
     if (!fovDrawn) {
-      determineFOVTiles(terminal);
+      determineFOVTiles(argTerm);
       fovDrawn = true;
     }
-    drawFOV(terminal);
-    super.onDraw(terminal, sx, sy);
-    DisplayManager.instance().setDirty(); // update
+
+    drawFOV(argTerm);
+    super.onDraw(argTerm, sx, sy);
+    // update
+    DisplayManager.instance().setDirty();
   }
 
   @Override
-  protected boolean onUpdatePosition(Coordinate position) {
-    int x = position.x - screenArea.x;
-    int y = position.y - screenArea.y;
+  protected boolean onUpdatePosition(Coordinate argPos) {
+    int x = argPos.x - screenArea.x;
+    int y = argPos.y - screenArea.y;
 
-    if (incomingLight[x][y] > 0)
-      return true;
-
-    return false;
+    return incomingLight[x][y] > 0;
   }
 
   @Override
-  protected CursorResult onProcessCommand(InputCommand command) {
-    switch (command) {
+  protected CursorResult onProcessCommand(InputCommand argCmd) {
+    switch (argCmd) {
       case PREVIOUS_TARGET:
         // move to previous target
         targets.previous();
@@ -87,28 +95,32 @@ public class AttackCursor extends Cursor {
     }
 
     Actor tgt = targets.getCurrent();
-    if (tgt != null)
+
+    if (tgt != null) {
       pos.setLocation(tgt.getPosition());
+    }
 
     return null;
   }
 
-  private void determineFOVTiles(TerminalBase terminal) {
-    int width = maxRadius;
-    int height = maxRadius;
+  /**
+   * 
+   * @param argTerm
+   */
+  private void determineFOVTiles(TerminalBase argTerm) {
     MapArea currentMap = Game.current().getCurrentMapArea();
-    screenArea = currentMap.getVisibleAreaInTiles(terminal, initialPosition);
-
-    float[][] lighting = new float[width][height];
-
-    lighting = ArrayUtils.getSubArray(currentMap.getLightValues(), screenArea);
-
+    screenArea = currentMap.getVisibleAreaInTiles(argTerm, initialPosition);
+    float[][] lighting = ArrayUtils.getSubArray(currentMap.getLightValues(), screenArea);
     incomingLight = fov.calculateFOV(lighting, initialPosition.x - screenArea.x,
         initialPosition.y - screenArea.y, maxRadius + 1f);
 
   }
 
-  private void drawFOV(TerminalBase terminal) {
+  /**
+   * 
+   * @param argTerm
+   */
+  private void drawFOV(TerminalBase argTerm) {
     MapArea currentMap = Game.current().getCurrentMapArea();
 
     for (int x = screenArea.x; x < screenArea.getMaxX(); x++) {
@@ -117,14 +129,16 @@ public class AttackCursor extends Cursor {
         int cY = y - screenArea.y;
 
         Tile t = currentMap.getTileAt(x, y);
-        if (incomingLight[cX][cY] > 0 && t.isVisible()) {
 
-          if (!t.isWall())
-            terminal.withColor(SColor.TRANSPARENT, SColorFactory.dimmest(background)).fill(cX, cY,
-                1, 1);
+        if (incomingLight[cX][cY] > 0 && t.isVisible()) {
+          if (!t.isWall()) {
+            argTerm.withColor(SColor.TRANSPARENT, SColorFactory.dimmest(background)).fill(cX, cY, 1,
+                1);
+          }
 
           if (!determinedActors) {
             Actor a = t.getActor();
+
             if (a != null && !(a instanceof Player)) {
               targets.add(a);
             }
@@ -132,6 +146,7 @@ public class AttackCursor extends Cursor {
         }
       }
     }
+
     if (!determinedActors && startTarget == null) {
       targetNearestEnemy();
     }

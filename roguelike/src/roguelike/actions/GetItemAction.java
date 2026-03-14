@@ -29,12 +29,12 @@ public class GetItemAction extends Action {
    * 
    * @param argAct
    * @param argMap
-   * @param argItem
+   * @param argItm
    */
-  public GetItemAction(Actor argAct, MapArea argMap, Item argItem) {
+  public GetItemAction(Actor argAct, MapArea argMap, Item argItm) {
     super(argAct);
     this.map = argMap;
-    this.item = argItem;
+    this.item = argItm;
   }
 
   @Override
