@@ -1,5 +1,15 @@
 package roguelike.ui.asciipanel;
 
+/**
+ * 
+ */
 public interface TileTransformer {
-	public void transformTile(int x, int y, AsciiCharacterData data);
+
+  /**
+   * 
+   * @param x
+   * @param y
+   * @param argData
+   */
+  public void transformTile(int x, int y, AsciiCharacterData argData);
 }

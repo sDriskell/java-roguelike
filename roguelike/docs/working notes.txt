@@ -4,17 +4,33 @@ METHOD ARGUMENT NAMES:
 	-booleans be in form of a question (isLocked, hasKey)
 
 ABBREVIATIONS:
-	-itm	item
-	-col	color
-	-h		height
-	-w		width
-	-msg	message
-	-term	terminal
-	-plyr	player
-	-tgt	target
-	-pos	position
-	-atk	attack
 	-act	actor
-	-dmg	damage
+	-atk	attack
 	-atkr	attacker
+	-bg		background
+	-char	character
+	-col	color
+	-cur	cursor
 	-def	defense
+	-dflt	default
+	-dmg	damage
+	-fg		foreground
+	-gph(s)	graphic(s)
+	-h		height
+	-itm	item
+	-msg	message
+	-plyr	player
+	-pos	position
+	-str	string
+	-term	terminal
+	-tgt	target
+	-trns	transformer
+	-w		width
+
+	
+BIG GOALS:
+	-Remove all serialization
+	-Refactor AsciiPanel component
+		-remove spiraling constructors
+		-break into a package with smaller, more manageable classes
+	-Refactor and remove squidlib
