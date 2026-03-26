@@ -10,20 +10,23 @@ ABBREVIATIONS:
 	-bg		background
 	-char	character
 	-col	color
+	-cmd	command
 	-cur	cursor
-	-def	defense
-	-dflt	default
 	-dmg	damage
+	-dflt	default
+	-def	defense
 	-fg		foreground
 	-gph(s)	graphic(s)
 	-h		height
+	-inv	inventory
 	-itm	item
 	-msg	message
+	-pnl	panel
 	-plyr	player
 	-pos	position
 	-str	string
-	-term	terminal
 	-tgt	target
+	-term	terminal
 	-trns	transformer
 	-w		width
 
@@ -34,3 +37,11 @@ BIG GOALS:
 		-remove spiraling constructors
 		-break into a package with smaller, more manageable classes
 	-Refactor and remove squidlib
+	-Build junit testing into project
+
+MODERATE GOALS:
+	-Eliminate magic numbers
+	-Persistant levels when traversing up and down the game
+	-Remove hardcoded game components; add a better, lighter storage option
+	-Tackle spots where spiraling constructors are occurring
+	

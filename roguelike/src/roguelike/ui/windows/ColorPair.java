@@ -2,25 +2,37 @@ package roguelike.ui.windows;
 
 import squidpony.squidcolor.SColor;
 
+/**
+ * 
+ */
 public class ColorPair {
-	private SColor bgColor;
-	private SColor fgColor;
+  private SColor bgColor;
+  private SColor fgColor;
 
-	public ColorPair(SColor foreground, SColor background) {
-		fgColor = foreground;
-		bgColor = background;
-	}
+  /**
+   * 
+   * @param argFg
+   * @param argBg
+   */
+  public ColorPair(SColor argFg, SColor argBg) {
+    fgColor = argFg;
+    bgColor = argBg;
+  }
 
-	public ColorPair(SColor foreground) {
-		fgColor = foreground;
-		bgColor = SColor.BLACK;
-	}
+  /**
+   * 
+   * @param argFg
+   */
+  public ColorPair(SColor argFg) {
+    fgColor = argFg;
+    bgColor = SColor.BLACK;
+  }
 
-	public SColor foreground() {
-		return fgColor;
-	}
+  public SColor foreground() {
+    return fgColor;
+  }
 
-	public SColor background() {
-		return bgColor;
-	}
+  public SColor background() {
+    return bgColor;
+  }
 }
