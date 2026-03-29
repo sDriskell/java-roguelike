@@ -1,56 +1,108 @@
 package roguelike.actions;
 
+/**
+ * 
+ */
 public class ActionResult {
-	final boolean success;
-	final boolean completed;
-	final Action alternateAction;
-	String message;
 
-	private ActionResult(boolean success) {
-		this(success, true, null);
-	}
+  final boolean isSuccess;
+  final boolean isCompleted;
+  final Action alternateAction;
+  String message;
 
-	private ActionResult(boolean success, boolean completed, Action alternateAction) {
-		this.success = success;
-		this.completed = completed;
-		this.alternateAction = alternateAction;
-	}
+  /**
+   * 
+   * @param argIsSuccess
+   */
+  private ActionResult(boolean argIsSuccess) {
+    this(argIsSuccess, true, null);
+  }
 
-	public static ActionResult success() {
-		return new ActionResult(true);
-	}
+  /**
+   * 
+   * @param argSuccess
+   * @param argCompleted
+   * @param alternateAction
+   */
+  private ActionResult(boolean argSuccess, boolean argCompleted, Action argAltAction) {
+    isSuccess = argSuccess;
+    isCompleted = argCompleted;
+    alternateAction = argAltAction;
+  }
 
-	public static ActionResult failure() {
-		return new ActionResult(false);
-	}
+  /**
+   * 
+   * @return
+   */
+  public static ActionResult success() {
+    return new ActionResult(true);
+  }
 
-	public static ActionResult alternate(Action action) {
-		return new ActionResult(false, true, action);
-	}
+  /**
+   * 
+   * @return
+   */
+  public static ActionResult failure() {
+    return new ActionResult(false);
+  }
 
-	public static ActionResult incomplete() {
-		return new ActionResult(false, false, null);
-	}
+  /**
+   * 
+   * @param argAction
+   * @return
+   */
+  public static ActionResult alternate(Action argAction) {
+    return new ActionResult(false, true, argAction);
+  }
 
-	public boolean isSuccess() {
-		return success;
-	}
+  /**
+   * 
+   * @return
+   */
+  public static ActionResult incomplete() {
+    return new ActionResult(false, false, null);
+  }
 
-	public boolean isCompleted() {
-		return this.completed;
-	}
+  /**
+   * 
+   * @return
+   */
+  public boolean isSuccessful() {
+    return isSuccess;
+  }
 
-	public Action getAlternateAction() {
-		return alternateAction;
-	}
+  /**
+   * 
+   * @return
+   */
+  public boolean isCompleted() {
+    return this.isCompleted;
+  }
 
-	public String getMessage() {
-		return message;
-	}
+  /**
+   * 
+   * @return
+   */
+  public Action getAlternateAction() {
+    return alternateAction;
+  }
 
-	public ActionResult setMessage(String message) {
-		this.message = message;
-		return this;
-	}
+  /**
+   * 
+   * @return
+   */
+  public String getMessage() {
+    return message;
+  }
+
+  /**
+   * 
+   * @param message
+   * @return
+   */
+  public ActionResult setMessage(String argMsg) {
+    message = argMsg;
+    return this;
+  }
 
 }

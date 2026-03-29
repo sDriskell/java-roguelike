@@ -17,30 +17,61 @@ import roguelike.util.StringEx;
 import squidpony.squidcolor.SColor;
 import squidpony.squidcolor.SColorFactory;
 
+/**
+ * 
+ */
 public class LookDisplay extends TextWindow {
+
   private static final int BOTTOM_MARGIN = 1;
   private static final int TOP_MARGIN = 1;
   private TerminalBase terminal;
   private ArrayList<StringEx> textLines;
 
-  public LookDisplay(TerminalBase terminal, int width, int height) {
-    super(width, height);
-    setTerminal(terminal);
+  /**
+   * 
+   * @param argTerm
+   * @param argWidth
+   * @param argHeight
+   */
+  public LookDisplay(TerminalBase argTerm, int argWidth, int argHeight) {
+    super(argWidth, argHeight);
+    setTerminal(argTerm);
   }
 
-  public LookDisplay setTerminal(TerminalBase terminal) {
-    this.size = new Rectangle(0, 0, terminal.size().width, terminal.size().height);
-    this.terminal = terminal;
+  /**
+   * 
+   * @param argTerm
+   * @return
+   */
+  public LookDisplay setTerminal(TerminalBase argTerm) {
+    size = new Rectangle(0, 0, argTerm.size().width, argTerm.size().height);
+    terminal = argTerm;
     return this;
   }
 
-  public void draw(MapArea map, int x, int y, Point screenLookPoint) {
-    int height = getHeight(map, x, y, true, "Looking at");
+  /**
+   * 
+   * @param argMap
+   * @param x
+   * @param y
+   * @param argScrnLook
+   */
+  public void draw(MapArea argMap, int x, int y, Point argScrnLook) {
+    int height = getHeight(argMap, x, y, true, "Looking at");
     draw(height);
   }
 
-  public int getHeight(MapArea map, int x, int y, boolean drawActor, String caption) {
-    textLines = getTextLines(map, x, y, drawActor);
+  /**
+   * 
+   * @param argMap
+   * @param x
+   * @param y
+   * @param argDrawActor
+   * @param argCaption
+   * @return
+   */
+  public int getHeight(MapArea argMap, int x, int y, boolean argDrawActor, String argCaption) {
+    textLines = getTextLines(argMap, x, y, argDrawActor);
     int height = Math.min(textLines.size(), this.size.height - 4);
     height += BOTTOM_MARGIN + TOP_MARGIN;
 
@@ -48,35 +79,55 @@ public class LookDisplay extends TextWindow {
 
   }
 
-  public void draw(int height) {
-    int top = terminal.size().height - height - 1;
-    if (terminal.size().y > Game.current().getPlayer().position.y)
-      top = 0;
+  /**
+   * 
+   * @param argHeight
+   */
+  public void draw(int argHeight) {
+    int top = terminal.size().height - argHeight - 1;
 
-    this.drawBoxShape(terminal, top, height + 1, true);
-    drawInfo(textLines, top, height);
+    if (terminal.size().y > Game.current().getPlayer().position.y) {
+      top = 0;
+    }
+
+    drawBoxShape(terminal, top, argHeight + 1, true);
+    drawInfo(textLines, top, argHeight);
   }
 
+  /**
+   * 
+   */
   public void erase() {
     terminal.fill(0, 0, size.width, size.height, ' ');
   }
 
-  private ArrayList<StringEx> getTextLines(MapArea map, int x, int y, boolean drawActor) {
+  /**
+   * 
+   * @param argMap
+   * @param x
+   * @param y
+   * @param argDrawActor
+   * @return
+   */
+  private ArrayList<StringEx> getTextLines(MapArea argMap, int x, int y, boolean argDrawActor) {
     ArrayList<StringEx> textList = new ArrayList<>();
-    Actor actor = drawActor ? map.getActorAt(x, y) : null;
+    Actor actor = argDrawActor ? argMap.getActorAt(x, y) : null;
 
     if (actor != null) {
       add(textList, "`" + actor.color().getName() + "`" + actor.getName() + " ="
           + actor.behavior().getDescription());
       add(textList, actor.getDescription());
+
       Weapon equipped = ItemSlot.RIGHT_HAND.getEquippedWeapon(actor);
+
       add(textList, " `Gray`Weapon");
-      add(textList, "`White`" + equipped.name() + " (" + equipped.defaultDamageType().name() + ")");
+      add(textList,
+          "`White`" + equipped.getName() + " (" + equipped.defaultDamageType().name() + ")");
       add(textList, "");
       Statistics stats = actor.statistics();
       add(textList,
           String.format("`Bronze`Ref:`White`%3d `Bronze`Aim:`White`%3d `Bronze`Spd:`White`%3d",
-              stats.reflexes(), stats.aiming(), actor.effectiveSpeed(map)));
+              stats.reflexes(), stats.aiming(), actor.effectiveSpeed(argMap)));
 
       add(textList,
           String.format(" `Bronze`To:`White`%3d `Bronze`Co:`White`%3d `Bronze`Pe:`White`%3d ",
@@ -90,46 +141,61 @@ public class LookDisplay extends TextWindow {
       add(textList,
           String.format(" `Red`H:`White`%3d  `Bronze`MP:`White`%3d `Bronze`RP:`White`%3d ",
               actor.health().getCurrent(), stats.baseMeleePool(0), stats.baseRangedPool(0)));
-      add(textList,
-          String.format(" Can see player? `Red`%s", actor.canSee(Game.current().getPlayer(), map)));
+      add(textList, String.format(" Can see player? `Red`%s",
+          actor.canSee(Game.current().getPlayer(), argMap)));
     }
-    Inventory inventory = map.getItemsAt(x, y);
+
+    Inventory inventory = argMap.getItemsAt(x, y);
     add(textList, "");
 
-    if (drawActor)
+    if (argDrawActor) {
       add(textList, "On ground:");
+    }
 
     int itemSize = (this.size.height - (BOTTOM_MARGIN + TOP_MARGIN)) - textList.size();
     String[] itemDescriptions = inventory.getGroupedItemListAsText(itemSize - BOTTOM_MARGIN);
 
-    for (String string : itemDescriptions)
+    for (String string : itemDescriptions) {
       add(textList, " " + string);
+    }
 
     return textList;
   }
 
-  private void drawInfo(ArrayList<StringEx> textLines, int top, int height) {
+  /**
+   * 
+   * @param argLines
+   * @param argTop
+   * @param argHeight
+   */
+  private void drawInfo(ArrayList<StringEx> argLines, int argTop, int argHeight) {
     SColor menuBgColor = SColorFactory.asSColor(30, 30, 30);
     TerminalBase background = terminal.withColor(menuBgColor, menuBgColor);
     TerminalBase text = terminal.withColor(SColor.WHITE, menuBgColor);
-    int textY = TOP_MARGIN + top;
+    int textY = TOP_MARGIN + argTop;
 
-    background.fill(1, 1 + top, size.width - 2, height - 1, ' ');
+    background.fill(1, 1 + argTop, size.width - 2, argHeight - 1, ' ');
 
-    for (int i = 0; i < textLines.size(); i++) {
-      text.write(2, i + textY, textLines.get(i));
-      if ((i + textY) >= (height + top)) {
+    for (int i = 0; i < argLines.size(); i++) {
+      text.write(2, i + textY, argLines.get(i));
+      if ((i + textY) >= (argHeight + argTop)) {
         text.write(3, i + textY + 2, "...");
         break;
       }
     }
   }
 
-  private void add(ArrayList<StringEx> list, String string) {
-    StringEx str = new StringEx(string);
+  /**
+   * 
+   * @param argList
+   * @param argStr
+   */
+  private void add(ArrayList<StringEx> argList, String argStr) {
+    StringEx str = new StringEx(argStr);
     StringEx[] lines = str.wordWrap(size.width - 2);
+
     for (StringEx line : lines) {
-      list.add(line);
+      argList.add(line);
     }
   }
 }

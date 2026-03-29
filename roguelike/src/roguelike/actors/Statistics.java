@@ -2,125 +2,180 @@ package roguelike.actors;
 
 import java.io.Serializable;
 
+//TODO: Remove serializable implementation
+
+/**
+ * 
+ */
 public class Statistics implements Serializable {
-	private static final long serialVersionUID = 1L;
 
-	public class Statistic implements Serializable {
-		private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-		private int[] stat = new int[2];
+  /**
+   * How fast the character's turn occurs
+   */
+  public final Statistic speed = new Statistic(10, 0);
 
-		public int getBase() {
-			return stat[0];
-		}
+  /**
+   * The amount of damage done in melee, carrying capacity, ability to resist
+   * poison and disease, etc
+   */
+  public final Statistic toughness = new Statistic(10, 0);
 
-		public int getBonus() {
-			return stat[1];
-		}
+  /**
+   * Determines how quickly the character gets tired, hungry, thirsty
+   */
+  public final Statistic conditioning = new Statistic(10, 0);
 
-		public Statistic(int base, int bonus) {
-			this.stat = new int[] { base, bonus };
-		}
+  /**
+   * Affects the vision radius, as well as the ability to exploit weak spots, pick
+   * locks, and spot traps and other hidden things
+   */
+  public final Statistic perception = new Statistic(10, 0);
 
-		public Statistic setBase(int base) {
-			stat[0] = base;
-			return this;
-		}
+  /**
+   * The ability to dodge attacks and avoid effects of traps
+   */
+  public final Statistic agility = new Statistic(10, 0);
 
-		public Statistic setBonus(int bonus) {
-			stat[1] = bonus;
-			return this;
-		}
+  /**
+   * Determines how the character resists various conditions, as well as
+   * resistance to sorcery
+   */
+  public final Statistic willpower = new Statistic(10, 0);
 
-		public int getTotalValue() {
-			return stat[0] + stat[1];
-		}
-	}
+  /**
+   * Influences whether opponents decide to flee from combat, attempts to bribe
+   * and intimidate, anything having to do with social interaction. Also
+   * influences the bonuses gained from taverns, brothels, etc.
+   */
+  public final Statistic presence = new Statistic(10, 0);
 
-	/**
-	 * How fast the character's turn occurs
-	 */
-	public final Statistic speed = new Statistic(10, 0);
+  public int reflexBonus;
 
-	/**
-	 * The amount of damage done in melee, carrying capacity, ability to resist poison and disease, etc
-	 */
-	public final Statistic toughness = new Statistic(10, 0);
+  public int aimingBonus;
 
-	/**
-	 * Determines how quickly the character gets tired, hungry, thirsty
-	 */
-	public final Statistic conditioning = new Statistic(10, 0);
+  /**
+   * Determines how difficult it is to knock the character down or disarm him
+   * 
+   * @return
+   */
+  public int knockdown() {
+    return (toughness.getTotalValue() + conditioning.getTotalValue()) / 2;
+  }
 
-	/**
-	 * Affects the vision radius, as well as the ability to exploit weak spots, pick locks, and spot traps and other
-	 * hidden things
-	 */
-	public final Statistic perception = new Statistic(10, 0);
+  /**
+   * Determines how quickly the character can respond to an attack - this is the
+   * base number of dice that will be rolled to determine successes for a melee
+   * attack
+   * 
+   * @return
+   */
+  public int reflexes() {
+    return ((perception.getTotalValue() + agility.getTotalValue()) / 2) + reflexBonus;
+  }
 
-	/**
-	 * The ability to dodge attacks and avoid effects of traps
-	 */
-	public final Statistic agility = new Statistic(10, 0);
+  /**
+   * Determines how effective the character is at aiming ranged weapons - this is
+   * the base number of dice that will be rolled to determine successes for a
+   * ranged attack
+   * 
+   * @return
+   */
+  public int aiming() {
+    return ((perception.getTotalValue() + willpower.getTotalValue()) / 2) + aimingBonus;
+  }
 
-	/**
-	 * Determines how the character resists various conditions, as well as resistance to sorcery
-	 */
-	public final Statistic willpower = new Statistic(10, 0);
+  /**
+   * 
+   * @param argWpnProf
+   * @return
+   */
+  public int baseMeleePool(int argWpnProf) {
+    return reflexes() + argWpnProf;
+  }
 
-	/**
-	 * Influences whether opponents decide to flee from combat, attempts to bribe and intimidate, anything having to do
-	 * with social interaction. Also influences the bonuses gained from taverns, brothels, etc.
-	 */
-	public final Statistic presence = new Statistic(10, 0);
+  /**
+   * 
+   * @param argWpnProf
+   * @return
+   */
+  public int baseRangedPool(int argWpnProf) {
+    return aiming() + argWpnProf;
+  }
 
-	public int reflexBonus;
+  /**
+   * 
+   * @return
+   */
+  public int baseEvadePool() {
+    // get evade type
+    // - partial evade: -2 to MP for this turn, but TN=6
+    // - full evade: 0 MP penalty, TN=7
 
-	public int aimingBonus;
+    return reflexes();
+  }
 
-	/**
-	 * Determines how difficult it is to knock the character down or disarm him
-	 * 
-	 * @return
-	 */
-	public int knockdown() {
-		return (toughness.getTotalValue() + conditioning.getTotalValue()) / 2;
-	}
+  /**
+  * 
+  */
+  public class Statistic implements Serializable {
 
-	/**
-	 * Determines how quickly the character can respond to an attack - this is the base number of dice that will be
-	 * rolled to determine successes for a melee attack
-	 * 
-	 * @return
-	 */
-	public int reflexes() {
-		return ((perception.getTotalValue() + agility.getTotalValue()) / 2) + reflexBonus;
-	}
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Determines how effective the character is at aiming ranged weapons - this is the base number of dice that will be
-	 * rolled to determine successes for a ranged attack
-	 * 
-	 * @return
-	 */
-	public int aiming() {
-		return ((perception.getTotalValue() + willpower.getTotalValue()) / 2) + aimingBonus;
-	}
+    private int[] stat = new int[2];
 
-	public int baseMeleePool(int weaponProficiency) {
-		return reflexes() + weaponProficiency;
-	}
+    /**
+     * 
+     * @return
+     */
+    public int getBase() {
+      return stat[0];
+    }
 
-	public int baseRangedPool(int weaponProficiency) {
-		return aiming() + weaponProficiency;
-	}
+    /**
+     * 
+     * @return
+     */
+    public int getBonus() {
+      return stat[1];
+    }
 
-	public int baseEvadePool() {
-		// get evade type
-		// - partial evade: -2 to MP for this turn, but TN=6
-		// - full evade: 0 MP penalty, TN=7
+    /**
+     * 
+     * @param argBase
+     * @param argBonus
+     */
+    public Statistic(int argBase, int argBonus) {
+      this.stat = new int[] { argBase, argBonus };
+    }
 
-		return reflexes();
-	}
+    /**
+     * 
+     * @param argBase
+     * @return
+     */
+    public Statistic setBase(int argBase) {
+      stat[0] = argBase;
+      return this;
+    }
 
+    /**
+     * 
+     * @param argBonus
+     * @return
+     */
+    public Statistic setBonus(int argBonus) {
+      stat[1] = argBonus;
+      return this;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public int getTotalValue() {
+      return stat[0] + stat[1];
+    }
+  }
 }

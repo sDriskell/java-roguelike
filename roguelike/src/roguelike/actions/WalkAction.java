@@ -8,22 +8,38 @@ import roguelike.util.Coordinate;
 import roguelike.util.Log;
 import squidpony.squidgrid.util.DirectionIntercardinal;
 
+/**
+ * 
+ */
 public class WalkAction extends Action {
 
   private MapArea mapArea;
   private DirectionIntercardinal direction;
   private boolean canOpenDoors;
 
-  public WalkAction(Actor actor, MapArea mapArea, DirectionIntercardinal direction) {
-    this(actor, mapArea, direction, true);
+  /**
+   * 
+   * @param argAct
+   * @param argMap
+   * @param argDir
+   */
+  public WalkAction(Actor argAct, MapArea argMap, DirectionIntercardinal argDir) {
+    this(argAct, argMap, argDir, true);
   }
 
-  public WalkAction(Actor actor, MapArea mapArea, DirectionIntercardinal direction,
-      boolean canOpenDoors) {
-    super(actor);
-    this.mapArea = mapArea;
-    this.direction = direction;
-    this.canOpenDoors = canOpenDoors;
+  /**
+   * 
+   * @param argAct
+   * @param argMap
+   * @param argDir
+   * @param argCanOpenDoors
+   */
+  public WalkAction(Actor argAct, MapArea argMap, DirectionIntercardinal argDir,
+      boolean argCanOpenDoors) {
+    super(argAct);
+    mapArea = argMap;
+    direction = argDir;
+    canOpenDoors = argCanOpenDoors;
   }
 
   @Override
@@ -47,7 +63,8 @@ public class WalkAction extends Action {
 
     if (!mapArea.canMoveTo(actor, pos)) {
       Tile tile = mapArea.getTileAt(pos);
-      if (tile != null && tile instanceof Door && canOpenDoors)
+
+      if (tile instanceof Door && canOpenDoors)
         return ActionResult.alternate(new OpenDoorAction(actor, tile));
 
       return ActionResult.failure().setMessage(actor.doAction("can't move there"));

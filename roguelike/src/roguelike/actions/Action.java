@@ -2,35 +2,60 @@ package roguelike.actions;
 
 import roguelike.actors.Actor;
 
+/**
+ * 
+ */
 public abstract class Action {
 
-	protected Actor actor;
-	protected boolean usesEnergy;
+  protected Actor actor;
+  protected boolean usesEnergy;
 
-	protected Action(Actor actor) {
-		this.actor = actor;
-		this.usesEnergy = true;
-	}
+  /**
+   * 
+   * @param argActor
+   */
+  protected Action(Actor argActor) {
+    actor = argActor;
+    usesEnergy = true;
+  }
 
-	public Actor getActor() {
-		return actor;
-	}
+  /**
+   * 
+   * @return
+   */
+  public Actor getActor() {
+    return actor;
+  }
 
-	public final ActionResult perform() {
-		if (checkForIncomplete())
-			return ActionResult.incomplete();
+  /**
+   * 
+   * @return
+   */
+  public final ActionResult perform() {
+    if (checkForIncomplete()) {
+      return ActionResult.incomplete();
+    }
 
-		ActionResult result = onPerform();
+    ActionResult res = onPerform();
 
-		if (result.success && this.usesEnergy)
-			actor.energy().act();
+    if (res.isSuccess && usesEnergy) {
+      actor.energy().act();
+    }
 
-		return result;
-	}
+    return res;
+  }
 
-	protected boolean checkForIncomplete() {
-		return false;
-	}
+  /**
+   * 
+   * @return
+   */
+  protected boolean checkForIncomplete() {
+    return false;
+  }
 
-	protected abstract ActionResult onPerform();
+  /**
+   * 
+   * @return
+   */
+  protected abstract ActionResult onPerform();
 }

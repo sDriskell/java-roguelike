@@ -10,6 +10,9 @@ import squidpony.squidcolor.SColor;
 import squidpony.squidcolor.SColorFactory;
 import squidpony.squidgrid.util.DirectionIntercardinal;
 
+/**
+ * 
+ */
 public class AttackAnimation extends Animation {
 
   private Actor target;
@@ -18,16 +21,23 @@ public class AttackAnimation extends Animation {
   private char attackChar;
   private Coordinate attackCharPoint;
 
-  public AttackAnimation(Actor attacker, Actor target, String damage) {
-    this.target = target;
-    this.damage = damage;
-    this.totalFrames = 15;
+  /**
+   * 
+   * @param argAtk
+   * @param argTgt
+   * @param argDmg
+   */
+  public AttackAnimation(Actor argAtk, Actor argTgt, String argDmg) {
+    target = argTgt;
+    damage = argDmg;
+    totalFrames = 15;
 
-    Coordinate attackerPos = attacker.getPosition();
-    Coordinate targetPos = target.getPosition();
+    Coordinate attackerPos = argAtk.getPosition();
+    Coordinate targetPos = argTgt.getPosition();
 
     DirectionIntercardinal dir = DirectionIntercardinal.getDirection(targetPos.x - attackerPos.x,
         targetPos.y - attackerPos.y);
+
     switch (dir) {
       case UP:
       case DOWN:
@@ -49,6 +59,7 @@ public class AttackAnimation extends Animation {
         attackChar = '*';
         break;
     }
+
     if (Math.floor(attackerPos.distance(targetPos)) <= 1) {
       attackCharPoint = targetPos;
     }
@@ -63,9 +74,9 @@ public class AttackAnimation extends Animation {
   }
 
   @Override
-  public void onNextFrame(TerminalBase terminal) {
-    Point offsetPos = getOffsetPosition(terminal, target);
-    Point attackCharPos = getOffsetPosition(terminal, attackCharPoint);
+  public void onNextFrame(TerminalBase argTerm) {
+    Point offsetPos = getOffsetPosition(argTerm, target);
+    Point attackCharPos = getOffsetPosition(argTerm, attackCharPoint);
     int x = offsetPos.x;
     int y = offsetPos.y;
 
@@ -76,6 +87,7 @@ public class AttackAnimation extends Animation {
         currentFrame / (float) totalFrames);
     SColor foregroundColor;
     int yOffset = 0;
+
     if (Player.isPlayer(target)) {
       foregroundColor = SColor.RED;
       yOffset = (currentFrame / 4) * 2;
@@ -83,11 +95,12 @@ public class AttackAnimation extends Animation {
     else {
       foregroundColor = SColor.YELLOW;
     }
+
     foregroundColor = SColorFactory.blend(foregroundColor, SColor.BENI_DYE,
         currentFrame / (float) totalFrames);
 
-    TerminalBase effect = terminal.withColor(foregroundColor, backgroundColor);
-    TerminalBase dmg = terminal.withColor(foregroundColor);
+    TerminalBase effect = argTerm.withColor(foregroundColor, backgroundColor);
+    TerminalBase dmg = argTerm.withColor(foregroundColor);
 
     effect.fill(offsetPos.x, offsetPos.y, 1, 1);
     effect.put(attackCharPos.x, attackCharPos.y, attackChar);

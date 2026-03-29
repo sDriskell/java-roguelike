@@ -4,15 +4,24 @@ import roguelike.actions.Action;
 import roguelike.actors.Actor;
 import roguelike.items.Weapon;
 
+/**
+ * 
+ */
 public class MeleeAttack extends Attack {
 
-	public MeleeAttack(String description, int baseDamage, Weapon weapon) {
-		super(description, baseDamage, weapon);
-	}
+  /**
+   * 
+   * @param argDesc
+   * @param argBaseDmg
+   * @param argWpn
+   */
+  public MeleeAttack(String argDesc, int argBaseDmg, Weapon argWpn) {
+    super(argDesc, argBaseDmg, argWpn);
+  }
 
-	@Override
-	public boolean onPerform(Action action, Actor target) {
-		return action.getActor().combatHandler().processAttack(action, this, target);
-	}
+  @Override
+  public boolean onPerform(Action argAct, Actor argTgt) {
+    return argAct.getActor().combatHandler().processAttack(argAct, argTgt, this);
+  }
 
 }

@@ -8,74 +8,130 @@ import java.io.Serializable;
 import squidpony.squidcolor.SColor;
 import squidpony.squidcolor.SColorFactory;
 
+//TODO: remove Serializable implemenation
+/**
+ * 
+ */
 public class CharEx implements Serializable {
-	private static final long serialVersionUID = -506720251888391231L;
 
-	static SColor defaultForeground = SColor.WHITE;
-	static SColor defaultBackground = SColor.BLACK;
+  private static final long serialVersionUID = -506720251888391231L;
 
-	private transient SColor foreground;
-	private transient SColor background;
-	private char symbol;
+  static SColor defaultForeground = SColor.WHITE;
+  static SColor defaultBackground = SColor.BLACK;
 
-	public CharEx(char symbol) {
-		this(symbol, defaultForeground, defaultBackground);
-	}
+  private transient SColor foreground;
+  private transient SColor background;
+  private char symbol;
 
-	public CharEx(char symbol, SColor foreground) {
-		this(symbol, foreground, defaultBackground);
-	}
+  // TODO: better design pattern for spiraling
+  /**
+   * 
+   * @param argSym
+   */
+  public CharEx(char argSym) {
+    this(argSym, defaultForeground, defaultBackground);
+  }
 
-	public CharEx(char symbol, SColor foreground, SColor background) {
-		this.symbol = symbol;
-		this.foreground = foreground;
-		this.background = background;
-	}
+  /**
+   * 
+   * @param argSym
+   * @param argFg
+   */
+  public CharEx(char argSym, SColor argFg) {
+    this(argSym, argFg, defaultBackground);
+  }
 
-	public static CharEx parse(String text) {
-		String[] elements = text.split(":");
+  /**
+   * 
+   * @param argSym
+   * @param argFg
+   * @param argBg
+   */
+  public CharEx(char argSym, SColor argFg, SColor argBg) {
+    symbol = argSym;
+    foreground = argFg;
+    background = argBg;
+  }
 
-		if (elements == null || elements.length == 0)
-			throw new IllegalArgumentException("Invalid text passed to Character.parse");
+  /**
+   * 
+   * @param argTxt
+   * @return
+   */
+  public static CharEx parse(String argTxt) {
+    String[] elements = argTxt.split(":");
 
-		return new CharEx(elements[0].charAt(0));
-	}
+    if (elements == null || elements.length == 0) {
+      throw new IllegalArgumentException("Invalid text passed to Character.parse");
+    }
 
-	private void writeObject(ObjectOutputStream out) throws IOException {
-		out.defaultWriteObject();
+    return new CharEx(elements[0].charAt(0));
+  }
 
-		out.writeInt(foreground.getRGB());
-		out.writeInt(background.getRGB());
-	}
+  /**
+   * 
+   * @param argOut
+   * @throws IOException
+   */
+  private void writeObject(ObjectOutputStream argOut) throws IOException {
+    argOut.defaultWriteObject();
+    argOut.writeInt(foreground.getRGB());
+    argOut.writeInt(background.getRGB());
+  }
 
-	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-		in.defaultReadObject();
-		foreground = SColorFactory.asSColor(in.readInt());
-		background = SColorFactory.asSColor(in.readInt());
-	}
+  /**
+   * 
+   * @param argIn
+   * @throws IOException
+   * @throws ClassNotFoundException
+   */
+  private void readObject(ObjectInputStream argIn) throws IOException, ClassNotFoundException {
+    argIn.defaultReadObject();
+    foreground = SColorFactory.asSColor(argIn.readInt());
+    background = SColorFactory.asSColor(argIn.readInt());
+  }
 
-	public char symbol() {
-		return this.symbol;
-	}
+  /**
+   * 
+   * @return
+   */
+  public char getSymbol() {
+    return symbol;
+  }
 
-	public SColor foregroundColor() {
-		return this.foreground;
-	}
+  /**
+   * 
+   * @return
+   */
+  public SColor getForegroundColor() {
+    return foreground;
+  }
 
-	public SColor backgroundColor() {
-		return this.background;
-	}
+  /**
+   * 
+   * @return
+   */
+  public SColor argBackgroundColor() {
+    return background;
+  }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof CharEx) {
-			CharEx other = (CharEx) obj;
-			return (Character.compare(other.symbol, this.symbol) == 0 && other.background.equals(this.background) && other.foreground.equals(this.foreground));
-		}
-		return super.equals(obj);
-	}
+  @Override
+  public boolean equals(Object argO) {
+    if (argO instanceof CharEx) {
+      CharEx other = (CharEx) argO;
+      return (Character.compare(other.symbol, this.symbol) == 0
+          && other.background.equals(this.background) && other.foreground.equals(this.foreground));
+    }
+    return super.equals(argO);
+  }
 
-	public boolean isWhitespace() {
-		return this.symbol == ' ';
-	}
+  // TODO: Override hashcode method
+
+  /**
+   * 
+   * @return
+   */
+  public boolean isWhitespace() {
+    return symbol == ' ';
+  }
 }

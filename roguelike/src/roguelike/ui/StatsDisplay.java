@@ -16,6 +16,9 @@ import roguelike.util.StringEx;
 import squidpony.squidcolor.SColor;
 import squidpony.squidcolor.SColorFactory;
 
+/**
+ * 
+ */
 public class StatsDisplay extends TextWindow {
 
   private final int leftMargin = 1;
@@ -23,17 +26,28 @@ public class StatsDisplay extends TextWindow {
   private TerminalBase terminal;
   private Player player;
 
-  public StatsDisplay(TerminalBase terminal) {
-    super(terminal.size().width, terminal.size().height);
-    this.terminal = terminal;
+  /**
+   * 
+   * @param argterm
+   */
+  public StatsDisplay(TerminalBase argterm) {
+    super(argterm.size().width, argterm.size().height);
+    this.terminal = argterm;
 
-    System.out.println("Stats display: " + terminal.size().width + "x" + terminal.size().height);
+    System.out.println("Stats display: " + argterm.size().width + "x" + argterm.size().height);
   }
 
-  public void setPlayer(Player player) {
-    this.player = player;
+  /**
+   * 
+   * @param argPlyr
+   */
+  public void setPlayer(Player argPlyr) {
+    this.player = argPlyr;
   }
 
+  /**
+   * 
+   */
   public void draw() {
     if (player == null) {
       return;
@@ -45,7 +59,8 @@ public class StatsDisplay extends TextWindow {
     terminal.write(leftMargin, 1,
         String.format("P:%3d,%3d", player.getPosition().x, player.getPosition().y));
     terminal.write(leftMargin, 2, String.format("E:%3d", player.energy().getCurrent()));
-    terminal.write(leftMargin, 3, String.format("%s", Game.current().getCurrentMapArea().name()));
+    terminal.write(leftMargin, 3,
+        String.format("%s", Game.current().getCurrentMapArea().getName()));
 
     drawHealth();
     drawEquipped();
@@ -53,6 +68,9 @@ public class StatsDisplay extends TextWindow {
     drawConditions();
   }
 
+  /**
+   * 
+   */
   private void drawHealth() {
     TerminalBase bracketTerm = terminal.withColor(SColor.WHITE);
 
@@ -79,8 +97,10 @@ public class StatsDisplay extends TextWindow {
         String.format("H: %3d/%3d", player.health().getCurrent(), player.health().getMaximum()));
   }
 
+  /**
+   * 
+   */
   private void drawEquipped() {
-
     int leftX = 5;
     int startY = 8;
 
@@ -98,17 +118,21 @@ public class StatsDisplay extends TextWindow {
     Weapon ranged = ItemSlot.RANGED.getEquippedWeapon(player);
     Weapon ammo = ItemSlot.PROJECTILE.getEquippedWeapon(player);
 
-    if (left != null)
-      terminal.write(leftX, startY, String.format("%1$-15s", left.name()));
+    if (left != null) {
+      terminal.write(leftX, startY, String.format("%1$-15s", left.getName()));
+    }
 
-    if (right != null)
-      terminal.write(leftX, startY + 1, String.format("%1$-15s", right.name()));
+    if (right != null) {
+      terminal.write(leftX, startY + 1, String.format("%1$-15s", right.getName()));
+    }
 
-    if (ranged != null)
-      terminal.write(leftX, startY + 3, String.format("%1$-15s", ranged.name()));
+    if (ranged != null) {
+      terminal.write(leftX, startY + 3, String.format("%1$-15s", ranged.getName()));
+    }
 
-    if (ammo != null)
-      terminal.write(leftX, startY + 4, String.format("%1$-15s", ammo.name()));
+    if (ammo != null) {
+      terminal.write(leftX, startY + 4, String.format("%1$-15s", ammo.getName()));
+    }
 
     headerTerm.write(leftX + 14, startY + 6, "MP");
     int weaponProficiency = 0; // TODO: calculate this
@@ -121,8 +145,10 @@ public class StatsDisplay extends TextWindow {
         String.format("%3d", player.statistics().baseMeleePool(rangedProficiency)));
   }
 
+  /**
+   * 
+   */
   private void drawStats() {
-
     int startY = 14;
 
     SColor headerColor = SColor.BRONZE;
@@ -148,19 +174,24 @@ public class StatsDisplay extends TextWindow {
     displayTerm.write(15, startY, String.format("%3d", statistics.presence.getTotalValue()));
   }
 
+  /**
+   * 
+   */
   private void drawConditions() {
     int startY = 17;
 
     terminal.fill(1, startY, MainWindow.STAT_WIDTH, 3, ' ');
-
     List<Condition> conditions = player.conditions();
     StringEx s = new StringEx();
     CharEx space = new CharEx(' ');
+
     for (Condition c : conditions) {
       s.addAll(c.identifier());
       s.add(space);
     }
+
     StringEx[] lines = s.wordWrap(MainWindow.STAT_WIDTH);
+
     for (int x = 0; x < lines.length; x++) {
       terminal.write(1, x + startY, lines[x]);
     }

@@ -8,7 +8,11 @@ import roguelike.items.Equipment.ItemSlot;
 import squidpony.squidcolor.SColor;
 import squidpony.squidutility.Pair;
 
+/**
+ * 
+ */
 public abstract class Item implements Serializable {
+
   private static final long serialVersionUID = 1L;
 
   private UUID itemId = UUID.randomUUID();
@@ -22,46 +26,85 @@ public abstract class Item implements Serializable {
 
   final boolean stackable;
 
-  protected Item(boolean stackable) {
-    this.droppable = true;
-    this.stackable = stackable;
+  /**
+   * 
+   * @param argIsStackable
+   */
+  protected Item(boolean argIsStackable) {
+    droppable = true;
+    stackable = argIsStackable;
   }
 
-  public final UUID itemId() {
-    return this.itemId;
+  /**
+   * 
+   * @return
+   */
+  public final UUID getItemId() {
+    return itemId;
   }
 
-  public boolean isSameItem(UUID otherId) {
-    return itemId() == otherId;
+  /**
+   * 
+   * @param argId
+   * @return
+   */
+  public boolean isSameItem(UUID argId) {
+    return getItemId() == argId;
   }
 
+  /**
+   * 
+   * @return
+   */
   public abstract ItemType type();
 
-  public String name() {
-    if (name == null)
-      return "???";
-
-    return this.name;
+  /**
+   * 
+   * @return
+   */
+  public String getName() {
+    return name == null ? "???" : name;
   }
 
-  public char symbol() {
-    return this.symbol;
+  /**
+   * 
+   * @return
+   */
+  public char getSymbol() {
+    return symbol;
   }
 
-  public SColor color() {
-    return this.color;
+  /**
+   * 
+   * @return
+   */
+  public SColor getColor() {
+    return color;
   }
 
-  public int weight() {
-    return this.weight;
+  /**
+   * 
+   * @return
+   */
+  public int getWeight() {
+    return weight;
   }
 
+  /**
+   * 
+   * @return
+   */
   public abstract String getDescription();
 
+  /**
+   * 
+   * @return
+   */
   boolean isDroppable() {
     return droppable;
   }
 
+  // TODO: do something with this
   /**
    * Methods to cast to a specific subtype
    * 
@@ -71,50 +114,89 @@ public abstract class Item implements Serializable {
     return null;
   }
 
+  // TODO: do something with this
+  /**
+   * 
+   * @return
+   */
   public Projectile asProjectile() {
     return null;
   }
 
+  /**
+   * 
+   * @param <T>
+   * @param argType
+   * @return
+   */
   @SuppressWarnings("unchecked")
-  public <T> T as(Class<T> type) {
+  public <T> T as(Class<T> argType) {
     return (T) this;
   }
 
-  public boolean canEquip(ItemSlot slot) {
-    if (equippable == null)
-      return true;
-
-    if ((slot.value & equippable.value) == slot.value) {
-      return true;
-    }
-    return false;
+  /**
+   * 
+   * @param argSlt
+   * @return
+   */
+  public boolean canEquip(ItemSlot argSlt) {
+    return (equippable == null || (argSlt.value & equippable.value) == argSlt.value) ? true : false;
   }
 
-  public abstract boolean canUse(Actor user, Actor target);
+  /**
+   * 
+   * @param argUser
+   * @param argTgt
+   * @return
+   */
+  public abstract boolean canUse(Actor argUser, Actor argTgt);
 
   /**
    * Called when the item is used, returns an item that is the result of using
    * this one. If null, the item should be removed from inventory
    * 
-   * @param actor
    * @return
    */
   public Pair<Item, Boolean> onUsed() {
     return new Pair<>(this, false);
   }
 
-  public void onEquipped(Actor actor) {
+  /**
+   * 
+   * @param argAct
+   */
+  public void onEquipped(Actor argAct) {
   }
 
-  public void onRemoved(Actor actor) {
+  /**
+   * |
+   * 
+   * @param argAct
+   */
+  public void onRemoved(Actor argAct) {
   }
 
-  public void onThrown(Actor actor, Actor target) {
+  /**
+   * 
+   * @param argAct
+   * @param argTgt
+   */
+  public void onThrown(Actor argAct, Actor argTgt) {
   }
 
-  public void onAttacked(Actor actor, Actor target) {
+  /**
+   * 
+   * @param argAct
+   * @param argTgt
+   */
+  public void onAttacked(Actor argAct, Actor argTgt) {
   }
 
-  public void onAttacking(Actor actor, Actor target) {
+  /**
+   * 
+   * @param argAct
+   * @param argTgt
+   */
+  public void onAttacking(Actor argAct, Actor argTgt) {
   }
 }

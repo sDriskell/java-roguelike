@@ -2,41 +2,70 @@ package roguelike.actors;
 
 import java.io.Serializable;
 
+//TODO: remove serializable implementation
+
+/**
+ * 
+ */
 public class Health implements Serializable {
-	private static final long serialVersionUID = 1L;
 
-	private int current;
-	private int maximum;
+  private static final long serialVersionUID = 1L;
 
-	public Health(int maximum) {
-		this.maximum = maximum;
-		this.current = maximum;
-	}
+  private int current;
+  private int maximum;
 
-	public int getCurrent() {
-		return this.current;
-	}
+  /**
+   * 
+   * @param argMax
+   */
+  public Health(int argMax) {
+    maximum = argMax;
+    current = argMax;
+  }
 
-	public int getMaximum() {
-		return this.maximum;
-	}
+  /**
+   * 
+   * @return
+   */
+  public int getCurrent() {
+    return current;
+  }
 
-	public void setMaximum(int maximum) {
-		setMaximum(maximum, maximum < current);
-	}
+  /**
+   * 
+   * @return
+   */
+  public int getMaximum() {
+    return maximum;
+  }
 
-	public void setMaximum(int maximum, boolean setCurrentToMax) {
-		this.maximum = maximum;
-		if (setCurrentToMax)
-			this.current = maximum;
-	}
+  /**
+   * 
+   * @param argMax
+   */
+  public void setMaximum(int argMax) {
+    setMaximum(argMax, argMax < current);
+  }
 
-	public void heal(int amount) {
-		this.current = Math.min(current + amount, maximum);
-	}
+  /**
+   * 
+   * @param argMax
+   * @param isSetToMax
+   */
+  public void setMaximum(int argMax, boolean isSetToMax) {
+    maximum = argMax;
 
-	boolean damage(int amount) {
-		this.current -= amount;
-		return current <= 0;
-	}
+    if (isSetToMax) {
+      current = argMax;
+    }
+  }
+
+  public void heal(int argAMt) {
+    current = Math.min(current + argAMt, maximum);
+  }
+
+  boolean damage(int argAmt) {
+    current -= argAmt;
+    return current <= 0;
+  }
 }

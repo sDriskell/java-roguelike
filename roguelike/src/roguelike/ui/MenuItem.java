@@ -2,42 +2,79 @@ package roguelike.ui;
 
 import roguelike.util.StringEx;
 
+/**
+ * 
+ * @param <T>
+ */
 public class MenuItem<T> {
 
-	private StringEx text;
-	private T item;
-	private boolean active;
+  private StringEx text;
+  private T item;
+  private boolean isActive;
 
-	public MenuItem(StringEx text, T item, boolean active) {
-		this.text = text;
-		this.item = item;
-		this.active = active;
-	}
+  /**
+   * 
+   * @param argTxt
+   * @param argItm
+   * @param argIsActive
+   */
+  public MenuItem(StringEx argTxt, T argItm, boolean argIsActive) {
+    text = argTxt;
+    item = argItm;
+    isActive = argIsActive;
+  }
 
-	public MenuItem(String text, T item) {
-		this(new StringEx(text), item, false);
-	}
+  /**
+   * 
+   * @param argTxt
+   * @param argItm
+   */
+  public MenuItem(String argTxt, T argItm) {
+    this(new StringEx(argTxt), argItm, false);
+  }
 
-	public MenuItem(String text, T item, boolean active) {
-		this(text, item);
-		this.active = active;
-	}
+  /**
+   * 
+   * @param argTxt
+   * @param argItm
+   * @param argIsActive
+   */
+  public MenuItem(String argTxt, T argItm, boolean argIsActive) {
+    this(argTxt, argItm);
+    isActive = argIsActive;
+  }
 
-	public MenuItem<T> setActive(boolean active)
-	{
-		this.active = active;
-		return this;
-	}
+  /**
+   * 
+   * @param argIsActive
+   * @return
+   */
+  public MenuItem<T> setActive(boolean argIsActive) {
+    isActive = argIsActive;
+    return this;
+  }
 
-	public StringEx getText() {
-		return text;
-	}
+  /**
+   * 
+   * @return
+   */
+  public StringEx getText() {
+    return text;
+  }
 
-	public T item() {
-		return this.item;
-	}
+  /**
+   * 
+   * @return
+   */
+  public T item() {
+    return this.item;
+  }
 
-	public boolean isActive() {
-		return active;
-	}
+  /**
+   * 
+   * @return
+   */
+  public boolean isActive() {
+    return isActive;
+  }
 }

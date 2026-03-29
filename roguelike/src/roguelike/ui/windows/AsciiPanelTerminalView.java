@@ -3,26 +3,30 @@ package roguelike.ui.windows;
 import roguelike.ui.asciipanel.AsciiPanel;
 import roguelike.util.CharEx;
 
+/**
+ * 
+ */
 public class AsciiPanelTerminalView {
 
-	private TerminalBase terminal;
-	private AsciiPanel asciiPanel;
+  private TerminalBase terminal;
+  private AsciiPanel asciiPanel;
 
-	public AsciiPanelTerminalView(TerminalBase terminal, AsciiPanel panel) {
-		this.terminal = terminal;
-		this.asciiPanel = panel;
+  public AsciiPanelTerminalView(TerminalBase argterm, AsciiPanel argPnl) {
+    terminal = argterm;
+    asciiPanel = argPnl;
 
-		this.terminal.setTerminalChanged(new TerminalChangeNotification() {
+    terminal.setTerminalChanged(new TerminalChangeNotification() {
 
-			@Override
-			public void onChanged(int x, int y, CharEx c) {
-				try {
-					asciiPanel.write(c.symbol(), x, y, c.foregroundColor(), c.backgroundColor());
-				} catch (Exception e) {
-					System.out.println("char=" + c.symbol());
-					throw e;
-				}
-			}
-		});
-	}
+      @Override
+      public void onChanged(int x, int y, CharEx c) {
+        try {
+          asciiPanel.write(c.getSymbol(), x, y, c.getForegroundColor(), c.argBackgroundColor());
+        }
+        catch (Exception e) {
+          System.out.println("char=" + c.getSymbol());
+          throw e;
+        }
+      }
+    });
+  }
 }

@@ -15,6 +15,9 @@ import roguelike.ui.windows.TerminalChangeNotification;
 import roguelike.util.CharEx;
 import roguelike.util.Log;
 
+/**
+ * 
+ */
 public class DisplayManager {
   private static final String FONT_NAME = "Nouveau_IBM.ttf";
   private static final String BACKUP_FONT_NAME = "Lucidia";
@@ -32,24 +35,42 @@ public class DisplayManager {
 
   private static DisplayManager self;
 
-  public DisplayManager(int fontSize) {
-    this.fontSize = fontSize;
-
+  /**
+   * 
+   * @param argFontSize
+   */
+  public DisplayManager(int argFontSize) {
+    fontSize = argFontSize;
     self = this;
   }
 
+  /**
+   * 
+   * @return
+   */
   public static DisplayManager instance() {
     return self;
   }
 
+  /**
+   * 
+   * @return
+   */
   public Font screenFont() {
-    return this.font;
+    return font;
   }
 
+  /**
+   * 
+   * @return
+   */
   public JComponent displayPane() {
-    return this.displayPane;
+    return displayPane;
   }
 
+  /**
+   * 
+   */
   public void refresh() {
     if (dirty) {
       asciiPanel.repaint();
@@ -57,10 +78,17 @@ public class DisplayManager {
     }
   }
 
+  /**
+   * 
+   */
   public void setDirty() {
     dirty = true;
   }
 
+  /**
+   * 
+   * @return
+   */
   public TerminalBase getTerminal() {
     if (mainDisplay == null) {
       mainDisplay = new Terminal(gridWidth, gridHeight, new TerminalChangeNotification() {
@@ -70,36 +98,52 @@ public class DisplayManager {
         }
       });
     }
+
     return mainDisplay;
   }
 
+  /**
+   * 
+   * @return
+   */
   public AsciiPanelTerminalView getTerminalView() {
     if (terminalView == null) {
       terminalView = new AsciiPanelTerminalView(getTerminal(), asciiPanel);
     }
+
     return terminalView;
   }
 
-  public void init(int width, int height) {
-    Log.info("DisplayManager.init(" + width + ", " + height + ")");
+  /**
+   * 
+   * @param argWidth
+   * @param argHeight
+   */
+  public void init(int argWidth, int argHeight) {
+    Log.info("DisplayManager.init(" + argWidth + ", " + argHeight + ")");
     font = getFont(FONT_NAME);
     font = font.deriveFont((float) fontSize);
 
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
     ge.registerFont(font);
 
-    this.gridWidth = width;
-    this.gridHeight = height;
-
-    asciiPanel = new AsciiPanel(width, height);
+    gridWidth = argWidth;
+    gridHeight = argHeight;
+    asciiPanel = new AsciiPanel(argWidth, argHeight);
     displayPane = asciiPanel;
   }
 
-  private Font getFont(String name) {
+  /**
+   * 
+   * @param argName
+   * @return
+   */
+  private Font getFont(String argName) {
     Font font = null;
-    String fName = "./assets/" + name;
+    String fName = "./assets/" + argName;
+
     try {
-      InputStream is = TitleScreen.class.getResourceAsStream("/resources/assets/" + name);
+      InputStream is = TitleScreen.class.getResourceAsStream("/resources/assets/" + argName);
       font = Font.createFont(Font.TRUETYPE_FONT, is);
 
       System.out.println("Loaded " + fName);
@@ -109,6 +153,7 @@ public class DisplayManager {
       System.err.println(fName + " not loaded.  Using " + FONT_NAME + " font.");
       font = new Font(BACKUP_FONT_NAME, Font.PLAIN, 24);
     }
+
     return font;
   }
 }

@@ -19,58 +19,94 @@ import roguelike.util.Log;
 import squidpony.squidcolor.SColor;
 import squidpony.squidmath.RNG;
 
+//TODO: remove Serializable implementation
+/**
+ * 
+ */
 public class MapArea implements Serializable {
+
   private static final long serialVersionUID = 1L;
 
   private Tile[][] map;
   private float[][] lightResistances;
   private boolean[][] walls;
-
   protected CurrentItemTracker<Actor> actors;
   protected int width, height;
   protected int difficulty; // controls how difficult random enemies are here
-
   protected String name;
 
-  protected MapArea(int width, int height, MapBuilderBase mapBuilder) {
+  /**
+   * 
+   * @param argWidth
+   * @param argHeight
+   * @param argMapBldr
+   */
+  protected MapArea(int argWidth, int argHeight, MapBuilderBase argMapBldr) {
     actors = new CurrentItemTracker<>();
-    this.width = width;
-    this.height = height;
-    this.difficulty = 1;
-
-    buildMapArea(mapBuilder);
+    width = argWidth;
+    height = argHeight;
+    difficulty = 1;
+    buildMapArea(argMapBldr);
   }
 
-  public static MapArea build(int width, int height, MapBuilderBase mapBuilder) {
-    return new Dungeon(width, height, mapBuilder, 1, 10);
+  /**
+   * 
+   * @param arghWidth
+   * @param argHeight
+   * @param argMapBldr
+   * @return
+   */
+  public static MapArea build(int arghWidth, int argHeight, MapBuilderBase argMapBldr) {
+    return new Dungeon(arghWidth, argHeight, argMapBldr, 1, 10);
   }
 
+  /**
+   * 
+   * @param in
+   * @throws ClassNotFoundException
+   * @throws IOException
+   */
   private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
     in.defaultReadObject();
     Log.debug("Read map");
   }
 
-  public int width() {
-    return this.width;
+  /**
+   * 
+   * @return
+   */
+  public int getWidth() {
+    return width;
   }
 
-  public int height() {
+  /**
+   * 
+   * @return
+   */
+  public int getHeight() {
     return this.height;
   }
 
-  public String name() {
+  /**
+   * 
+   * @return
+   */
+  public String getName() {
     return this.name;
   }
 
+  /**
+   * 
+   */
   public void spawnMonsters() {
     Log.verboseDebug("spawnMonsters");
     int maxActors = 10;
+
     if (actors.count() < maxActors && Game.current().random().nextInt(10) > 6) {
       /* create a new one somewhere close to the player */
-
       Coordinate position = findRandomNonVisibleTile();
-      if (position != null) {
 
+      if (position != null) {
         Actor npc = EnemyFactory.createEnemy(position.x, position.y, difficulty);
 
         if (addActor(npc)) {
@@ -82,9 +118,12 @@ public class MapArea implements Serializable {
     }
   }
 
+  /**
+   * 
+   * @return
+   */
   private Coordinate findRandomNonVisibleTile() {
     Coordinate playerPos = Game.current().getPlayer().getPosition();
-
     RNG rng = Game.current().random();
 
     for (int i = 0; i < 5; i++) {
@@ -95,17 +134,27 @@ public class MapArea implements Serializable {
       y = Math.max(0, Math.min(y, height - 1));
 
       Tile tile = getTileAt(x, y);
+
       if (!tile.visible && !tile.isWall() && tile.canPass()) {
         return new Coordinate(x, y);
       }
     }
+
     return null;
   }
 
+  /**
+   * 
+   * @return
+   */
   public float[][] getLightValues() {
     return lightResistances;
   }
 
+  /**
+   * 
+   * @return
+   */
   public boolean[][] getWalls() {
     return walls;
   }
@@ -131,18 +180,19 @@ public class MapArea implements Serializable {
    * on the provided screen size and center point (generally the player's
    * location).
    * 
-   * @param screenCellsX The width of the screen in cells
-   * @param screenCellsY The height of the screen in cells
-   * @param center The point at which the screen should be centered on
+   * @param argScnCellsX The width of the screen in cells
+   * @param argScnCellsY The height of the screen in cells
+   * @param argCenter The point at which the screen should be centered on
    * @return The location of the upper left point, in cells, after adjusting for
    * map boundaries
    */
-  public Coordinate getUpperLeftScreenTile(int screenCellsX, int screenCellsY, Coordinate center) {
-    int left = (int) Math.round(center.x - (screenCellsX / 2.0));
-    int top = (int) Math.round(center.y - (screenCellsY / 2.0));
+  public Coordinate getUpperLeftScreenTile(int argScnCellsX, int argScnCellsY,
+      Coordinate argCenter) {
+    int left = (int) Math.round(argCenter.x - (argScnCellsX / 2.0));
+    int top = (int) Math.round(argCenter.y - (argScnCellsY / 2.0));
 
-    left = Math.min(Math.max(left, 0), Math.max(width - screenCellsX, 0));
-    top = Math.min(Math.max(top, 0), Math.max(height - screenCellsY, 0));
+    left = Math.min(Math.max(left, 0), Math.max(width - argScnCellsX, 0));
+    top = Math.min(Math.max(top, 0), Math.max(height - argScnCellsY, 0));
 
     return new Coordinate(left, top);
   }
@@ -150,55 +200,60 @@ public class MapArea implements Serializable {
   /**
    * Determines the visible screen area, in cells
    * 
-   * @param screenCellsX The width of the screen in cells
-   * @param screenCellsY The height of the screen in cells
-   * @param center The point at which the screen is centered on
+   * @param argScnCellsX The width of the screen in cells
+   * @param argScnCellsY The height of the screen in cells
+   * @param argCenter The point at which the screen is centered on
    * @return A Rectangle representing the area that should be drawn to the screen,
    * in cells
    */
-  public Rectangle getVisibleAreaInTiles(int screenCellsX, int screenCellsY, Coordinate center) {
-    Coordinate upperLeft = getUpperLeftScreenTile(screenCellsX, screenCellsY, center);
-    int w;
-    int h;
-
-    w = Math.min(this.width - upperLeft.x, screenCellsX);
-    h = Math.min(this.height - upperLeft.y, screenCellsY);
+  public Rectangle getVisibleAreaInTiles(int argScnCellsX, int argScnCellsY, Coordinate argCenter) {
+    Coordinate upperLeft = getUpperLeftScreenTile(argScnCellsX, argScnCellsY, argCenter);
+    int w = Math.min(width - upperLeft.x, argScnCellsX);
+    int h = Math.min(height - upperLeft.y, argScnCellsY);
 
     return new Rectangle(upperLeft.x, upperLeft.y, w, h);
   }
 
-  public Rectangle getVisibleAreaInTiles(TerminalBase terminal, Coordinate center) {
-    return getVisibleAreaInTiles(terminal.size().width, terminal.size().height, center);
+  /**
+   * 
+   * @param argTerm
+   * @param argCenter
+   * @return
+   */
+  public Rectangle getVisibleAreaInTiles(TerminalBase argTerm, Coordinate argCenter) {
+    return getVisibleAreaInTiles(argTerm.size().width, argTerm.size().height, argCenter);
   }
 
   /**
    * Adds an item to the tile at x,y
    * 
-   * @param item
+   * @param argItm
    * @param x
    * @param y
    */
-  public void addItem(Item item, int x, int y) {
+  public void addItem(Item argItm, int x, int y) {
     Inventory items = getItemsAt(x, y);
-    items.add(item);
+    items.add(argItm);
   }
 
   /**
    * Removes an item from the tile at x,y
    * 
-   * @param item
+   * @param argItm
    * @param x
    * @param y
    * @return True if the item was removed, false if there are no items on the tile
    * or the specific item wasn't in the list.
    */
-  public boolean removeItem(Item item, int x, int y) {
+  public boolean removeItem(Item argItm, int x, int y) {
     Inventory items = getItemsAt(x, y);
+
     if (!items.any()) {
       Log.warning("Failed! no items at " + x + "," + y);
       return false;
     }
-    return items.remove(item);
+
+    return items.remove(argItm);
   }
 
   /**
@@ -231,6 +286,10 @@ public class MapArea implements Serializable {
     return actors.getCurrent();
   }
 
+  /**
+   * 
+   * @return
+   */
   public Actor peekNextActor() {
     return actors.peek();
   }
@@ -238,7 +297,7 @@ public class MapArea implements Serializable {
   /**
    * Advances the current actor to the next in the queue.
    */
-  public void nextActor(String reason) {
+  public void nextActor(String argReason) {
     actors.advance();
   }
 
@@ -250,69 +309,70 @@ public class MapArea implements Serializable {
    * @return
    */
   public Actor getActorAt(int x, int y) {
-    if (!isWithinBounds(x, y))
-      return null;
-
-    return getTileAt(x, y).getActor();
+    return isWithinBounds(x, y) ? getTileAt(x, y).getActor() : null;
   }
 
   /**
    * Adds an actor to this map.
    * 
-   * @param actor
+   * @param argAct
    * @return True if the actor was added, false if there was already an actor at
    * the location specified by actor.getPosition().
    */
-  public boolean addActor(Actor actor) {
-    Coordinate pos = actor.getPosition();
+  public boolean addActor(Actor argAct) {
+    Coordinate pos = argAct.getPosition();
     Tile tile = getTileAt(pos.x, pos.y);
-    if (tile.getActor() != null)
-      return false;
 
-    actors.add(actor);
-    tile.setActor(actor);
+    if (tile.getActor() != null) {
+      return false;
+    }
+
+    actors.add(argAct);
+    tile.setActor(argAct);
     return true;
   }
 
   /**
    * Moves an actor from one tile to another.
    * 
-   * @param actor
-   * @param newPosition
+   * @param argAct
+   * @param argNewPos
    * @return True if the move was successful, false otherwise.
    */
-  public boolean moveActor(Actor actor, Coordinate newPosition) {
-    Coordinate pos = actor.getPosition();
+  public boolean moveActor(Actor argAct, Coordinate argNewPos) {
+    Coordinate pos = argAct.getPosition();
     Tile tile = getTileAt(pos.x, pos.y);
-    if (tile.getActor() != null) {
-      if (tile.moveActorTo(getTileAt(newPosition))) {
-        actor.setPosition(newPosition.x, newPosition.y);
-        return true;
-      }
+
+    if (tile.getActor() != null && tile.moveActorTo(getTileAt(argNewPos))) {
+      argAct.setPosition(argNewPos.x, argNewPos.y);
+      return true;
     }
+
     return false;
+
   }
 
   /**
    * Removes an actor from the map.
    * 
-   * @param actor
+   * @param argAct
    * @return True if the actor could be removed, false otherwise (for instance, if
    * the tile at the actor's position actually has no actor, which probably
    * indicates a bug)
    */
-  public boolean removeActor(Actor actor) {
-    Log.debug("Removing actor " + actor.getName());
-
-    Coordinate pos = actor.getPosition();
+  public boolean removeActor(Actor argAct) {
+    Log.debug("Removing actor " + argAct.getName());
+    Coordinate pos = argAct.getPosition();
     Tile tile = getTileAt(pos.x, pos.y);
+
     if (tile.getActor() == null) {
-      Log.warning("Failed!  actor=" + actor.getName());
+      Log.warning("Failed!  actor=" + argAct.getName());
       return false;
     }
+
     Log.debug("Success!");
 
-    actors.remove(actor);
+    actors.remove(argAct);
     Log.debug("     > actors count: " + actors.getAll().size());
     tile.setActor(null);
     return true;
@@ -321,65 +381,71 @@ public class MapArea implements Serializable {
   /**
    * Returns the tile at the given position.
    * 
-   * @param position
+   * @param argPos
    * @return
    */
-  public Tile getTileAt(Point position) {
-    return getTileAt(position.x, position.y);
+  public Tile getTileAt(Point argPos) {
+    return getTileAt(argPos.x, argPos.y);
   }
 
+  /**
+   * 
+   * @param x
+   * @param y
+   * @return
+   */
   public Tile getTileAt(int x, int y) {
-    if (!isWithinBounds(x, y))
-      return null;
-
-    return map[x][y];
+    return isWithinBounds(x, y) ? map[x][y] : null;
   }
 
-  public int getSpeedModifier(Coordinate position) {
-    if (!isWithinBounds(position.x, position.y))
-      return 0;
-
-    return map[position.x][position.y].speedModifier;
+  /**
+   * 
+   * @param argPos
+   * @return
+   */
+  public int getSpeedModifier(Coordinate argPos) {
+    return isWithinBounds(argPos.x, argPos.y) ? map[argPos.x][argPos.y].speedModifier : 0;
   }
 
   /**
    * Determines if the actor can move to the specified position.
    * 
-   * @param actor
-   * @param position
+   * @param argAct
+   * @param argPos
    * @return True if a move is allowed, false otherwise.
    */
-  public boolean canMoveTo(Actor actor, Coordinate position) {
-    return canMoveTo(actor, position.x, position.y);
+  public boolean canMoveTo(Actor argAct, Coordinate argPos) {
+    return canMoveTo(argAct, argPos.x, argPos.y);
   }
 
   /**
    * Determines if the actor can move to the specified position.
    * 
-   * @param actor
+   * @param argAct
    * @param x
    * @param y
    * @return True if a move is allowed, false otherwise.
    */
-  public boolean canMoveTo(Actor actor, int x, int y) {
-    // check for out of bounds, etc
-    if (!isWithinBounds(x, y))
-      return false;
+  public boolean canMoveTo(Actor argAct, int x, int y) {
+    if (isWithinBounds(x, y)) {
+      Tile tile = map[x][y];
 
-    Tile tile = map[x][y];
-    if (tile.canPass()) {
-      return actor.onMoveAttempting(this, tile);
+      if (tile.canPass()) {
+        return argAct.onMoveAttempting(this, tile);
+      }
     }
 
     return false;
   }
 
-  public boolean isVisible(Point position) {
-    Tile tile = getTileAt(position);
-    if (tile == null)
-      return false;
-
-    return tile.isVisible();
+  /**
+   * 
+   * @param argPos
+   * @return
+   */
+  public boolean isVisible(Point argPos) {
+    Tile tile = getTileAt(argPos);
+    return tile != null && tile.isVisible();
   }
 
   /**
@@ -390,24 +456,17 @@ public class MapArea implements Serializable {
    * @return
    */
   public boolean isWithinBounds(int x, int y) {
-    if (x < 0 || x >= this.width)
-      return false;
-
-    if (y < 0 || y >= this.height)
-      return false;
-
-    return true;
+    return !(x < 0 || x >= width || y < 0 || y >= height);
   }
 
   /**
    * Populates this map's tiles.
    * 
-   * @param mapBuilder The MapBuilder used to construct this map.
+   * @param argMapBldr The MapBuilder used to construct this map.
    */
-  private void buildMapArea(MapBuilderBase mapBuilder) {
+  private void buildMapArea(MapBuilderBase argMapBldr) {
     map = new Tile[width][height];
-
-    this.name = mapBuilder.buildMap(map);
+    name = argMapBldr.buildMap(map);
     updateValues();
 
     // TODO: pathfinding precalculations?

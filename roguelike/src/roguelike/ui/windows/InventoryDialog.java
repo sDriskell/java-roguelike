@@ -9,23 +9,31 @@ import roguelike.ui.MenuItem;
 import squidpony.squidcolor.SColor;
 import squidpony.squidcolor.SColorFactory;
 
+/**
+ * 
+ */
 public class InventoryDialog extends Dialog<Item> {
 
   private InventoryMenu menu;
 
-  public InventoryDialog(InventoryMenu menu) {
+  /**
+   * 
+   * @param argMenu
+   */
+  public InventoryDialog(InventoryMenu argMenu) {
+    // TODO: magic numbers
     super(60, 30);
-    this.menu = menu;
+    menu = argMenu;
   }
 
   @Override
   protected void onDraw() {
     SColor menuBgColor = SColorFactory.asSColor(30, 30, 30);
     TerminalBase border = terminal.withColor(SColor.WHITE, SColor.BLACK);
-    TerminalBase background = terminal.withColor(menuBgColor, menuBgColor);
-    TerminalBase text = terminal.withColor(SColor.WHITE, menuBgColor);
+    TerminalBase bg = terminal.withColor(menuBgColor, menuBgColor);
+    TerminalBase txt = terminal.withColor(SColor.WHITE, menuBgColor);
 
-    background.fill(0, 0, size.width, size.height, ' ');
+    bg.fill(0, 0, size.width, size.height, ' ');
     border.fill(0, 0, size.width, 1, ' ');
 
     drawBoxShape(border);
@@ -36,44 +44,47 @@ public class InventoryDialog extends Dialog<Item> {
     border.write(1, 0, String.format("Inventory `Gray`(%d/%d)", currentPage, pageCount));
 
     int displayY = 2;
+
     for (MenuItem<Item> item : menu.currentPageItems()) {
       String color = "";
+
       if (item.isActive()) {
         color = "`Alizarin`";
       }
-      text.write(2, displayY, color + item.getText());
+
+      txt.write(2, displayY, color + item.getText());
       displayY++;
     }
   }
 
   @Override
-  protected DialogResult<Item> onProcess(InputCommand command) {
+  protected DialogResult<Item> onProcess(InputCommand argCmd) {
     DialogResult<Item> result = null;
 
-    if (command != null) {
-      switch (command) {
+    if (argCmd != null) {
+      switch (argCmd) {
         case CONFIRM:
-
           Item activeItem = menu.getActiveItem();
+
           if (activeItem != null) {
             result = DialogResult.ok(activeItem);
-
           }
           else {
             result = DialogResult.ok(null);
-
           }
 
         case CANCEL:
-          if (result == null)
+          if (result == null) {
             result = DialogResult.cancel();
+          }
 
           break;
 
         default:
-          menu.processCommand(command);
+          menu.processCommand(argCmd);
       }
     }
+
     return result;
   }
 

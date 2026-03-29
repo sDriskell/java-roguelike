@@ -15,6 +15,9 @@ import roguelike.screens.Screen;
 import roguelike.screens.TitleScreen;
 import roguelike.util.Log;
 
+/**
+ * 
+ */
 public class MainWindow {
 
   public static final int SCREEN_WIDTH = 1200;
@@ -36,6 +39,9 @@ public class MainWindow {
   private Screen currentScreen;
   private DisplayManager displayManager;
 
+  /**
+   * 
+   */
   public MainWindow() {
 
     System.out.println("SKIP_TICKS: " + SKIP_TICKS);
@@ -55,8 +61,8 @@ public class MainWindow {
 
     long nextTick = System.currentTimeMillis();
 
+    // TODO: figure out what this does clearly.
     while (true) {
-
       currentScreen.process();
       currentScreen = Screen.currentScreen();
       long drawTicks = currentScreen.draw();
@@ -65,8 +71,8 @@ public class MainWindow {
       displayManager.refresh();
 
       nextTick += SKIP_TICKS;
-
       long sleepTime = nextTick - System.currentTimeMillis();
+
       if (sleepTime >= 0) {
         try {
           Thread.sleep(sleepTime);
@@ -81,6 +87,9 @@ public class MainWindow {
     }
   }
 
+  /**
+   * 
+   */
   public void setKeyBindings() {
     KeyMap defaultKeys = new KeyMap("Default");
 
@@ -115,6 +124,9 @@ public class MainWindow {
     InputManager.defaultKeyBindings = defaultKeys;
   }
 
+  /**
+   * 
+   */
   private void initFrame() {
     frame = new JFrame("Untitled Roguelike");
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -143,6 +155,9 @@ public class MainWindow {
     hideMouseCursor();
   }
 
+  /**
+   * 
+   */
   private void hideMouseCursor() {
     BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
 

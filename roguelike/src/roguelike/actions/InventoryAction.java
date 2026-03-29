@@ -6,14 +6,20 @@ import roguelike.screens.InventoryScreen;
 import roguelike.screens.Screen;
 import roguelike.util.Log;
 
+/**
+ * 
+ */
 public class InventoryAction extends DialogInputRequiredAction<Item> {
 
-  public InventoryAction(Actor actor) {
-    super(actor);
-
-    this.usesEnergy = false;
-    Screen screen = Screen.currentScreen();
-    screen.setNextScreen(new InventoryScreen(screen, screen.terminal()));
+  /**
+   * 
+   * @param argAct
+   */
+  public InventoryAction(Actor argAct) {
+    super(argAct);
+    usesEnergy = false;
+    Screen scn = Screen.currentScreen();
+    scn.setNextScreen(new InventoryScreen(scn, scn.terminal()));
   }
 
   @Override

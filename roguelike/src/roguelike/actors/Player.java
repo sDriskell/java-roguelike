@@ -6,23 +6,38 @@ import roguelike.util.ActorUtils;
 import roguelike.util.Log;
 import squidpony.squidcolor.SColor;
 
+/**
+ * 
+ */
 public class Player extends Actor {
+
   private static final long serialVersionUID = 1L;
 
   private String characterName;
 
+  /**
+   * 
+   */
   public Player() {
     super('@', SColor.WHITE);
     // TODO: load these during character creation somewhere
-    this.statistics().speed.setBase(20);
-
-    this.behavior = new PlayerInputBehavior(this);
+    statistics().speed.setBase(20);
+    behavior = new PlayerInputBehavior(this);
   }
 
-  public static boolean isPlayer(Actor actor) {
-    return actor instanceof Player;
+  /**
+   * 
+   * @param argAct
+   * @return
+   */
+  public static boolean isPlayer(Actor argAct) {
+    return argAct instanceof Player;
   }
 
+  /**
+   * 
+   * @return
+   */
   public String getCharacterName() {
     return characterName;
   }
@@ -58,8 +73,8 @@ public class Player extends Actor {
   }
 
   @Override
-  public void onAttackedInternal(Actor attacker) {
-    Log.verboseDebug("Player attacked by " + attacker.getName());
+  public void onAttackedInternal(Actor argAtkr) {
+    Log.verboseDebug("Player attacked by " + argAtkr.getName());
     Log.verboseDebug("AttackedBy count=" + attackedBy.size());
   }
 
@@ -69,8 +84,8 @@ public class Player extends Actor {
   }
 
   @Override
-  protected String makeCorrectVerb(String message) {
-    return ActorUtils.makePlayerText(message);
+  protected String makeCorrectVerb(String argMsg) {
+    return ActorUtils.makePlayerText(argMsg);
   }
 
 }

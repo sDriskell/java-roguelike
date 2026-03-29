@@ -18,29 +18,59 @@ import org.jsefa.csv.config.CsvConfiguration;
 
 import roguelike.screens.MainScreen;
 
+/**
+ * 
+ */
 public class FileUtils {
-  static String readFile(String path, Charset encoding) throws IOException {
-    byte[] encoded = Files.readAllBytes(Paths.get(path));
-    return new String(encoded, encoding);
+
+  private FileUtils() {
+    // Utility class
   }
 
-  public static String readFile(InputStream stream) throws IOException {
-    BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+  /**
+   * 
+   * @param argPath
+   * @param argEncoding
+   * @return
+   * @throws IOException
+   */
+  static String readFile(String argPath, Charset argEncoding) throws IOException {
+    byte[] encoded = Files.readAllBytes(Paths.get(argPath));
+    return new String(encoded, argEncoding);
+  }
+
+  /**
+   * 
+   * @param argStream
+   * @return
+   * @throws IOException
+   */
+  public static String readFile(InputStream argStream) throws IOException {
+    BufferedReader reader = new BufferedReader(new InputStreamReader(argStream));
     StringBuilder out = new StringBuilder();
     String line;
+
     while ((line = reader.readLine()) != null) {
       out.append(line);
       out.append("\n");
     }
-    reader.close();
 
+    reader.close();
     return out.toString();
   }
 
-  public static <T> List<T> recordsFromCsv(String path, Class<T> typeClass) {
+  /**
+   * 
+   * @param <T>
+   * @param argPath
+   * @param argType
+   * @return
+   */
+  public static <T> List<T> recordsFromCsv(String argPath, Class<T> argType) {
     String csv;
+
     try {
-      csv = FileUtils.readFile(MainScreen.class.getResourceAsStream(path));
+      csv = FileUtils.readFile(MainScreen.class.getResourceAsStream(argPath));
     }
     catch (IOException e) {
       e.printStackTrace();
@@ -52,18 +82,21 @@ public class FileUtils {
     csvConfiguration.setFieldDelimiter(',');
     csvConfiguration.setLineFilter(new HeaderAndFooterFilter(1, false, false));
 
-    Deserializer deserializer = CsvIOFactory.createFactory(csvConfiguration, typeClass)
-        .createDeserializer();
+    Deserializer deserializer = CsvIOFactory
+        .createFactory(csvConfiguration, argType).createDeserializer();
 
     deserializer.open(new StringReader(csv));
+
     while (deserializer.hasNext()) {
       T row = deserializer.next();
       items.add(row);
     }
+
     deserializer.close(true);
 
     System.out
-        .println("Read " + items.size() + " of type " + typeClass.getName() + " from " + path);
+        .println("Read " + items.size() + " of type " + argType.getName() + " from " + argPath);
+
     return items;
   }
 }

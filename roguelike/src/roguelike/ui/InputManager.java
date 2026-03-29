@@ -10,6 +10,9 @@ import squidpony.squidgrid.gui.SGKeyListener;
 import squidpony.squidgrid.gui.SGKeyListener.CaptureType;
 import squidpony.squidgrid.util.DirectionIntercardinal;
 
+/**
+ * 
+ */
 public class InputManager {
 
   public static KeyMap defaultKeyBindings;
@@ -21,43 +24,71 @@ public class InputManager {
   private static Stack<KeyMap> keyBindings = new Stack<>();
 
   private InputManager() {
+    // Hidden constructor for utility class.
   }
 
-  public static void registerWithFrame(JFrame frame) {
-    frame.addKeyListener(keyListener);
+  /**
+   * 
+   * @param argF
+   */
+  public static void registerWithFrame(JFrame argF) {
+    argF.addKeyListener(keyListener);
   }
 
+  /**
+   * 
+   * @return
+   */
   public static InputCommand nextCommand() {
     return nextCommand(nextKey(), false);
   }
 
+  /**
+   * 
+   * @return
+   */
   public static InputCommand nextCommandPreserveKeyData() {
     return nextCommand(nextKey(), true);
   }
 
+  /**
+   * 
+   * @return
+   */
   public static DirectionIntercardinal nextDirection() {
     InputCommand cmd = nextCommandPreserveKeyData();
-    if (cmd == null)
-      return null;
-
-    return cmd.toDirection();
+    return cmd == null ? null : cmd.toDirection();
   }
 
+  /**
+   * 
+   * @return
+   */
   public static boolean inputReceived() {
     boolean input = inputReceived;
     inputReceived = !inputReceived;
     return input;
   }
 
-  public static void setInputEnabled(boolean enabled) {
-    inputEnabled = enabled;
+  /**
+   * 
+   * @param argIsEnabled
+   */
+  public static void setInputEnabled(boolean argIsEnabled) {
+    inputEnabled = argIsEnabled;
   }
 
-  public static KeyMap setActiveKeybindings(KeyMap keyMap) {
+  /**
+   * 
+   * @param argKeyMap
+   * @return
+   */
+  public static KeyMap setActiveKeybindings(KeyMap argKeyMap) {
     KeyMap old = activeKeyMap;
-    if (!keyMap.getName().equals(old.getName())) {
-      Log.debug("switching keyMap to " + keyMap.getName());
-      activeKeyMap = keyMap;
+
+    if (!argKeyMap.getName().equals(old.getName())) {
+      Log.debug("switching keyMap to " + argKeyMap.getName());
+      activeKeyMap = argKeyMap;
 
       if (!old.getName().equals("."))
         keyBindings.push(old);
@@ -71,29 +102,44 @@ public class InputManager {
    * @return The new active key map.
    */
   public static KeyMap previousKeyMap() {
-    if (keyBindings.isEmpty())
+    if (keyBindings.isEmpty()) {
       return null;
+    }
 
     activeKeyMap = keyBindings.pop();
     return activeKeyMap;
   }
 
-  private static InputCommand nextCommand(KeyEvent key, boolean getKeyData) {
-    InputCommand cmd = activeKeyMap.getCommand(key);
-    if (cmd == null && key != null && getKeyData) {
-      return InputCommand.fromKey(key.getKeyCode(), key.getKeyChar());
+  /**
+   * 
+   * @param argKey
+   * @param argGetKeyData
+   * @return
+   */
+  private static InputCommand nextCommand(KeyEvent argKey, boolean argGetKeyData) {
+    InputCommand cmd = activeKeyMap.getCommand(argKey);
+    if (cmd == null && argKey != null && argGetKeyData) {
+      return InputCommand.fromKey(argKey.getKeyCode(), argKey.getKeyChar());
     }
+
     return cmd;
   }
 
+  /**
+   * 
+   * @return
+   */
   private static KeyEvent nextKey() {
-    if (!inputEnabled)
+    if (!inputEnabled) {
       return null;
+    }
 
     KeyEvent key = keyListener.next();
+
     if (key != null) {
       DisplayManager.instance().setDirty();
     }
+
     return key;
   }
 

@@ -1,24 +1,42 @@
 package roguelike.items;
 
+/**
+ * 
+ */
 public abstract class ItemBuilder {
 
-	protected Item item;
+  protected Item item;
 
-	protected ItemBuilder(Item item) {
-		if (item == null)
-			throw new IllegalArgumentException("item cannot be null");
+  /**
+   * 
+   * @param argItm
+   */
+  protected ItemBuilder(Item argItm) {
+    if (argItm == null) {
+      throw new IllegalArgumentException("item cannot be null");
+    }
 
-		this.item = item;
-	}
+    item = argItm;
+  }
 
-	public ItemBuilder withDroppable(boolean droppable) {
-		item.droppable = droppable;
-		return this;
-	}
+  /**
+   * 
+   * @param argIsDrop
+   * @return
+   */
+  public ItemBuilder withDroppable(boolean argIsDrop) {
+    item.droppable = argIsDrop;
+    return this;
+  }
 
-	public ItemBuilder withWeight(int weight) {
-		item.weight = weight;
-		return this;
-	}
+  /**
+   * 
+   * @param argWgt
+   * @return
+   */
+  public ItemBuilder withWeight(int argWgt) {
+    item.weight = argWgt;
+    return this;
+  }
 
 }

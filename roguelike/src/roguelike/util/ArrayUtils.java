@@ -3,54 +3,114 @@ package roguelike.util;
 import java.awt.Rectangle;
 import java.util.Arrays;
 
+/**
+ * 
+ * @param <E>
+ */
 public class ArrayUtils<E> {
 
-	public static boolean[][] getSubArray(boolean[][] original, Rectangle area) {
-		return getSubArray(original, area.x, area.y, area.width, area.height);
-	}
+  /**
+   * 
+   * @param argOrg
+   * @param argArea
+   * @return
+   */
+  public static boolean[][] getSubArray(boolean[][] argOrg, Rectangle argArea) {
+    return getSubArray(argOrg, argArea.x, argArea.y, argArea.width, argArea.height);
+  }
 
-	public static boolean[][] getSubArray(boolean[][] original, int x, int y, int width, int height) {
-		if (original.length < x)
-			throw new IllegalArgumentException("invalid x: " + x + " original=" + original.length);
-		if (original[0].length < y)
-			throw new IllegalArgumentException("invalid y: " + y + " original=" + original[0].length);
+  /**
+   * 
+   * @param argOrg
+   * @param x
+   * @param y
+   * @param argW
+   * @param argH
+   * @return
+   */
+  public static boolean[][] getSubArray(boolean[][] argOrg, int x, int y, int argW, int argH) {
+    if (argOrg.length < x) {
+      throw new IllegalArgumentException("invalid x: " + x + " original=" + argOrg.length);
+    }
 
-		boolean[][] subArray = new boolean[width][];
-		for (int i = x, j = 0; i < (x + width); i++, j++) {
-			subArray[j] = Arrays.copyOfRange(original[i], y, y + height);
-		}
-		return subArray;
-	}
+    if (argOrg[0].length < y) {
+      throw new IllegalArgumentException("invalid y: " + y + " original=" + argOrg[0].length);
+    }
 
-	public static float[][] getSubArray(float[][] original, Rectangle area) {
-		return getSubArray(original, area.x, area.y, area.width, area.height);
-	}
+    boolean[][] subArray = new boolean[argW][];
 
-	public static float[][] getSubArray(float[][] original, int x, int y, int width, int height) {
-		if (original.length < x)
-			throw new IllegalArgumentException("invalid x: " + x + " original=" + original.length);
-		if (original[0].length < y)
-			throw new IllegalArgumentException("invalid y: " + y + " original=" + original[0].length);
+    for (int i = x, j = 0; i < (x + argW); i++, j++) {
+      subArray[j] = Arrays.copyOfRange(argOrg[i], y, y + argH);
+    }
 
-		float[][] subArray = new float[width][];
+    return subArray;
+  }
 
-		for (int i = x, j = 0; i < (x + width); i++, j++) {
-			subArray[j] = Arrays.copyOfRange(original[i], y, y + height);
-		}
-		return subArray;
-	}
+  /**
+   * 
+   * @param argOrg
+   * @param argArea
+   * @return
+   */
+  public static float[][] getSubArray(float[][] argOrg, Rectangle argArea) {
+    return getSubArray(argOrg, argArea.x, argArea.y, argArea.width, argArea.height);
+  }
 
-	public static <T> T[][] getSubArray(T[][] original, Rectangle area) {
-		return getSubArray(original, area.x, area.y, (int) area.getMaxX(), (int) area.getMaxY());
-	}
+  /**
+   * 
+   * @param argOrg
+   * @param x
+   * @param y
+   * @param argW
+   * @param argH
+   * @return
+   */
+  public static float[][] getSubArray(float[][] argOrg, int x, int y, int argW, int argH) {
+    if (argOrg.length < x) {
+      throw new IllegalArgumentException("invalid x: " + x + " original=" + argOrg.length);
+    }
+    if (argOrg[0].length < y) {
+      throw new IllegalArgumentException("invalid y: " + y + " original=" + argOrg[0].length);
+    }
 
-	public static <T> T[][] getSubArray(T[][] original, int x, int y, int width, int height) {
+    float[][] subArray = new float[argW][];
 
-		T[][] subArray = Arrays.copyOfRange(original, x, x + width);
-		for (int i = x, j = 0; i < width; i++, j++) {
-			subArray[j] = Arrays.copyOfRange(original[i], y, y + height);
-		}
+    for (int i = x, j = 0; i < (x + argW); i++, j++) {
+      subArray[j] = Arrays.copyOfRange(argOrg[i], y, y + argH);
+    }
 
-		return subArray;
-	}
+    return subArray;
+  }
+
+  /**
+   * 
+   * @param <T>
+   * @param argOrg
+   * @param argArea
+   * @return
+   */
+  public static <T> T[][] getSubArray(T[][] argOrg, Rectangle argArea) {
+    return getSubArray(argOrg, argArea.x, argArea.y, (int) argArea.getMaxX(),
+        (int) argArea.getMaxY());
+  }
+
+  /**
+   * 
+   * @param <T>
+   * @param argOrg
+   * @param x
+   * @param y
+   * @param argW
+   * @param argH
+   * @return
+   */
+  public static <T> T[][] getSubArray(T[][] argOrg, int x, int y, int argW, int argH) {
+    T[][] subArray = Arrays.copyOfRange(argOrg, x, x + argW);
+
+    for (int i = x, j = 0; i < argW; i++, j++) {
+      subArray[j] = Arrays.copyOfRange(argOrg[i], y, y + argH);
+    }
+
+    return subArray;
+  }
 }

@@ -2,9 +2,12 @@ package roguelike.maps;
 
 import java.util.ArrayList;
 
+/**
+ * 
+ */
 public class Path {
-  /** The list of steps building up this path */
-  private ArrayList<Step> steps = new ArrayList<>();
+
+  private ArrayList<Step> pathSteps = new ArrayList<>();
 
   int currentStep;
 
@@ -12,20 +15,23 @@ public class Path {
    * Create an empty path
    */
   public Path() {
-
+    // TODO: handle empty constructor
   }
 
+  /**
+   * 
+   * @return
+   */
   public Step getCurrentStep() {
-    if (currentStep < steps.size())
-      return getStep(currentStep);
-
-    return null;
+    return currentStep < pathSteps.size() ? getStep(currentStep) : null;
   }
 
+  /**
+   * 
+   * @return
+   */
   public int nextStep() {
-    currentStep++;
-
-    return currentStep;
+    return ++currentStep;
   }
 
   /**
@@ -34,38 +40,38 @@ public class Path {
    * @return The number of steps in this path
    */
   public int getLength() {
-    return steps.size();
+    return pathSteps.size();
   }
 
   /**
    * Get the step at a given index in the path
    * 
-   * @param index The index of the step to retrieve. Note this should be >= 0 and
+   * @param argInd The index of the step to retrieve. Note this should be >= 0 and
    *   < getLength();
    * @return The step information, the position on the map.
    */
-  public Step getStep(int index) {
-    return (Step) steps.get(index);
+  public Step getStep(int argInd) {
+    return pathSteps.get(argInd);
   }
 
   /**
    * Get the x coordinate for the step at the given index
    * 
-   * @param index The index of the step whose x coordinate should be retrieved
+   * @param argInd The index of the step whose x coordinate should be retrieved
    * @return The x coordinate at the step
    */
-  public int getX(int index) {
-    return getStep(index).x;
+  public int getX(int argInd) {
+    return getStep(argInd).stepX;
   }
 
   /**
    * Get the y coordinate for the step at the given index
    * 
-   * @param index The index of the step whose y coordinate should be retrieved
+   * @param argInd The index of the step whose y coordinate should be retrieved
    * @return The y coordinate at the step
    */
-  public int getY(int index) {
-    return getStep(index).y;
+  public int getY(int argInd) {
+    return getStep(argInd).stepY;
   }
 
   /**
@@ -75,7 +81,7 @@ public class Path {
    * @param y The y coordinate of the new step
    */
   public void appendStep(int x, int y) {
-    steps.add(new Step(x, y));
+    pathSteps.add(new Step(x, y));
   }
 
   /**
@@ -85,7 +91,7 @@ public class Path {
    * @param y The y coordinate of the new step
    */
   public void prependStep(int x, int y) {
-    steps.add(0, new Step(x, y));
+    pathSteps.add(0, new Step(x, y));
   }
 
   /**
@@ -96,7 +102,7 @@ public class Path {
    * @return True if the path contains the given step
    */
   public boolean contains(int x, int y) {
-    return steps.contains(new Step(x, y));
+    return pathSteps.contains(new Step(x, y));
   }
 
   /**
@@ -105,10 +111,8 @@ public class Path {
    * @author Kevin Glass
    */
   public class Step {
-    /** The x coordinate at the given step */
-    private int x;
-    /** The y coordinate at the given step */
-    private int y;
+    private int stepX;
+    private int stepY;
 
     /**
      * Create a new step
@@ -117,8 +121,8 @@ public class Path {
      * @param y The y coordinate of the new step
      */
     public Step(int x, int y) {
-      this.x = x;
-      this.y = y;
+      stepX = x;
+      stepY = y;
     }
 
     /**
@@ -127,33 +131,32 @@ public class Path {
      * @return The x coodindate of the new step
      */
     public int getX() {
-      return x;
+      return stepX;
     }
 
     /**
      * Get the y coordinate of the new step
      * 
-     * @return The y coodindate of the new step
+     * @return The y coordinate of the new step
      */
     public int getY() {
-      return y;
+      return stepY;
     }
 
     /**
      * @see Object#hashCode()
      */
     public int hashCode() {
-      return x * y;
+      return stepX * stepY;
     }
 
     /**
      * @see Object#equals(Object)
      */
-    public boolean equals(Object other) {
-      if (other instanceof Step) {
-        Step o = (Step) other;
-
-        return (o.x == x) && (o.y == y);
+    public boolean equals(Object argOth) {
+      if (argOth instanceof Step) {
+        Step o = (Step) argOth;
+        return (o.stepX == stepX) && (o.stepY == stepY);
       }
 
       return false;

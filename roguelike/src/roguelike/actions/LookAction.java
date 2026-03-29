@@ -10,26 +10,34 @@ import roguelike.ui.LookCursor;
 import roguelike.ui.windows.TerminalBase;
 import roguelike.util.Log;
 
+/**
+ * 
+ */
 public class LookAction extends CursorInputRequiredAction<InputCommand> {
 
-	public LookAction(Actor actor, MapArea mapArea) {
-		super(actor);
-		this.usesEnergy = false;
+  /**
+   * 
+   * @param argAct
+   * @param argMap
+   */
+  public LookAction(Actor argAct, MapArea argMap) {
+    super(argAct);
+    usesEnergy = false;
+    cursor = new LookCursor(argAct.getPosition(), argMap);
+    showCursor(cursor);
+  }
 
-		this.cursor = new LookCursor(actor.getPosition(), mapArea);
-		showCursor(cursor);
-	}
+  @Override
+  protected void showCursor(Cursor cursor) {
+    Screen current = Screen.currentScreen();
+    TerminalBase screenTerm = current.terminal().getWindow(0, 0,
+        current.getDrawableArea().width, current.getDrawableArea().height);
+    current.setNextScreen(new LookScreen(screenTerm, (LookCursor) cursor, r -> result = r));
+  }
 
-	@Override
-	protected void showCursor(Cursor cursor) {
-		Screen currentScreen = Screen.currentScreen();
-		TerminalBase screenTerm = currentScreen.terminal().getWindow(0, 0, currentScreen.getDrawableArea().width, currentScreen.getDrawableArea().height);
-		currentScreen.setNextScreen(new LookScreen(screenTerm, (LookCursor) cursor, r -> result = r));
-	}
-
-	@Override
-	protected ActionResult onPerform() {
-		Log.debug("LookAction");
-		return ActionResult.success();
-	}
+  @Override
+  protected ActionResult onPerform() {
+    Log.debug("LookAction");
+    return ActionResult.success();
+  }
 }

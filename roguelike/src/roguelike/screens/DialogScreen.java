@@ -4,32 +4,41 @@ import roguelike.Dialog;
 import roguelike.functionalinterfaces.DialogCallback;
 import roguelike.ui.windows.TerminalBase;
 
+/**
+ * 
+ * @param <T>
+ */
 public class DialogScreen<T> extends Screen {
 
-	private Dialog<T> dialog;
-	private DialogCallback<T> resultCallback;
+  private Dialog<T> dialog;
+  private DialogCallback<T> resultCallback;
 
-	public DialogScreen(TerminalBase terminal, Dialog<T> dialog, DialogCallback<T> resultCallback) {
-		super(terminal);
+  /**
+   * 
+   * @param argTrm
+   * @param argDlg
+   * @param argResult
+   */
+  public DialogScreen(TerminalBase argTrm, Dialog<T> argDlg, DialogCallback<T> argResult) {
+    super(argTrm);
 
-		this.dialog = dialog;
-		this.resultCallback = resultCallback;
+    dialog = argDlg;
+    resultCallback = argResult;
+    dialog.showInPane(argTrm);
+    dialog.show();
+  }
 
-		this.dialog.showInPane(terminal);
-		this.dialog.show();
-	}
+  @Override
+  public void onDraw() {
+    dialog.draw();
+  }
 
-	@Override
-	public void onDraw() {
-		dialog.draw();
-	}
-
-	@Override
-	public void process() {
-		if (dialog.process()) {
-			resultCallback.setResult(dialog.result());
-			restorePreviousScreen();
-		}
-	}
+  @Override
+  public void process() {
+    if (dialog.process()) {
+      resultCallback.setResult(dialog.result());
+      restorePreviousScreen();
+    }
+  }
 
 }

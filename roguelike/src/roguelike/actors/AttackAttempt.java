@@ -2,16 +2,28 @@ package roguelike.actors;
 
 import java.io.Serializable;
 
+/**
+ * 
+ */
 public class AttackAttempt implements Serializable {
-	private static final long serialVersionUID = 1L;
 
-	private Actor actor;
+  private static final long serialVersionUID = 1L;
 
-	public AttackAttempt(Actor actor) {
-		this.actor = actor;
-	}
+  private Actor actor;
 
-	public Actor getActor() {
-		return actor;
-	}
+  /**
+   * 
+   * @param argAct
+   */
+  public AttackAttempt(Actor argAct) {
+    this.actor = argAct;
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public Actor getActor() {
+    return actor;
+  }
 }

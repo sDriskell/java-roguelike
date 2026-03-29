@@ -7,44 +7,48 @@ import roguelike.actors.Actor;
 import roguelike.util.Coordinate;
 import squidpony.squidgrid.util.BasicRadiusStrategy;
 
+/**
+ * 
+ */
 public class MeleeWeapon extends Weapon {
 
-	private static final long serialVersionUID = 682348343481995648L;
+  private static final long serialVersionUID = 682348343481995648L;
 
-	protected MeleeWeapon() {
-		super(false);
-	}
+  /**
+   * 
+   */
+  protected MeleeWeapon() {
+    super(false);
+  }
 
-	@Override
-	public Attack getAttack() {
+  @Override
+  public Attack getAttack() {
+    double rndFact = Game.current().random().nextDouble() * baseDamage;
+    int totDmg = (int) (baseDamage + rndFact / 2);
 
-		double randomFactor = Game.current().random().nextDouble() * baseDamage;
-		int totalDamage = (int) (baseDamage + randomFactor / 2);
+    return new MeleeAttack(attackDescription, totDmg, this);
+  }
 
-		return new MeleeAttack(attackDescription, totalDamage, this);
-	}
+  @Override
+  public ItemType type() {
+    return ItemType.WEAPON;
+  }
 
-	@Override
-	public ItemType type() {
-		return ItemType.WEAPON;
-	}
+  @Override
+  public String getName() {
+    return name;
+  }
 
-	@Override
-	public String name() {
-		return name;
-	}
+  @Override
+  public String getDescription() {
+    return description;
+  }
 
-	@Override
-	public String getDescription() {
-		return description;
-	}
-
-	@Override
-	public boolean canUse(Actor user, Actor target) {
-		Coordinate userPos = user.getPosition();
-		Coordinate targetPos = target.getPosition();
-
-		float distance = targetPos.distance(userPos, BasicRadiusStrategy.CIRCLE);
-		return distance <= getReachInTiles();
-	}
+  @Override
+  public boolean canUse(Actor argUsr, Actor argTgt) {
+    Coordinate userPos = argUsr.getPosition();
+    Coordinate tgtPos = argTgt.getPosition();
+    float dist = tgtPos.distance(userPos, BasicRadiusStrategy.CIRCLE);
+    return dist <= getReachInTiles();
+  }
 }

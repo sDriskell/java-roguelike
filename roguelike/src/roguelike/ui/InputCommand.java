@@ -2,105 +2,141 @@ package roguelike.ui;
 
 import squidpony.squidgrid.util.DirectionIntercardinal;
 
+/**
+ * 
+ */
 public enum InputCommand {
 
-	NEW,
-	LOAD,
-	QUIT,
-	SAVE_QUIT,
+  NEW,
+  LOAD,
+  QUIT,
+  SAVE_QUIT,
 
-	CANCEL,
-	CONFIRM,
+  CANCEL,
+  CONFIRM,
 
-	LEFT,
-	UP,
-	RIGHT,
-	DOWN,
-	UP_LEFT,
-	UP_RIGHT,
-	DOWN_LEFT,
-	DOWN_RIGHT,
+  LEFT,
+  UP,
+  RIGHT,
+  DOWN,
+  UP_LEFT,
+  UP_RIGHT,
+  DOWN_LEFT,
+  DOWN_RIGHT,
 
-	STAIRS_DOWN,
-	STAIRS_UP,
+  STAIRS_DOWN,
+  STAIRS_UP,
 
-	NEXT_PAGE,
-	PREVIOUS_PAGE,
+  NEXT_PAGE,
+  PREVIOUS_PAGE,
 
-	OPEN_DOOR,
-	CLOSE_DOOR,
+  OPEN_DOOR,
+  CLOSE_DOOR,
 
-	INVENTORY,
-	LOOK,
-	SHOW_MESSAGES,
+  INVENTORY,
+  LOOK,
+  SHOW_MESSAGES,
 
-	ATTACK,
-	RANGED_ATTACK,
-	PREVIOUS_TARGET,
-	NEXT_TARGET,
+  ATTACK,
+  RANGED_ATTACK,
+  PREVIOUS_TARGET,
+  NEXT_TARGET,
 
-	SEARCH,
-	REST,
+  SEARCH,
+  REST,
 
-	TALK,
-	PICK_UP,
+  TALK,
+  PICK_UP,
 
-	EQUIP,
-	USE,
-	DROP,
+  EQUIP,
+  USE,
+  DROP,
 
-	FROM_KEYDATA;
+  FROM_KEYDATA;
 
-	private int keyData;
-	private char keyChar;
+  private int keyData;
+  private char keyChar;
 
-	InputCommand() {
-		this(-999, ' ');
-	}
+  /**
+   * 
+   */
+  InputCommand() {
+    // TODO: number's purpose?
+    this(-999, ' ');
+  }
 
-	InputCommand(int keyData, char keyChar) {
-		this.keyData = keyData;
-		this.keyChar = keyChar;
-	}
+  /**
+   * 
+   * @param argKey
+   * @param argChar
+   */
+  InputCommand(int argKey, char argChar) {
+    keyData = argKey;
+    keyChar = argChar;
+  }
 
-	public static InputCommand fromKey(int keyData, char keyChar) {
-		return FROM_KEYDATA.setKeyData(keyData, keyChar);
-	}
+  /**
+   * 
+   * @param argKeyData
+   * @param argChar
+   * @return
+   */
+  public static InputCommand fromKey(int argKeyData, char argChar) {
+    return FROM_KEYDATA.setKeyData(argKeyData, argChar);
+  }
 
-	public int getKeyData() {
-		return keyData;
-	}
+  /**
+   * 
+   * @return
+   */
+  public int getKeyData() {
+    return keyData;
+  }
 
-	public char getKeyChar() {
-		return keyChar;
-	}
+  /**
+   * 
+   * @return
+   */
+  public char getKeyChar() {
+    return keyChar;
+  }
 
-	public DirectionIntercardinal toDirection() {
-		switch (this) {
-		case UP:
-			return DirectionIntercardinal.UP;
-		case LEFT:
-			return DirectionIntercardinal.LEFT;
-		case RIGHT:
-			return DirectionIntercardinal.RIGHT;
-		case DOWN:
-			return DirectionIntercardinal.DOWN;
-		case UP_LEFT:
-			return DirectionIntercardinal.UP_LEFT;
-		case UP_RIGHT:
-			return DirectionIntercardinal.UP_RIGHT;
-		case DOWN_LEFT:
-			return DirectionIntercardinal.DOWN_LEFT;
-		case DOWN_RIGHT:
-			return DirectionIntercardinal.DOWN_RIGHT;
-		default:
-			return DirectionIntercardinal.NONE;
-		}
-	}
+  /**
+   * 
+   * @return
+   */
+  public DirectionIntercardinal toDirection() {
+    switch (this) {
+      case UP:
+        return DirectionIntercardinal.UP;
+      case LEFT:
+        return DirectionIntercardinal.LEFT;
+      case RIGHT:
+        return DirectionIntercardinal.RIGHT;
+      case DOWN:
+        return DirectionIntercardinal.DOWN;
+      case UP_LEFT:
+        return DirectionIntercardinal.UP_LEFT;
+      case UP_RIGHT:
+        return DirectionIntercardinal.UP_RIGHT;
+      case DOWN_LEFT:
+        return DirectionIntercardinal.DOWN_LEFT;
+      case DOWN_RIGHT:
+        return DirectionIntercardinal.DOWN_RIGHT;
+      default:
+        return DirectionIntercardinal.NONE;
+    }
+  }
 
-	private InputCommand setKeyData(int keyData, char keyChar) {
-		this.keyData = keyData;
-		this.keyChar = keyChar;
-		return this;
-	}
+  /**
+   * 
+   * @param argKeyData
+   * @param argChar
+   * @return
+   */
+  private InputCommand setKeyData(int argKeyData, char argChar) {
+    keyData = argKeyData;
+    keyChar = argChar;
+    return this;
+  }
 }

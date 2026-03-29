@@ -14,54 +14,93 @@ import squidpony.squidgrid.util.DirectionCardinal;
 import squidpony.squidmath.RNG;
 import squidpony.squidutility.ProbabilityTable;
 
+/**
+ * 
+ */
 public class Room {
-  protected final RNG random = Game.current().random();
-  protected final ArrayList<Point> floorTiles;
 
+  protected final RNG random = Game.current().random();
+
+  protected final ArrayList<Point> floorTiles;
   public final ArrayList<ConnectionPoint> doors;
   public final Rectangle area;
 
-  public Room(Rectangle area) {
-    this.area = area;
+  /**
+   * 
+   * @param argArea
+   */
+  public Room(Rectangle argArea) {
+    area = argArea;
     doors = new ArrayList<>();
     floorTiles = new ArrayList<>();
   }
 
+  /**
+   * 
+   * @return
+   */
   public int bottom() {
     return (int) area.getMaxY() - 1;
   }
 
+  /**
+   * 
+   * @return
+   */
   public int top() {
     return (int) area.getMinY();
   }
 
+  /**
+   * 
+   * @return
+   */
   public int left() {
     return (int) area.getMinX();
   }
 
+  /**
+   * 
+   * @return
+   */
   public int right() {
     return (int) area.getMaxX() - 1;
   }
 
+  /**
+   * 
+   * @return
+   */
   public int getRandomX() {
     return (int) random.between(area.getMinX() + 1, area.getMaxX() - 1);
   }
 
+  /**
+   * 
+   * @return
+   */
   public int getRandomY() {
     return (int) random.between(area.getMinY() + 1, area.getMaxY() - 1);
   }
 
+  /**
+   * 
+   * @return
+   */
   public Point getRandomFloorTile() {
-    Point p = null;
-    if (floorTiles.size() > 1) {
-      return floorTiles.get(random.between(0, floorTiles.size()));
-    }
-    return p;
+    return floorTiles.size() > 1 ? floorTiles.get(random.between(0, floorTiles.size())) : null;
   }
 
-  public Point getDoorCoordinate(Tile[][] map, DirectionCardinal direction) {
+  /**
+   * 
+   * @param argMap
+   * @param argDir
+   * @return
+   */
+  public Point getDoorCoordinate(Tile[][] argMap, DirectionCardinal argDir) {
     Point p = null;
-    switch (direction) {
+
+    switch (argDir) {
       case DOWN:
         p = new Point(this.getRandomX(), this.bottom());
         break;
@@ -77,125 +116,168 @@ public class Room {
       default:
         return null;
     }
+
     return p;
   }
 
-  public Point addRandomDoorToRoom(Tile[][] map, DirectionCardinal direction) {
-    ConnectionPoint p = new ConnectionPoint(getDoorCoordinate(map, direction), direction, this);
+  /**
+   * 
+   * @param argMap
+   * @param argDir
+   * @return
+   */
+  public Point addRandomDoorToRoom(Tile[][] argMap, DirectionCardinal argDir) {
+    ConnectionPoint p = new ConnectionPoint(getDoorCoordinate(argMap, argDir), argDir, this);
 
-    if (map[p.x][p.y].isWall()) {
+    if (argMap[p.x][p.y].isWall()) {
       this.doors.add(p);
       return p;
     }
+
     return null;
   }
 
-  public Point getDoorFrom(Point p, DirectionCardinal thisDoorDirection) {
-    switch (thisDoorDirection) {
+  /**
+   * 
+   * @param argPt
+   * @param argDoorDirection
+   * @return
+   */
+  public Point getDoorFrom(Point argPt, DirectionCardinal argDoorDirection) {
+    switch (argDoorDirection) {
       case DOWN:
-        return new Point(p.x, this.bottom());
+        return new Point(argPt.x, this.bottom());
       case UP:
-        return new Point(p.x, this.top());
+        return new Point(argPt.x, this.top());
       case LEFT:
-        return new Point(this.left(), p.y);
+        return new Point(this.left(), argPt.y);
       case RIGHT:
-        return new Point(this.right(), p.y);
+        return new Point(this.right(), argPt.y);
       default:
         return null;
     }
   }
 
-  public Point getExistingDoor(DirectionCardinal direction) {
-    final Point startPoint;
-    final Point endPoint;
-    switch (direction) {
+  /**
+   * 
+   * @param argDir
+   * @return
+   */
+  public Point getExistingDoor(DirectionCardinal argDir) {
+    final Point start;
+    final Point end;
+
+    switch (argDir) {
       case DOWN:
-        startPoint = new Point(this.left(), this.bottom());
-        endPoint = new Point(this.right(), this.bottom());
+        start = new Point(this.left(), this.bottom());
+        end = new Point(this.right(), this.bottom());
         break;
       case UP:
-        startPoint = new Point(this.left(), this.top());
-        endPoint = new Point(this.right(), this.top());
+        start = new Point(this.left(), this.top());
+        end = new Point(this.right(), this.top());
         break;
       case LEFT:
-        startPoint = new Point(this.left(), this.top());
-        endPoint = new Point(this.left(), this.bottom());
+        start = new Point(this.left(), this.top());
+        end = new Point(this.left(), this.bottom());
         break;
       case RIGHT:
-        startPoint = new Point(this.right(), this.top());
-        endPoint = new Point(this.right(), this.bottom());
+        start = new Point(this.right(), this.top());
+        end = new Point(this.right(), this.bottom());
         break;
       default:
-        startPoint = null;
-        endPoint = null;
+        return null;
     }
-    if (startPoint == null || endPoint == null)
-      return null;
 
-    List<Point> candidates = doors.stream().filter(
-        d -> d.x == startPoint.x || d.x == endPoint.x || d.y == startPoint.y || d.y == endPoint.y)
+    List<Point> candidates = doors.stream()
+        .filter(d -> d.x == start.x || d.x == end.x || d.y == start.y || d.y == end.y)
         .collect(Collectors.toList());
 
     if (candidates.isEmpty()) {
       return CollectionUtils.getRandomElement(candidates);
     }
+
     return null;
   }
 
-  public void fillRoom(Tile[][] map, TileBuilder tb, Symbol tile) {
+  /**
+   * 
+   * @param argMap
+   * @param argBuilder
+   * @param argTile
+   */
+  public void fillRoom(Tile[][] argMap, TileBuilder argBuilder, Symbol argTile) {
     Rectangle rect = this.area;
+
     for (int x = (int) rect.getMinX() + 1; x < rect.getMaxX() - 1; x++) {
       for (int y = (int) rect.getMinY() + 1; y < rect.getMaxY() - 1; y++) {
+        argMap[x][y] = argBuilder.buildTile(argTile);
 
-        map[x][y] = tb.buildTile(tile);
-
-        if (!map[x][y].isWall() && isFloorAdjacentToWall(map, x, y)) {
+        if (!argMap[x][y].isWall() && isFloorAdjacentToWall(argMap, x, y)) {
           floorTiles.add(new Point(x, y));
         }
       }
     }
   }
 
-  public void fillRoom(Tile[][] map, TileBuilder tb, ProbabilityTable<Symbol> tiles) {
-    Rectangle rect = this.area;
+  /**
+   * 
+   * @param argMap
+   * @param argBuilder
+   * @param argTiles
+   */
+  public void fillRoom(Tile[][] argMap, TileBuilder argBuilder, ProbabilityTable<Symbol> argTiles) {
+    Rectangle rect = area;
+
     for (int x = (int) rect.getMinX() + 1; x < rect.getMaxX() - 1; x++) {
       for (int y = (int) rect.getMinY() + 1; y < rect.getMaxY() - 1; y++) {
+        argMap[x][y] = argBuilder.buildTile(argTiles.random());
 
-        map[x][y] = tb.buildTile(tiles.random());
-
-        if (!map[x][y].isWall() && isFloorAdjacentToWall(map, x, y)) {
+        if (!argMap[x][y].isWall() && isFloorAdjacentToWall(argMap, x, y)) {
           floorTiles.add(new Point(x, y));
         }
       }
     }
   }
 
-  protected void addFloorTile(Point point) {
-    if (area.contains(point) && !floorTiles.contains(point)) {
-      floorTiles.add(point);
+  /**
+   * 
+   * @param argPt
+   */
+  protected void addFloorTile(Point argPt) {
+    if (area.contains(argPt) && !floorTiles.contains(argPt)) {
+      floorTiles.add(argPt);
     }
   }
 
-  protected boolean isFloorAdjacentToWall(Tile[][] map, int x, int y) {
-    if (x > 0 && map[x - 1][y].isWall())
-      return true;
-    if (y > 0 && map[x][y - 1].isWall())
-      return true;
-    if (x < map.length - 1 && map[x + 1][y].isWall())
-      return true;
-    if (y < map.length - 1 && map[x][y + 1].isWall())
-      return true;
-
-    return false;
+  /**
+   * 
+   * @param argMap
+   * @param x
+   * @param y
+   * @return
+   */
+  protected boolean isFloorAdjacentToWall(Tile[][] argMap, int x, int y) {
+    return ((x > 0 && argMap[x - 1][y].isWall()) || (y > 0 && argMap[x][y - 1].isWall())
+        || (x < argMap.length - 1 && argMap[x + 1][y].isWall())
+        || (y < argMap.length - 1 && argMap[x][y + 1].isWall()));
   }
 
-  protected void fillPath(Queue<Point> points, char tile, Room room, Tile[][] map, TileBuilder tb) {
-    Point p = points.poll();
+  /**
+   * 
+   * @param argPts
+   * @param arcTile
+   * @param argRoom
+   * @param argMap
+   * @param argBuilder
+   */
+  protected void fillPath(Queue<Point> argPts, char arcTile, Room argRoom, Tile[][] argMap,
+      TileBuilder argBuilder) {
+    Point p = argPts.poll();
+
     while (p != null) {
-      room.addFloorTile(p);
-
-      map[p.x][p.y] = tb.buildTile(tile);
-      p = points.poll();
+      argRoom.addFloorTile(p);
+      argMap[p.x][p.y] = argBuilder.buildTile(arcTile);
+      p = argPts.poll();
     }
   }
 }

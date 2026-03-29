@@ -4,27 +4,40 @@ import java.util.ArrayList;
 
 import roguelike.ui.InputManager;
 import roguelike.ui.windows.TerminalBase;
-import roguelike.util.Log;
 
+/**
+ * 
+ */
 public class AnimationManager {
 
   private ArrayList<Animation> animations;
   private boolean refresh;
 
+  /**
+   * 
+   */
   public AnimationManager() {
     animations = new ArrayList<>();
   }
 
-  public void addAnimation(Animation animation) {
-    animations.add(animation);
+  /**
+   * 
+   * @param argAnim
+   */
+  public void addAnimation(Animation argAnim) {
+    animations.add(argAnim);
 
-    if (animation.isBlocking())
+    if (argAnim.isBlocking()) {
       InputManager.setInputEnabled(false);
+    }
   }
 
+  /**
+   * 
+   * @return
+   */
   public boolean shouldRefresh() {
     if (refresh) {
-      Log.debug("AnimationManager refresh=true");
       refresh = false;
       return true;
     }
@@ -34,22 +47,24 @@ public class AnimationManager {
   /**
    * Returns true if a frame of any animation was processed
    * 
-   * @param terminal
+   * @param argTerm
    * @return
    */
-  public boolean nextFrame(TerminalBase terminal) {
+  public boolean nextFrame(TerminalBase argTerm) {
     boolean anyBlocking = false;
     boolean anyAnimations = false;
-
     ArrayList<Animation> toRemove = new ArrayList<>();
+
     for (Animation animation : animations) {
-      if (animation.nextFrame(terminal)) {
+      if (animation.nextFrame(argTerm)) {
         toRemove.add(animation);
       }
       else {
-        if (!anyBlocking && animation.isBlocking())
+        if (!anyBlocking && animation.isBlocking()) {
           anyBlocking = true;
+        }
       }
+
       anyAnimations = true;
     }
 
@@ -57,15 +72,20 @@ public class AnimationManager {
       animations.remove(a);
     }
 
-    if (!anyBlocking)
+    if (!anyBlocking) {
       InputManager.setInputEnabled(true);
+    }
 
-    if (toRemove.isEmpty())
+    if (toRemove.isEmpty()) {
       refresh = true;
+    }
 
     return anyAnimations;
   }
 
+  /**
+   * 
+   */
   public void clear() {
     animations.clear();
   }

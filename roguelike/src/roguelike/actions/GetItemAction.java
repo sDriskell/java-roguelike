@@ -7,54 +7,74 @@ import roguelike.items.Item;
 import roguelike.maps.MapArea;
 import squidpony.squidcolor.SColor;
 
+/**
+ * 
+ */
 public class GetItemAction extends Action {
 
-	private MapArea map;
-	private Item item;
+  private MapArea map;
+  private Item item;
 
-	public GetItemAction(Actor actor, MapArea map) {
-		super(actor);
-		this.map = map;
-	}
+  /**
+   * 
+   * @param argAct
+   * @param argMap
+   */
+  public GetItemAction(Actor argAct, MapArea argMap) {
+    super(argAct);
+    map = argMap;
+  }
 
-	public GetItemAction(Actor actor, MapArea map, Item item) {
-		super(actor);
-		this.map = map;
-		this.item = item;
-	}
+  /**
+   * 
+   * @param argAct
+   * @param argMap
+   * @param argItm
+   */
+  public GetItemAction(Actor argAct, MapArea argMap, Item argItm) {
+    super(argAct);
+    this.map = argMap;
+    this.item = argItm;
+  }
 
-	@Override
-	protected ActionResult onPerform() {
-		if (item != null) {
+  @Override
+  protected ActionResult onPerform() {
 
-			Inventory inventory = map.getItemsAt(actor.getPosition().x, actor.getPosition().y);
-			Item pickUp = inventory.getItem(this.item.itemId());
+    if (item != null) {
+      Inventory inv = map.getItemsAt(actor.getPosition().x, actor.getPosition().y);
+      Item pickUp = inv.getItem(this.item.getItemId());
+      return pickUpItem(inv, pickUp);
+    }
 
-			return pickUpItem(inventory, pickUp);
+    Inventory inv = map.getItemsAt(actor.getPosition().x, actor.getPosition().y);
 
-		} else {
-			Inventory inventory = map.getItemsAt(actor.getPosition().x, actor.getPosition().y);
+    if (!inv.any()) {
+      return ActionResult.failure().setMessage("No items here!");
+    }
 
-			if (!inventory.any())
-				return ActionResult.failure().setMessage("No items here!");
+    // TODO: display menu allowing player to choose item
+    Item firstItem = inv.getItem(inv.getCount() - 1);
+    return pickUpItem(inv, firstItem);
 
-			// TODO: display menu allowing player to choose item
-			Item firstItem = inventory.getItem(inventory.getCount() - 1);
-			return pickUpItem(inventory, firstItem);
-		}
-	}
+  }
 
-	private ActionResult pickUpItem(Inventory inventory, Item pickUp) {
-		if (pickUp != null) {
+  /**
+   * 
+   * @param argInv
+   * @param argPickUp
+   * @return
+   */
+  private ActionResult pickUpItem(Inventory argInv, Item argPickUp) {
 
-			actor.inventory().add(pickUp);
-			inventory.remove(pickUp);
+    if (argPickUp != null) {
+      actor.inventory().add(argPickUp);
+      argInv.remove(argPickUp);
 
-			String message = actor.doAction("picks up the %s", pickUp.name());
-			Game.current().displayMessage(message, SColor.LIGHT_BLUE);
+      String msg = actor.doAction("picks up the %s", argPickUp.getName());
+      Game.current().displayMessage(msg, SColor.LIGHT_BLUE);
 
-			return ActionResult.success();
-		}
-		return ActionResult.failure().setMessage("Selected item doesn't exist...");
-	}
+      return ActionResult.success();
+    }
+    return ActionResult.failure().setMessage("Selected item doesn't exist...");
+  }
 }

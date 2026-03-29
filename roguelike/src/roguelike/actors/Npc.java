@@ -9,78 +9,91 @@ import roguelike.items.Item;
 import roguelike.maps.MapArea;
 import squidpony.squidcolor.SColor;
 
+/**
+ * 
+ */
 public class Npc extends Actor {
-	private static final long serialVersionUID = 1L;
 
-	protected String name = "";
-	protected String description = "";
-	int difficulty = 1;
+  private static final long serialVersionUID = 1L;
 
-	Npc(char symbol, SColor color, String name) {
-		super(symbol, color);
-		this.name = name;
-	}
+  protected String name = "";
+  protected String description = "";
+  int difficulty = 1;
 
-	public void setBehavior(Behavior behavior) {
-		this.behavior = behavior;
-	}
+  /**
+   * 
+   * @param argSym
+   * @param argCol
+   * @param argName
+   */
+  Npc(char argSym, SColor argCol, String argName) {
+    super(argSym, argCol);
+    name = argName;
+  }
 
-	@Override
-	public Action getNextAction() {
-		if (behavior != null) {
-			return behavior.getAction();
-		}
-		return null;
-	}
+  /**
+   * 
+   * @param argBehavior
+   */
+  public void setBehavior(Behavior argBehavior) {
+    behavior = argBehavior;
+  }
 
-	@Override
-	public String getName() {
-		return name;
-	}
+  @Override
+  public Action getNextAction() {
+    if (behavior != null) {
+      return behavior.getAction();
+    }
+    return null;
+  }
 
-	@Override
-	public String getDescription() {
-		return description;
-	}
+  @Override
+  public String getName() {
+    return name;
+  }
 
-	@Override
-	public void onAttackedInternal(Actor attacker) {
-		if (behavior != null)
-			behavior = behavior.getNextBehavior();
-	}
+  @Override
+  public String getDescription() {
+    return description;
+  }
 
-	@Override
-	public void onTurnFinished() {
-		if (behavior != null) {
-			behavior = behavior.getNextBehavior();
-		}
-	}
+  @Override
+  public void onAttackedInternal(Actor argAtkr) {
+    if (behavior != null)
+      behavior = behavior.getNextBehavior();
+  }
 
-	@Override
-	public void onKilled() {
-		behavior = null;
+  @Override
+  public void onTurnFinished() {
+    if (behavior != null) {
+      behavior = behavior.getNextBehavior();
+    }
+  }
 
-		// chance to drop whatever is in inventory
-		Inventory inventory = this.inventory();
-		MapArea map = game.getCurrentMapArea();
+  @Override
+  public void onKilled() {
+    behavior = null;
 
-		List<Item> droppableItems = inventory.getDroppableItems();
+    // chance to drop whatever is in inventory
+    Inventory inv = this.inventory();
+    MapArea map = game.getCurrentMapArea();
 
-		for (int x = 0; x < droppableItems.size(); x++) {
+    List<Item> droppableItems = inv.getDroppableItems();
 
-			if (game.random().nextFloat() < 0.7) {
+    for (int x = 0; x < droppableItems.size(); x++) {
+      // TODO: remove magic float in comparison
+      if (game.random().nextFloat() < 0.7) {
+        Item i = droppableItems.get(x);
+        map.addItem(i, getPosition().x, getPosition().y);
 
-				Item i = droppableItems.get(x);
-				map.addItem(i, getPosition().x, getPosition().y);
+        game.displayMessage("Dropped " + i.getName(), SColor.GREEN);
+      }
 
-				game.displayMessage("Dropped " + i.name(), SColor.GREEN);
-			}
+    }
+  }
 
-		}
-	}
-
-	@Override
-	protected String makeCorrectVerb(String message) {
-		return message;
-	}
+  @Override
+  protected String makeCorrectVerb(String argMap) {
+    return argMap;
+  }
 }

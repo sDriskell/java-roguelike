@@ -18,7 +18,11 @@ import roguelike.maps.Path.Step;
 import roguelike.util.Log;
 import squidpony.squidgrid.util.DirectionIntercardinal;
 
+/**
+ * 
+ */
 public class MoveToRandomPointBehavior extends Behavior {
+
   private static final long serialVersionUID = 1L;
 
   transient AStarPathfinder pathfinder;
@@ -28,11 +32,15 @@ public class MoveToRandomPointBehavior extends Behavior {
   private MapArea map;
   private Point previousPosition;
 
-  public MoveToRandomPointBehavior(Actor actor) {
-    super(actor);
+  /**
+   * 
+   * @param argAct
+   */
+  public MoveToRandomPointBehavior(Actor argAct) {
+    super(argAct);
     this.map = Game.current().getCurrentMapArea();
 
-    pathfinder = new AStarPathfinder(map, actor.getVisionRadius() * 2);
+    pathfinder = new AStarPathfinder(map, argAct.getVisionRadius() * 2);
   }
 
   private void writeObject(ObjectOutputStream out) throws IOException {

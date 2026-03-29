@@ -11,7 +11,13 @@ import roguelike.items.Item;
 import squidpony.squidcolor.SColor;
 import squidpony.squidcolor.SColorFactory;
 
+//TODO: Remove serializable implementation
+
+/**
+ * 
+ */
 public class Tile implements Serializable {
+
   private static final long serialVersionUID = 1L;
 
   protected boolean visible;
@@ -30,17 +36,31 @@ public class Tile implements Serializable {
 
   private Actor actor;
 
+  /**
+   * 
+   */
   Tile() {
-    this.visible = false;
-    this.background = SColor.BLACK;
-    this.lightValue = SColor.BLACK;
-    this.items = new Inventory();
+    visible = false;
+    background = SColor.BLACK;
+    lightValue = SColor.BLACK;
+    items = new Inventory();
   }
 
+  /**
+   * 
+   * @param out
+   * @throws IOException
+   */
   private void writeObject(ObjectOutputStream out) throws IOException {
     out.defaultWriteObject();
   }
 
+  /**
+   * 
+   * @param in
+   * @throws IOException
+   * @throws ClassNotFoundException
+   */
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
   }
@@ -63,14 +83,21 @@ public class Tile implements Serializable {
     return this.visible;
   }
 
-  public void setVisible(boolean visible) {
-    this.visible = visible;
-    if (visible)
-      this.explored = true;
+  public void setVisible(boolean argIsVis) {
+    visible = argIsVis;
+
+    if (argIsVis) {
+      explored = true;
+    }
   }
 
-  public Tile setSpeedModifier(int speedModifier) {
-    this.speedModifier = speedModifier;
+  /**
+   * 
+   * @param argSpeedMod
+   * @return
+   */
+  public Tile setSpeedModifier(int argSpeedMod) {
+    speedModifier = argSpeedMod;
     return this;
   }
 
@@ -81,106 +108,168 @@ public class Tile implements Serializable {
    * @return
    */
   public SColor getLightedColorValue() {
-    return this.lightValue;
+    return lightValue;
   }
 
   /**
    * Sets the actual color this tile will be drawn in after taking lighting and
    * visibility into account
    * 
-   * @param lightValue
+   * @param argLtVal
    */
-  public void setLightedColorValue(SColor lightValue) {
-    this.lightValue = lightValue;
+  public void setLightedColorValue(SColor argLtVal) {
+    lightValue = argLtVal;
   }
 
   public float getLighting() {
     return this.lighting;
   }
 
-  public Tile setLighting(float lighting) {
-    this.lighting = lighting;
+  public Tile setLighting(float argLight) {
+    lighting = argLight;
     return this;
   }
 
+  /**
+   * 
+   * @return
+   */
   public char getSymbol() {
-    if (actor != null && visible)
+    if (actor != null && visible) {
       return actor.symbol();
+    }
 
-    if (items.any())
-      return getTopItem().symbol();
+    if (items.any()) {
+      return getTopItem().getSymbol();
+    }
 
     return this.symbol;
   }
 
+  /**
+   * 
+   * @return
+   */
   public SColor getColor() {
     if (!visible) {
-      if (explored)
+      if (explored) {
         return SColorFactory.dimmer(SColor.DARK_CERULEAN);
+      }
+
       return SColor.BLACK;
     }
 
-    if (actor != null)
+    if (actor != null) {
       return actor.color();
+    }
 
-    if (items.any())
-      return getTopItem().color();
+    if (items.any()) {
+      return getTopItem().getColor();
+    }
 
     return this.color;
   }
 
+  /**
+   * 
+   * @return
+   */
   public SColor getBackground() {
     if (!visible) {
-      if (explored)
+      if (explored) {
         return SColorFactory.dimmest(this.background);
+      }
 
       return SColor.BLACK;
     }
+
     return this.background;
   }
 
-  public Tile setBackground(SColor background) {
-    this.background = background;
+  /**
+   * 
+   * @param argBack
+   * @return
+   */
+  public Tile setBackground(SColor argBack) {
+    background = argBack;
     return this;
   }
 
+  /**
+   * 
+   * @return
+   */
   public Actor getActor() {
     return this.actor;
   }
 
-  public void setActor(Actor actor) {
-    this.actor = actor;
+  /**
+   * 
+   * @param argAct
+   */
+  public void setActor(Actor argAct) {
+    actor = argAct;
   }
 
+  /**
+   * 
+   * @return
+   */
   public boolean canPass() {
     return isPassable;
   }
 
+  /**
+   * 
+   * @return
+   */
   public boolean isWall() {
     return wall;
   }
 
-  Tile setValues(char symbol, boolean isPassable, SColor color) {
-    this.symbol = symbol;
-    this.isPassable = isPassable;
-    this.color = color;
+  /**
+   * 
+   * @param argSym
+   * @param argIsPass
+   * @param argCol
+   * @return
+   */
+  Tile setValues(char argSym, boolean argIsPass, SColor argCol) {
+    symbol = argSym;
+    isPassable = argIsPass;
+    color = argCol;
+    return this;
+  }
+
+  /**
+   * 
+   * @param argSym
+   * @param argIsPass
+   * @param argCol
+   * @param argIsWall
+   * @return
+   */
+  Tile setValues(char argSym, boolean argIsPass, SColor argCol, boolean argIsWall) {
+    setValues(argSym, argIsPass, argCol);
+    wall = argIsWall;
+
+    if (this.wall) {
+      lighting = 1f;
+    }
 
     return this;
   }
 
-  Tile setValues(char symbol, boolean isPassable, SColor color, boolean wall) {
-    setValues(symbol, isPassable, color);
-    this.wall = wall;
-    if (this.wall)
-      this.lighting = 1f;
-
-    return this;
-  }
-
-  boolean moveActorTo(Tile newTile) {
+  /**
+   * 
+   * @param argNewTile
+   * @return
+   */
+  boolean moveActorTo(Tile argNewTile) {
     if (this.actor != null) {
-      newTile.actor = this.actor;
-      this.actor = null;
+      argNewTile.actor = actor;
+      actor = null;
       return true;
     }
     else {
@@ -189,14 +278,20 @@ public class Tile implements Serializable {
     }
   }
 
+  /**
+   * 
+   * @return
+   */
   Inventory getItems() {
     return items;
   }
 
+  /**
+   * 
+   * @return
+   */
   private Item getTopItem() {
-    if (items.any()) {
-      return items.getItem(items.getCount() - 1);
-    }
-    return null;
+    return items.any() ? items.getItem(items.getCount() - 1) : null;
+
   }
 }

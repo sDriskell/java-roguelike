@@ -6,82 +6,94 @@ import roguelike.maps.MapHelpers;
 import roguelike.util.CharEx;
 import squidpony.squidcolor.SColor;
 
+/**
+ * 
+ */
 public class Terminal extends TerminalBase {
 
-	public Terminal(int width, int height, TerminalChangeNotification terminalChanged) {
-		this(new Rectangle(0, 0, width, height), new CharEx[width][height], terminalChanged);
-	}
+  /**
+   * 
+   * @param argW
+   * @param argH
+   * @param argTermChange
+   */
+  public Terminal(int argW, int argH, TerminalChangeNotification argTermChange) {
+    this(new Rectangle(0, 0, argW, argH), new CharEx[argW][argH], argTermChange);
+  }
 
-	Terminal(
-			final Rectangle area, final CharEx[][] data,
-			final TerminalChangeNotification terminalChanged)
-	{
-		super(terminalChanged);
+  Terminal(final Rectangle argArea, final CharEx[][] argData,
+      final TerminalChangeNotification argTermChange) {
+    super(argTermChange);
 
-		this.colors = new ColorPair(SColor.WHITE, SColor.BLACK);
-		this.size = area;
-		this.data = data;
-		this.cursor = new TerminalCursor() {
+    colors = new ColorPair(SColor.WHITE, SColor.BLACK);
+    size = argArea;
+    data = argData;
+    cursor = new TerminalCursor() {
 
-			@Override
-			public boolean put(int x, int y, CharEx c) {
-				int sx = getX(x);
-				int sy = getY(y);
-				if (!MapHelpers.isWithinBounds(data.length, data[0].length, sx, sy))
-					return false;
+      @Override
+      public boolean put(int x, int y, CharEx c) {
+        int sx = getX(x);
+        int sy = getY(y);
 
-				CharEx existing = data[sx][sy];
-				if (existing != null && existing.equals(c)) {
-					return false;
-				}
-				data[sx][sy] = c;
-				return true;
-			}
+        if (!MapHelpers.isWithinBounds(argData.length, argData[0].length, sx, sy)) {
+          return false;
+        }
 
-			@Override
-			public boolean bg(int x, int y) {
-				int sx = getX(x);
-				int sy = getY(y);
-				if (!MapHelpers.isWithinBounds(data.length, data[0].length, sx, sy))
-					return false;
+        CharEx existing = argData[sx][sy];
 
-				CharEx c = data[getX(x)][getY(y)];
-				CharEx c2 = new CharEx(c.symbol(), c.foregroundColor(), colors.background());
-				data[sx][sy] = c2;
+        if (existing != null && existing.equals(c)) {
+          return false;
+        }
 
-				terminalChanged.onChanged(sx, sy, c2);
+        argData[sx][sy] = c;
+        return true;
+      }
 
-				return true;
-			}
+      @Override
+      public boolean bg(int x, int y) {
+        int sx = getX(x);
+        int sy = getY(y);
 
-			private int getX(int x) {
-				return size.x + x;
-			}
+        if (!MapHelpers.isWithinBounds(argData.length, argData[0].length, sx, sy)) {
+          return false;
+        }
 
-			private int getY(int y) {
-				return size.y + y;
-			}
-		};
-	}
+        CharEx c = argData[getX(x)][getY(y)];
+        CharEx c2 = new CharEx(c.getSymbol(), c.getForegroundColor(), colors.background());
+        argData[sx][sy] = c2;
+        argTermChange.onChanged(sx, sy, c2);
 
-	@Override
-	public TerminalBase getWindow(int x, int y, int width, int height) {
-		Rectangle area = new Rectangle(x, y, width, height);
-		return new Terminal(area, this.data, this.terminalChanged);
-	}
+        return true;
+      }
 
-	@Override
-	public TerminalBase withColor(SColor color) {
-		Terminal term = new Terminal(size, data, this.terminalChanged);
-		term.colors = new ColorPair(color);
-		return term;
-	}
+      private int getX(int x) {
+        return size.x + x;
+      }
 
-	@Override
-	public TerminalBase withColor(SColor fgColor, SColor bgColor) {
-		Terminal term = new Terminal(size, data, this.terminalChanged);
-		term.colors = new ColorPair(fgColor, bgColor);
-		return term;
-	}
+      private int getY(int y) {
+        return size.y + y;
+      }
+    };
+  }
+
+  @Override
+  public TerminalBase getWindow(int x, int y, int a, int argH) {
+    Rectangle area = new Rectangle(x, y, a, argH);
+    return new Terminal(area, data, terminalChanged);
+  }
+
+  @Override
+  public TerminalBase withColor(SColor argCol) {
+    Terminal term = new Terminal(size, data, terminalChanged);
+    term.colors = new ColorPair(argCol);
+    return term;
+  }
+
+  @Override
+  public TerminalBase withColor(SColor argFgCol, SColor argBgCol) {
+    Terminal term = new Terminal(size, data, terminalChanged);
+    term.colors = new ColorPair(argFgCol, argBgCol);
+    return term;
+  }
 
 }

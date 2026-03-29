@@ -9,93 +9,154 @@ import roguelike.ui.Menu;
 import roguelike.ui.windows.TerminalBase;
 import roguelike.ui.windows.TextWindow;
 
+/**
+ * 
+ * @param <T>
+ */
 public abstract class Dialog<T> extends TextWindow {
-	// Box drawing tiles: "┻┗┛┫┳┣┃━┏┓╋"
+  // Box drawing tiles: "┻┗┛┫┳┣┃━┏┓╋"
 
-	private boolean isOpen;
-	private DialogResult<T> result;
+  private static final boolean NOT_FULL_SCREEN = false;
 
-	private boolean fullScreen;
+  private boolean isOpen;
+  private DialogResult<T> result;
+  private boolean isFullScreen;
+  protected TerminalBase terminal;
 
-	protected TerminalBase terminal;
+  /**
+   * 
+   * @param argWidth
+   * @param argHeight
+   */
+  protected Dialog(int argWidth, int argHeight) {
+    this(argWidth, argHeight, NOT_FULL_SCREEN);
+  }
 
-	protected Dialog(int width, int height) {
-		this(width, height, false);
-	}
+  /**
+   * 
+   * @param argWidth
+   * @param argHeight
+   * @param argIsFullScrn
+   */
+  protected Dialog(int argWidth, int argHeight, boolean argIsFullScrn) {
+    super(argWidth, argHeight);
+    isOpen = false;
+    isFullScreen = argIsFullScrn;
+  }
 
-	protected Dialog(int width, int height, boolean fullScreen) {
-		super(width, height);
-		this.isOpen = false;
-		this.fullScreen = fullScreen;
-	}
+  /**
+   * 
+   * @return
+   */
+  public Point getLocation() {
+    return size.getLocation();
+  }
 
-	public Point getLocation() {
-		return size.getLocation();
-	}
+  public boolean showFullscreen() {
+    return isFullScreen;
+  }
 
-	public boolean showFullscreen() {
-		return fullScreen;
-	}
+  /**
+   * 
+   * @return
+   */
+  public boolean waitingForResult() {
+    return isOpen;
+  }
 
-	public boolean waitingForResult() {
-		return isOpen;
-	}
+  /**
+   * 
+   * @param argTerm
+   */
+  public final void showInPane(TerminalBase argTerm) {
+    int w = argTerm.size().width;
+    int h = argTerm.size().height;
+    Point loc = getLocation(w, h);
+    size.setLocation(loc);
 
-	public final void showInPane(TerminalBase terminal) {
+    this.terminal = argTerm.getWindow(loc.x, loc.y, w, h);
+  }
 
-		int width = terminal.size().width;
-		int height = terminal.size().height;
+  /**
+   * 
+   */
+  public final void draw() {
+    if (terminal == null) {
+      return;
+    }
 
-		Point loc = getLocation(width, height);
-		size.setLocation(loc);
+    onDraw();
+  }
 
-		this.terminal = terminal.getWindow(loc.x, loc.y, width, height);
-	}
+  /**
+   * 
+   */
+  public final void show() {
+    InputManager.setActiveKeybindings(getKeyBindings());
+    isOpen = true;
+    onShow();
+  }
 
-	public final void draw() {
-		if (terminal == null)
-			return;
+  /**
+   * 
+   * @return
+   */
+  public final boolean process() {
+    InputCommand nextCmd = InputManager.nextCommandPreserveKeyData();
+    DialogResult<T> result = onProcess(nextCmd);
 
-		onDraw();
-	}
+    if (result != null) {
+      InputManager.previousKeyMap();
+      isOpen = false;
+    }
+    this.result = result;
 
-	public final void show() {
-		InputManager.setActiveKeybindings(this.getKeyBindings());
-		isOpen = true;
-		onShow();
-	}
+    return !isOpen;
+  }
 
-	public final boolean process() {
-		InputCommand nextCommand = InputManager.nextCommandPreserveKeyData();
-		DialogResult<T> result = onProcess(nextCommand);
+  /**
+   * 
+   * @return
+   */
+  public final DialogResult<T> result() {
+    return this.result;
+  }
 
-		if (result != null) {
-			InputManager.previousKeyMap();
-			isOpen = false;
-		}
-		this.result = result;
+  /**
+   * 
+   * @param argWidth
+   * @param argHeight
+   * @return
+   */
+  protected Point getLocation(int argWidth, int argHeight) {
+    int x = (int) ((argWidth / 2f) - (size.width / 2f));
+    int y = (int) ((argHeight / 2f) - (size.height / 2f));
+    return new Point(x, y);
+  }
 
-		return !isOpen;
-	}
+  /**
+   * 
+   * @return
+   */
+  protected KeyMap getKeyBindings() {
+    return Menu.KeyBindings;
+  }
 
-	public final DialogResult<T> result() {
-		return this.result;
-	}
+  /**
+   * 
+   */
+  protected void onShow() {
+  }
 
-	protected Point getLocation(int width, int height) {
-		int x = (int) ((width / 2f) - (size.width / 2f));
-		int y = (int) ((height / 2f) - (size.height / 2f));
-		return new Point(x, y);
-	}
+  /**
+   * 
+   * @param argCmd
+   * @return
+   */
+  protected abstract DialogResult<T> onProcess(InputCommand argCmd);
 
-	protected KeyMap getKeyBindings() {
-		return Menu.KEY_BINDINGS;
-	}
-
-	protected void onShow() {
-	}
-
-	protected abstract DialogResult<T> onProcess(InputCommand command);
-
-	protected abstract void onDraw();
+  /**
+   * 
+   */
+  protected abstract void onDraw();
 }

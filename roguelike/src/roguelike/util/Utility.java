@@ -1,18 +1,32 @@
 package roguelike.util;
 
+/**
+ * 
+ */
 public class Utility {
-  public static String capitalizeFirstLetter(String text) {
-    text = text.replace("!", "!_");
-    text = text.replace(".", "._");
-    String[] sentences = text.split("[_]");
+
+  /**
+   * 
+   * @param argTxt
+   * @return
+   */
+  public static String capitalizeFirstLetter(String argTxt) {
+    argTxt = argTxt.replace("!", "!_");
+    argTxt = argTxt.replace(".", "._");
+    String[] sentences = argTxt.split("[_]");
     StringBuilder sb = new StringBuilder();
+
     for (String s : sentences) {
       s = s.trim();
+
       if (s.length() > 1) {
-        sb.append(
-            String.format("%s%s", s.substring(0, 1).toUpperCase(), s.substring(1).toLowerCase()));
-        if (!s.endsWith(".") && !s.endsWith("!"))
+        String fmtStr = String
+            .format("%s%s", s.substring(0, 1).toUpperCase(), s.substring(1).toLowerCase());
+        sb.append(fmtStr);
+
+        if (!s.endsWith(".") && !s.endsWith("!")) {
           sb.append(".");
+        }
 
         sb.append(" ");
       }
@@ -20,6 +34,7 @@ public class Utility {
         sb.append(s);
       }
     }
+
     return sb.toString();
   }
 }

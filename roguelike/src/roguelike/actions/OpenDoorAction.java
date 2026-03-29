@@ -5,24 +5,32 @@ import roguelike.actors.Actor;
 import roguelike.maps.Door;
 import roguelike.maps.Tile;
 
+/**
+ * 
+ */
 public class OpenDoorAction extends Action {
 
-	private Tile tile;
+  private Tile tile;
 
-	public OpenDoorAction(Actor actor, Tile tile) {
-		super(actor);
-		this.tile = tile;
-	}
+  /**
+   * 
+   * @param argAct
+   * @param argTile
+   */
+  public OpenDoorAction(Actor argAct, Tile argTile) {
+    super(argAct);
+    tile = argTile;
+  }
 
-	@Override
-	protected ActionResult onPerform() {
-		if (!(tile instanceof Door))
-			return ActionResult.failure();
+  @Override
+  protected ActionResult onPerform() {
+    if (!(tile instanceof Door)) {
+      return ActionResult.failure();
+    }
 
-		Door door = (Door) tile;
-		door.open(Game.current().getCurrentMapArea());
-
-		return ActionResult.success();
-	}
+    Door door = (Door) tile;
+    door.open(Game.current().getCurrentMapArea());
+    return ActionResult.success();
+  }
 
 }

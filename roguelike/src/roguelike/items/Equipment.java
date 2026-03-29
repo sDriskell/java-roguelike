@@ -8,9 +8,16 @@ import java.util.List;
 import roguelike.actors.Actor;
 import roguelike.util.Log;
 
+/**
+ * 
+ */
 public class Equipment implements Serializable {
+
   private static final long serialVersionUID = 1006420730103267096L;
 
+  /**
+   * 
+   */
   public enum ItemSlot {
     HEAD(1 << 0),
     TORSO(1 << 1),
@@ -23,44 +30,82 @@ public class Equipment implements Serializable {
 
     public final int value;
 
-    ItemSlot(int value) {
-      this.value = value;
+    /**
+     * 
+     * @param argVal
+     */
+    ItemSlot(int argVal) {
+      value = argVal;
     }
 
-    public Item getItem(Actor actor) {
-      return actor.equipment().getEquipped(this);
+    /**
+     * 
+     * @param argAct
+     * @return
+     */
+    public Item getItem(Actor argAct) {
+      return argAct.equipment().getEquipped(this);
     }
 
-    public Weapon getEquippedWeapon(Actor actor) {
-      return actor.equipment().getEquippedWeapon(this);
+    /**
+     * 
+     * @param argAct
+     * @return
+     */
+    public Weapon getEquippedWeapon(Actor argAct) {
+      return argAct.equipment().getEquippedWeapon(this);
     }
 
-    public Item equipItem(Actor actor, Item item) {
-      Item old = actor.equipment().equipItem(this, item, actor.inventory());
+    /**
+     * 
+     * @param argAct
+     * @param argItm
+     * @return
+     */
+    public Item equipItem(Actor argAct, Item argItm) {
+      Item old = argAct.equipment().equipItem(this, argItm, argAct.inventory());
+
       if (old != null) {
-        old.onRemoved(actor);
+        old.onRemoved(argAct);
       }
-      item.onEquipped(actor);
+
+      argItm.onEquipped(argAct);
       return old;
     }
 
-    public Item removeItem(Actor actor) {
-      Item item = actor.equipment().removeItem(this, actor.inventory());
-      if (item != null)
-        item.onRemoved(actor);
+    /**
+     * 
+     * @param argAct
+     * @return
+     */
+    public Item removeItem(Actor argAct) {
+      Item item = argAct.equipment().removeItem(this, argAct.inventory());
+
+      if (item != null) {
+        item.onRemoved(argAct);
+      }
+
       return item;
     }
+
   }
 
   private HashMap<ItemSlot, Item> equipped;
   private ArrayList<Weapon> equippedWeapons = new ArrayList<>();
 
+  /**
+   * 
+   */
   public Equipment() {
-    this.equipped = new HashMap<>();
-    this.equippedWeapons.add(null);
-    this.equippedWeapons.add(null);
+    equipped = new HashMap<>();
+    equippedWeapons.add(null);
+    equippedWeapons.add(null);
   }
 
+  /**
+   * 
+   * @return
+   */
   public List<Weapon> getEquippedWeapons() {
     Weapon right = getEquippedWeapon(ItemSlot.RIGHT_HAND);
     Weapon left = getEquippedWeapon(ItemSlot.LEFT_HAND);
@@ -71,53 +116,83 @@ public class Equipment implements Serializable {
     return equippedWeapons;
   }
 
+  /**
+   * -
+   * 
+   * @return
+   */
   public RangedWeapon getRangedWeapon() {
     Weapon wpn = getEquippedWeapon(ItemSlot.RANGED);
-    if (wpn != null) {
-      if (wpn.type() == ItemType.RANGED_WEAPON)
-        return (RangedWeapon) wpn;
+
+    if (wpn != null && wpn.type() == ItemType.RANGED_WEAPON) {
+      return (RangedWeapon) wpn;
     }
+
     return null;
   }
 
-  Item equipItem(ItemSlot slot, Item item, Inventory inventory) {
-    Item oldItem = equipped.put(slot, item);
-    if (oldItem != null) {
-    }
-    else {
+  /**
+   * 
+   * @param argSlt
+   * @param argItm
+   * @param argInv
+   * @return
+   */
+  Item equipItem(ItemSlot argSlt, Item argItm, Inventory argInv) {
+    Item oldItem = equipped.put(argSlt, argItm);
+    Item existingItem = argInv.getItem(argItm.getItemId());
+
+    if (existingItem == null) {
+      Log.debug("equipItem: Existing item=null, adding " + argItm.getItemId());
+      argInv.add(argItm);
     }
 
-    Item existingItem = inventory.getItem(item.itemId());
-    if (existingItem == null) {
-      Log.debug("equipItem: Existing item=null, adding " + item.itemId());
-      inventory.add(item);
-    }
     // TODO: add equipped indicator to items
 
     return oldItem;
   }
 
-  Item removeItem(ItemSlot slot, Inventory inventory) {
-    Item item = equipped.getOrDefault(slot, null);
-    equipped.put(slot, null);
+  /**
+   * 
+   * @param argSlt
+   * @param argInv
+   * @return
+   */
+  Item removeItem(ItemSlot argSlt, Inventory argInv) {
+    Item item = equipped.getOrDefault(argSlt, null);
+    equipped.put(argSlt, null);
     return item;
   }
 
-  Item getEquipped(ItemSlot slot) {
-    return equipped.getOrDefault(slot, null);
+  /**
+   * 
+   * @param argSlt
+   * @return
+   */
+  Item getEquipped(ItemSlot argSlt) {
+    return equipped.getOrDefault(argSlt, null);
   }
 
-  Weapon getEquippedWeapon(ItemSlot slot) {
-    if (slot == ItemSlot.RIGHT_HAND || slot == ItemSlot.LEFT_HAND || slot == ItemSlot.RANGED
-        || slot == ItemSlot.PROJECTILE) {
-      Item weapon = equipped.getOrDefault(slot, null);
-      if (weapon != null) {
-        if (weapon.type() == ItemType.WEAPON || weapon.type() == ItemType.RANGED_WEAPON)
-          return weapon.asWeapon();
-        else if (weapon.type() == ItemType.PROJECTILE)
-          return weapon.asProjectile();
+  /**
+   * 
+   * @param argSlt
+   * @return
+   */
+  Weapon getEquippedWeapon(ItemSlot argSlt) {
+    if (argSlt == ItemSlot.RIGHT_HAND || argSlt == ItemSlot.LEFT_HAND || argSlt == ItemSlot.RANGED
+        || argSlt == ItemSlot.PROJECTILE) {
+      Item wpn = equipped.getOrDefault(argSlt, null);
+
+      if (wpn != null) {
+        if (wpn.type() == ItemType.WEAPON || wpn.type() == ItemType.RANGED_WEAPON) {
+          return wpn.asWeapon();
+        }
+        else if (wpn.type() == ItemType.PROJECTILE) {
+          return wpn.asProjectile();
+        }
       }
     }
+
     return null;
   }
 }

@@ -12,6 +12,9 @@ import roguelike.ui.windows.TerminalBase;
 import roguelike.util.Log;
 import squidpony.squidcolor.SColor;
 
+/**
+ * 
+ */
 public class TitleScreen extends Screen {
 
   public static final KeyMap KEY_BINDINGS = new KeyMap("Menu")
@@ -22,16 +25,17 @@ public class TitleScreen extends Screen {
       .bindKey(KeyEvent.VK_LEFT, InputCommand.PREVIOUS_PAGE)
       .bindKey(KeyEvent.VK_RIGHT, InputCommand.NEXT_PAGE);
 
-  public TitleScreen(TerminalBase terminal) {
-    super(terminal);
+  /**
+   * 
+   * @param argTerm
+   */
+  public TitleScreen(TerminalBase argTerm) {
+    super(argTerm);
 
     DisplayManager.instance().getTerminalView();
-
-    Log.debug("TitleScreen: terminal size " + terminal.size().width + "x" + terminal.size().height);
-
-    this.terminal = terminal.withColor(SColor.WHITE, SColor.BLACK);
-
-    terminal.fill(0, 0, terminal.size().width, terminal.size().height, ' ');
+    Log.debug("TitleScreen: terminal size " + argTerm.size().width + "x" + argTerm.size().height);
+    terminal = argTerm.withColor(SColor.WHITE, SColor.BLACK);
+    argTerm.fill(0, 0, argTerm.size().width, argTerm.size().height, ' ');
 
     InputManager.setInputEnabled(true);
     InputManager.setActiveKeybindings(KEY_BINDINGS);
@@ -51,27 +55,27 @@ public class TitleScreen extends Screen {
   @Override
   public void process() {
     // TODO: change key mapping for title screen
-
     InputCommand cmd = InputManager.nextCommandPreserveKeyData();
+
     if (cmd != null) {
       switch (cmd) {
-
         case NEW:
           setNextScreen(new NewGameScreen(terminal));
           break;
-
         case LOAD:
           setNextScreen(new MainScreen(this.terminal, loadGame()), false);
           break;
-
         case CANCEL:
           System.exit(0);
-
         default:
       }
     }
   }
 
+  /**
+   * 
+   * @return
+   */
   private Game loadGame() {
     return GameLoader.load();
   }

@@ -9,6 +9,9 @@ import roguelike.util.Coordinate;
 import squidpony.squidgrid.util.BasicRadiusStrategy;
 import squidpony.squidutility.Pair;
 
+/**
+ * 
+ */
 public class RangedWeapon extends Weapon {
 
   private static final long serialVersionUID = -340930226160562519L;
@@ -20,10 +23,17 @@ public class RangedWeapon extends Weapon {
 
   protected Actor owner;
 
+  /**
+   * 
+   */
   protected RangedWeapon() {
     super(false);
   }
 
+  /**
+   * 
+   * @return
+   */
   public int range() {
     return maxRange;
   }
@@ -39,17 +49,17 @@ public class RangedWeapon extends Weapon {
   }
 
   @Override
-  public boolean canEquip(ItemSlot slot) {
-    return slot == ItemSlot.RANGED;
+  public boolean canEquip(ItemSlot argSlt) {
+    return argSlt == ItemSlot.RANGED;
   }
 
   @Override
   public Attack getAttack() {
-
     if (requiresProjectiles) {
-      Projectile projectile = getProjectile();
-      if (projectile != null) {
-        return projectile.getAttack();
+      Projectile proj = getProjectile();
+
+      if (proj != null) {
+        return proj.getAttack();
       }
     }
 
@@ -62,7 +72,7 @@ public class RangedWeapon extends Weapon {
   }
 
   @Override
-  public String name() {
+  public String getName() {
     return name;
   }
 
@@ -71,41 +81,50 @@ public class RangedWeapon extends Weapon {
   }
 
   @Override
-  public void onEquipped(Actor actor) {
-    owner = actor;
+  public void onEquipped(Actor argAct) {
+    owner = argAct;
   }
 
   @Override
-  public void onRemoved(Actor actor) {
+  public void onRemoved(Actor argAct) {
     owner = null;
-    actor.doAction("removed the %s", this.name);
+    argAct.doAction("removed the %s", this.name);
   }
 
   @Override
-  public boolean canUse(Actor user, Actor target) {
-    Coordinate userPos = user.getPosition();
-    Coordinate targetPos = target.getPosition();
+  public boolean canUse(Actor argUsr, Actor argTgt) {
+    Coordinate userPos = argUsr.getPosition();
+    Coordinate tgtPos = argTgt.getPosition();
 
-    float distance = targetPos.distance(userPos, BasicRadiusStrategy.CIRCLE);
-    return distance <= this.maxRange;
+    float dist = tgtPos.distance(userPos, BasicRadiusStrategy.CIRCLE);
+    return dist <= this.maxRange;
   }
 
+  /**
+   * 
+   * @return
+   */
   public Projectile getProjectile() {
-    if (owner == null)
+    if (owner == null) {
       return null;
+    }
 
     Item projectile = ItemSlot.PROJECTILE.getItem(owner);
+
     if (projectile != null) {
       Pair<Item, Boolean> used = projectile.onUsed();
+
       if (used != null) {
-        if (used.getSecond()) {
+        if (used.getSecond().booleanValue()) {
           // TODO: update this to decrement the count instead of setting to null
           owner.inventory().remove(projectile);
           ItemSlot.PROJECTILE.removeItem(owner);
         }
+
         return (Projectile) used.getFirst();
       }
     }
+
     return null;
   }
 }

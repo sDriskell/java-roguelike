@@ -14,84 +14,111 @@ import squidpony.squidcolor.SColor;
 import squidpony.squidgrid.fov.BasicRadiusStrategy;
 import squidpony.squidgrid.fov.RadiusStrategy;
 
+/**
+ * 
+ */
 public class TargetedAttackBehavior extends EnemyBehavior {
-	private static final long serialVersionUID = 1L;
 
-	private Actor target;
-	private transient RadiusStrategy radiusStrategy = BasicRadiusStrategy.CIRCLE;
+  private static final long serialVersionUID = 1L;
 
-	protected TargetedAttackBehavior(Actor actor, Actor target) {
-		super(actor);
+  private Actor target;
+  private transient RadiusStrategy radiusStrategy = BasicRadiusStrategy.CIRCLE;
 
-		Game.current().displayMessage(actor.getName() + " is now attacking " + target.getName(), SColor.PURPLE);
-		this.target = target;
-		this.nextBehavior = this;
-	}
+  /**
+   * 
+   * @param argAct
+   * @param argTgt
+   */
+  protected TargetedAttackBehavior(Actor argAct, Actor argTgt) {
+    super(argAct);
 
-	private void writeObject(ObjectOutputStream out) throws IOException {
-		out.defaultWriteObject();
-	}
+    Game.current().displayMessage(argAct.getName() + " is now attacking " + argTgt.getName(),
+        SColor.PURPLE);
 
-	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-		in.defaultReadObject();
-		radiusStrategy = BasicRadiusStrategy.CIRCLE;
-	}
+    target = argTgt;
+    nextBehavior = this;
+  }
 
-	@Override
-	public boolean isHostile() {
-		return Player.isPlayer(target);
-	}
+  /**
+   * 
+   * @param out
+   * @throws IOException
+   */
+  private void writeObject(ObjectOutputStream out) throws IOException {
+    out.defaultWriteObject();
+  }
 
-	@Override
-	public Action getAction() {
+  /**
+   * 
+   * @param in
+   * @throws IOException
+   * @throws ClassNotFoundException
+   */
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+    radiusStrategy = BasicRadiusStrategy.CIRCLE;
+  }
 
-		Coordinate actorPos = actor.getPosition();
-		Coordinate targetPos = target.getPosition();
+  @Override
+  public boolean isHostile() {
+    return Player.isPlayer(target);
+  }
 
-		float radius = radiusStrategy.radius(actorPos.x, actorPos.y, targetPos.x, targetPos.y);
+  @Override
+  public Action getAction() {
+    Coordinate actPos = actor.getPosition();
+    Coordinate tgtPos = target.getPosition();
 
-		if (canAttackTarget(radius)) {
+    float rad = radiusStrategy.radius(actPos.x, actPos.y, tgtPos.x, tgtPos.y);
 
-			if (actor.canSee(target, Game.current().getCurrentMapArea())) {
-				nextBehavior = this;
-				return new AttackAction(actor, target);
-			}
-			else {
-				Game.current().displayMessage(target.getName() + " is no longer in sight range.");
-			}
-		} else if (target.isAlive() && isTargetVisible()) {
+    if (canAttackTarget(rad)) {
+      if (actor.canSee(target, Game.current().getCurrentMapArea())) {
+        nextBehavior = this;
+        return new AttackAction(actor, target);
+      }
+      else {
+        Game.current().displayMessage(target.getName() + " is no longer in sight range.");
+      }
+    }
+    else if (target.isAlive() && isTargetVisible()) {
+      if (actor.equipment().getEquippedWeapons().stream().filter(w -> w != null)
+          .findAny() != null) {
+        nextBehavior = this;
+      }
+    }
 
-			if (actor.equipment().getEquippedWeapons().stream().filter(w -> w != null).findAny() != null)
-				nextBehavior = this;
+    // if we can't attack, switch behavior to searching for the player
+    nextBehavior = new SearchForPlayerBehavior(actor);
+    return nextBehavior.getAction();
+  }
 
-		}
+  @Override
+  public Behavior getNextBehavior() {
+    if (actor.isAlive()) {
+      return nextBehavior;
+    }
 
-		// if we can't attack, switch behavior to searching for the player
-		nextBehavior = new SearchForPlayerBehavior(actor);
-		return nextBehavior.getAction();
-	}
+    return null;
+  }
 
-	@Override
-	public Behavior getNextBehavior() {
-		if (actor.isAlive()) {
-			return nextBehavior;
-		}
-		return null;
-	}
+  /**
+   * 
+   * @return
+   */
+  private boolean isTargetVisible() {
+    Coordinate actorPos = actor.getPosition();
+    Coordinate targetPos = target.getPosition();
+    float rad = radiusStrategy.radius(actorPos.x, actorPos.y, targetPos.x, targetPos.y);
 
-	private boolean isTargetVisible() {
-		Coordinate actorPos = actor.getPosition();
-		Coordinate targetPos = target.getPosition();
+    if (rad <= actor.getVisionRadius()) {
+      return actor.canSee(target, Game.current().getCurrentMapArea());
+    }
 
-		float radius = radiusStrategy.radius(actorPos.x, actorPos.y, targetPos.x, targetPos.y);
-		if (radius <= actor.getVisionRadius()) {
-			return actor.canSee(target, Game.current().getCurrentMapArea());
-		}
-		return false;
-	}
+    return false;
+  }
 
-	@Override
-	public String getDescription() {
-		return "Attacking " + target.getMessageName();
-	}
+  @Override
+  public String getDescription() {
+    return "Attacking " + target.getMessageName();
+  }
 }

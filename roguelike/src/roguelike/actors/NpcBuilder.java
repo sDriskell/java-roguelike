@@ -1,86 +1,170 @@
 package roguelike.actors;
 
-import roguelike.items.Equipment.ItemSlot;
 import roguelike.functionalinterfaces.BehaviorProvider;
+import roguelike.items.Equipment.ItemSlot;
 import roguelike.items.Inventory;
 import roguelike.items.Item;
 import squidpony.squidcolor.SColor;
 
+/**
+ * 
+ */
 public class NpcBuilder {
 
-	private Npc npc;
+  private Npc npc;
 
-	private NpcBuilder(String name, char symbol, SColor color) {
-		npc = new Npc(symbol, color, name);
-	}
+  /**
+   * 
+   * @param argName
+   * @param argSym
+   * @param argCol
+   */
+  private NpcBuilder(String argName, char argSym, SColor argCol) {
+    npc = new Npc(argSym, argCol, argName);
+  }
 
-	public Npc buildNpc() {
-		return npc;
-	}
+  /**
+   * 
+   * @return
+   */
+  public Npc buildNpc() {
+    return npc;
+  }
 
-	public static NpcBuilder withIdentifiers(String name, char symbol, SColor color, int difficulty) {
-		NpcBuilder nb = new NpcBuilder(name, symbol, color);
-		nb.npc.difficulty = difficulty;
-		return nb;
-	}
+  /**
+   * 
+   * @param argName
+   * @param argSym
+   * @param argCol
+   * @param argDif
+   * @return
+   */
+  public static NpcBuilder withIdentifiers(String argName, char argSym, SColor argCol, int argDif) {
+    NpcBuilder nb = new NpcBuilder(argName, argSym, argCol);
+    nb.npc.difficulty = argDif;
+    return nb;
+  }
 
-	public NpcBuilder withDescription(String description) {
-		npc.description = description;
-		return this;
-	}
+  /**
+   * 
+   * @param argDesc
+   * @return
+   */
+  public NpcBuilder withDescription(String argDesc) {
+    npc.description = argDesc;
+    return this;
+  }
 
-	public NpcBuilder withVisionRadius(int visionRadius) {
-		npc.visionRadius = visionRadius;
-		return this;
-	}
+  /**
+   * 
+   * @param argVisRad
+   * @return
+   */
+  public NpcBuilder withVisionRadius(int argVisRad) {
+    npc.visionRadius = argVisRad;
+    return this;
+  }
 
-	public NpcBuilder withBehavior(BehaviorProvider behavior) {
-		npc.behavior = behavior.create(npc);
-		return this;
-	}
+  /**
+   * 
+   * @param argBehavior
+   * @return
+   */
+  public NpcBuilder withBehavior(BehaviorProvider argBehavior) {
+    npc.behavior = argBehavior.create(npc);
+    return this;
+  }
 
-	public NpcBuilder withInventory(Inventory inventory) {
-		npc.inventory.allItems().addAll(inventory.allItems());
-		return this;
-	}
+  /**
+   * 
+   * @param argInv
+   * @return
+   */
+  public NpcBuilder withInventory(Inventory argInv) {
+    npc.inventory.allItems().addAll(argInv.allItems());
+    return this;
+  }
 
-	public NpcBuilder addItem(Item item) {
-		npc.inventory.add(item);
-		return this;
-	}
+  /**
+   * 
+   * @param argItm
+   * @return
+   */
+  public NpcBuilder addItem(Item argItm) {
+    npc.inventory.add(argItm);
+    return this;
+  }
 
-	public NpcBuilder equipItem(Item item, ItemSlot slot) {
-		slot.equipItem(npc, item);
-		return this;
-	}
+  /**
+   * 
+   * @param argItm
+   * @param argSlot
+   * @return
+   */
+  public NpcBuilder equipItem(Item argItm, ItemSlot argSlot) {
+    argSlot.equipItem(npc, argItm);
+    return this;
+  }
 
-	public NpcBuilder withSpeed(int speed) {
-		npc.statistics.speed.setBase(speed);
-		return this;
-	}
+  /**
+   * 
+   * @param argSpd
+   * @return
+   */
+  public NpcBuilder withSpeed(int argSpd) {
+    npc.statistics.speed.setBase(argSpd);
+    return this;
+  }
 
-	public NpcBuilder withStats(int toughness, int conditioning, int perception, int agility, int willpower, int presence) {
-		npc.statistics.toughness.setBase(toughness);
-		npc.statistics.conditioning.setBase(conditioning);
-		npc.statistics.perception.setBase(perception);
-		npc.statistics.agility.setBase(agility);
-		npc.statistics.willpower.setBase(willpower);
-		npc.statistics.presence.setBase(presence);
-		return this;
-	}
+  /**
+   * 
+   * @param argTgh
+   * @param argCond
+   * @param argPerc
+   * @param argAgi
+   * @param argWill
+   * @param argPres
+   * @return
+   */
+  public NpcBuilder withStats(int argTgh, int argCond, int argPerc, int argAgi, int argWill,
+      int argPres) {
+    npc.statistics.toughness.setBase(argTgh);
+    npc.statistics.conditioning.setBase(argCond);
+    npc.statistics.perception.setBase(argPerc);
+    npc.statistics.agility.setBase(argAgi);
+    npc.statistics.willpower.setBase(argWill);
+    npc.statistics.presence.setBase(argPres);
 
-	public NpcBuilder withHealth(int health) {
-		npc.health.setMaximum(health, true);
-		return this;
-	}
+    return this;
+  }
 
-	public NpcBuilder withReflexBonus(int reflexBonus) {
-		npc.statistics.reflexBonus = reflexBonus;
-		return this;
-	}
+  /**
+   * 
+   * @param argHlth
+   * @return
+   */
+  public NpcBuilder withHealth(int argHlth) {
+    npc.health.setMaximum(argHlth, true);
+    return this;
+  }
 
-	public NpcBuilder withAimingBonus(int aimingBonus) {
-		npc.statistics.aimingBonus = aimingBonus;
-		return this;
-	}
+  /**
+   * 
+   * @param argRlxBonus
+   * @return
+   */
+  public NpcBuilder withReflexBonus(int argRlxBonus) {
+    npc.statistics.reflexBonus = argRlxBonus;
+    return this;
+  }
+
+  /**
+   * 
+   * @param argAimBonus
+   * @return
+   */
+  public NpcBuilder withAimingBonus(int argAimBonus) {
+    npc.statistics.aimingBonus = argAimBonus;
+    return this;
+  }
 }

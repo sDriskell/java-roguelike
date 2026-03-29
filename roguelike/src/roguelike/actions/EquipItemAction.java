@@ -5,31 +5,40 @@ import roguelike.items.Equipment.ItemSlot;
 import roguelike.items.Item;
 import roguelike.items.ItemType;
 
+/**
+ * 
+ */
 public class EquipItemAction extends Action {
 
-	private Item item;
-	private ItemSlot itemSlot;
+  private Item item;
+  private ItemSlot itemSlot;
 
-	public EquipItemAction(Actor actor, Item item, ItemSlot itemSlot) {
-		super(actor);
+  /**
+   * 
+   * @param argAct
+   * @param argItm
+   * @param atgItmSlt
+   */
+  public EquipItemAction(Actor argAct, Item argItm, ItemSlot atgItmSlt) {
+    super(argAct);
+    item = argItm;
+    itemSlot = atgItmSlt;
+  }
 
-		this.item = item;
-		this.itemSlot = itemSlot;
-	}
+  @Override
+  protected ActionResult onPerform() {
+    ActionResult res;
 
-	@Override
-	protected ActionResult onPerform() {
-		ActionResult result = ActionResult.incomplete();
+    if (item.type() == ItemType.RANGED_WEAPON) {
+      ItemSlot.RANGED.equipItem(actor, item);
+      res = ActionResult.success().setMessage("Equipped ranged weapon: " + item.getName());
+    }
+    else {
+      itemSlot.equipItem(actor, item);
+      res = ActionResult.success().setMessage("Selected item: " + item.getName());
+    }
 
-		if (item.type() == ItemType.RANGED_WEAPON) {
-			ItemSlot.RANGED.equipItem(actor, item);
-			result = ActionResult.success().setMessage("Equipped ranged weapon: " + item.name());
-		} else {
-			itemSlot.equipItem(actor, item);
-			result = ActionResult.success().setMessage("Selected item: " + item.name());
-		}
-
-		return result;
-	}
+    return res;
+  }
 
 }

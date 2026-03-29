@@ -13,7 +13,13 @@ import roguelike.actors.conditions.Condition;
 import roguelike.functionalinterfaces.StatisticProvider;
 import roguelike.items.Equipment.ItemSlot;
 
+//TODO: replace i/o stream components
+
+/**
+ * 
+ */
 public abstract class Weapon extends Item {
+
   private static final long serialVersionUID = 1L;
 
   protected Map<DamageType, int[]> damage = new HashMap<>();
@@ -31,26 +37,35 @@ public abstract class Weapon extends Item {
   protected int attributeSuccessesToDefend;
 
   protected Material material;
-
-  /**
-   * This decrements periodically depending on usage, when it hits 0 the weapon
-   * breaks
-   */
   protected int durability;
-
   protected int reach;
 
-  protected Weapon(boolean stackable) {
-    super(stackable);
+  /**
+   * 
+   * @param argIsStackable
+   */
+  protected Weapon(boolean argIsStackable) {
+    super(argIsStackable);
     damage.put(DamageType.SLASHING, new int[2]);
     damage.put(DamageType.PIERCING, new int[2]);
     damage.put(DamageType.BLUNT, new int[2]);
   }
 
+  /**
+   * 
+   * @param out
+   * @throws IOException
+   */
   private void writeObject(ObjectOutputStream out) throws IOException {
     out.defaultWriteObject();
   }
 
+  /**
+   * 
+   * @param in
+   * @throws IOException
+   * @throws ClassNotFoundException
+   */
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
   }
@@ -61,37 +76,72 @@ public abstract class Weapon extends Item {
   }
 
   @Override
-  public boolean canEquip(ItemSlot slot) {
-    return (slot == ItemSlot.LEFT_HAND || slot == ItemSlot.RIGHT_HAND);
+  public boolean canEquip(ItemSlot argSlt) {
+    return (argSlt == ItemSlot.LEFT_HAND || argSlt == ItemSlot.RIGHT_HAND);
   }
 
+  /**
+   * 
+   * @return
+   */
   public int reach() {
-    return this.reach;
+    return reach;
   }
 
+  /**
+   * 
+   * @return
+   */
   public WeaponCategory weaponType() {
     return this.weaponCategory;
   }
 
+  /**
+   * 
+   * @return
+   */
   public DamageType defaultDamageType() {
     return defaultDamageType;
   }
 
-  public int getTargetNumber(DamageType type) {
-    return damage.get(type)[0];
+  /**
+   * 
+   * @param argType
+   * @return
+   */
+  public int getTargetNumber(DamageType argType) {
+    return damage.get(argType)[0];
   }
 
+  /**
+   * 
+   * @return
+   */
   public int getDefenseTargetNumber() {
     return defenseTargetNumber;
   }
 
-  public int getDamageRating(DamageType type) {
-    return damage.get(type)[1];
+  /**
+   * 
+   * @param argType
+   * @return
+   */
+  public int getDamageRating(DamageType argType) {
+    return damage.get(argType)[1];
   }
 
+  /**
+   * 
+   * @return
+   */
   public int getReachInTiles() {
     return (int) Math.max(1, Math.floor(reach / 2f));
   }
 
+  /**
+   * 
+   * 
+   * @return
+   */
   public abstract Attack getAttack();
 }

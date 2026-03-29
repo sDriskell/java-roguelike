@@ -5,42 +5,54 @@ import roguelike.maps.MapArea;
 import roguelike.screens.LookScreen;
 import roguelike.util.Coordinate;
 
+/**
+ * 
+ */
 public class LookCursor extends Cursor {
 
-	private LookScreen lookScreen;
+  private LookScreen lookScreen;
 
-	public LookCursor(Coordinate initialPosition, MapArea mapArea) {
-		super(initialPosition, mapArea);
-	}
+  /**
+   * 
+   * @param argInitPos
+   * @param argArea
+   */
+  public LookCursor(Coordinate argInitPos, MapArea argArea) {
+    super(argInitPos, argArea);
+  }
 
-	public void setLookScreen(LookScreen lookScreen) {
-		this.lookScreen = lookScreen;
-		setCurrentLookPoint(position);
-	}
+  public void setLookScreen(LookScreen argScreen) {
+    lookScreen = argScreen;
+    setCurrentLookPoint(pos);
+  }
 
-	@Override
-	protected boolean onUpdatePosition(Coordinate position) {
-		setCurrentLookPoint(position);
+  @Override
+  protected boolean onUpdatePosition(Coordinate argPos) {
+    setCurrentLookPoint(argPos);
 
-		return true;
-	}
+    return true;
+  }
 
-	private void setCurrentLookPoint(Coordinate position) {
-		// Make sure that only visible tiles can be looked at
-		if (!mapArea.getTileAt(position).isVisible())
-		{
-			lookScreen.lookAt(mapArea, null);
-			return;
-		}
+  /**
+   * 
+   * @param argPos
+   */
+  private void setCurrentLookPoint(Coordinate argPos) {
+    // Make sure that only visible tiles can be looked at
+    if (!mapArea.getTileAt(argPos).isVisible()) {
+      lookScreen.lookAt(mapArea, null);
+      return;
+    }
 
-		if (mapArea.getActorAt(position.x, position.y) != null) {
-			lookScreen.lookAt(mapArea, position);
-			return;
-		}
-		else if (mapArea.getItemsAt(position.x, position.y).any()) {
-			lookScreen.lookAt(mapArea, position);
-			return;
-		}
-		lookScreen.lookAt(mapArea, null);
-	}
+    if (mapArea.getActorAt(argPos.x, argPos.y) != null) {
+      lookScreen.lookAt(mapArea, argPos);
+      return;
+    }
+    else if (mapArea.getItemsAt(argPos.x, argPos.y).any()) {
+      lookScreen.lookAt(mapArea, argPos);
+      return;
+    }
+
+    lookScreen.lookAt(mapArea, null);
+  }
 }

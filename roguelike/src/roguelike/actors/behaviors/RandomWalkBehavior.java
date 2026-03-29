@@ -11,53 +11,70 @@ import roguelike.util.Coordinate;
 import roguelike.util.Log;
 import squidpony.squidgrid.util.DirectionIntercardinal;
 
+/**
+ * 
+ */
 public class RandomWalkBehavior extends Behavior {
-	private static final long serialVersionUID = 1L;
 
-	public RandomWalkBehavior(Actor actor) {
-		super(actor);
-	}
+  private static final long serialVersionUID = 1L;
 
-	@Override
-	public boolean isHostile() {
-		return false;
-	}
+  private static final String WALKING_RANDOMLY = "Walking randomly";
 
-	@Override
-	public Action getAction() {
-		MapArea map = Game.current().getCurrentMapArea();
-		double rnd = Game.current().random().nextDouble();
-		DirectionIntercardinal direction;
-		if (rnd < 0.25) {
-			direction = DirectionIntercardinal.UP;
-		} else if (rnd < 0.5) {
-			direction = DirectionIntercardinal.LEFT;
-		} else if (rnd < 0.75) {
-			direction = DirectionIntercardinal.DOWN;
-		} else {
-			direction = DirectionIntercardinal.RIGHT;
-		}
+  /**
+   * 
+   * @param argAct
+   */
+  public RandomWalkBehavior(Actor argAct) {
+    super(argAct);
+  }
 
-		Coordinate pos = actor.getPosition().createOffsetPosition(direction);
-		if (map.canMoveTo(actor, pos) && map.getActorAt(pos.x, pos.y) == null)
-			return new WalkAction(actor, map, direction);
+  @Override
+  public boolean isHostile() {
+    return false;
+  }
 
-		return new WaitAction(actor);
-	}
+  @Override
+  public Action getAction() {
+    MapArea map = Game.current().getCurrentMapArea();
+    double rnd = Game.current().random().nextDouble();
+    DirectionIntercardinal direction;
 
-	@Override
-	public Behavior getNextBehavior() {
-		AttackAttempt lastAttackedBy = actor.getLastAttackedBy();
-		if (lastAttackedBy != null) {
-			Log.debug("RandomWalkBehavior: Switching to targeted attack behavior");
-			return new TargetedAttackBehavior(actor, lastAttackedBy.getActor());
-		}
+    if (rnd < 0.25) {
+      direction = DirectionIntercardinal.UP;
+    }
+    else if (rnd < 0.5) {
+      direction = DirectionIntercardinal.LEFT;
+    }
+    else if (rnd < 0.75) {
+      direction = DirectionIntercardinal.DOWN;
+    }
+    else {
+      direction = DirectionIntercardinal.RIGHT;
+    }
 
-		return this;
-	}
+    Coordinate pos = actor.getPosition().createOffsetPosition(direction);
 
-	@Override
-	public String getDescription() {
-		return "Walking randomly";
-	}
+    if (map.canMoveTo(actor, pos) && map.getActorAt(pos.x, pos.y) == null) {
+      return new WalkAction(actor, map, direction);
+    }
+
+    return new WaitAction(actor);
+  }
+
+  @Override
+  public Behavior getNextBehavior() {
+    AttackAttempt lastAtk = actor.getLastAttackedBy();
+
+    if (lastAtk != null) {
+      Log.debug("RandomWalkBehavior: Switching to targeted attack behavior");
+      return new TargetedAttackBehavior(actor, lastAtk.getActor());
+    }
+
+    return this;
+  }
+
+  @Override
+  public String getDescription() {
+    return WALKING_RANDOMLY;
+  }
 }
