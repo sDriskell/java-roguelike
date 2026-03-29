@@ -445,7 +445,7 @@ public class DungeonMapBuilder extends MapBuilderBase {
    * @param argPt
    */
   private void addStairsUp(Point argPt) {
-    map[argPt.x][argPt.y] = new Stairs(this, false).setValues(Symbol.STAIRS_UP.symbol(), true,
+    map[argPt.x][argPt.y] = new Stairs(this, false).setValues(Symbol.STAIRS_UP.getArtifact(), true,
         SColor.WHITE);
   }
 
@@ -455,7 +455,7 @@ public class DungeonMapBuilder extends MapBuilderBase {
    */
   private void addStairsDown(Point argPt) {
     map[argPt.x][argPt.y] = new Stairs(new DungeonMapBuilder(level + 1), true)
-        .setValues(Symbol.STAIRS_DOWN.symbol(), true, SColor.WHITE);
+        .setValues(Symbol.STAIRS_DOWN.getArtifact(), true, SColor.WHITE);
   }
 
   /**
@@ -505,7 +505,7 @@ public class DungeonMapBuilder extends MapBuilderBase {
       return;
     }
 
-    if (map[x][y].symbol == Symbol.DUNGEON_FLOOR.symbol()) {
+    if (map[x][y].symbol == Symbol.DUNGEON_FLOOR.getArtifact()) {
       setTile(x, y, Symbol.SHALLOW_WATER);
     }
 

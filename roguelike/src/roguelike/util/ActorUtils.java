@@ -8,40 +8,58 @@ import squidpony.squidgrid.los.BresenhamLOS;
 import squidpony.squidgrid.los.LOSSolver;
 import squidpony.squidgrid.util.BasicRadiusStrategy;
 
+/**
+ * 
+ */
 public class ActorUtils {
+
   private static LOSSolver losSolver = new BresenhamLOS();
 
   private ActorUtils() {
+    // Hidden utility class constructor.
   }
 
-  public static boolean canSee(Actor actor, Actor other, MapArea mapArea) {
-    Point position = actor.getPosition();
-    int startx = position.x, starty = position.y, targetx = other.getPosition().x,
-        targety = other.getPosition().y;
+  /**
+   * 
+   * @param argAct
+   * @param argOther
+   * @param argMapArea
+   * @return
+   */
+  public static boolean canSee(Actor argAct, Actor argOther, MapArea argMapArea) {
+    Point position = argAct.getPosition();
+    int startx = position.x;
+    int starty = position.y;
+    int targetx = argOther.getPosition().x;
+    int targety = argOther.getPosition().y;
+
     float force = 1;
-    float decay = 1f / actor.getVisionRadius();
-    boolean visible = losSolver.isReachable(mapArea.getLightValues(), startx, starty, targetx,
-        targety, force, decay, BasicRadiusStrategy.CIRCLE);
+    float decay = 1f / argAct.getVisionRadius();
 
-    Log.verboseDebug(actor.getName() + " canSee " + other.getName() + "=" + visible);
+    boolean visible = losSolver
+        .isReachable(argMapArea.getLightValues(), startx, starty, targetx, targety, force, decay,
+            BasicRadiusStrategy.CIRCLE);
 
+    Log.verboseDebug(argAct.getName() + " canSee " + argOther.getName() + "=" + visible);
     return visible;
   }
 
-  public static String makePlayerText(String text) {
-    String[] words = text.split(" ");
+  /**
+   * 
+   * @param argTxt
+   * @return
+   */
+  public static String makePlayerText(String argTxt) {
+    String[] words = argTxt.split(" ");
 
     if (words[0].equals("has")) {
       words[0] = "have";
-
     }
     else if (words[0].endsWith("Es")) {
       words[0] = words[0].substring(0, words[0].length() - 1);
-
     }
     else if (words[0].endsWith("es")) {
       words[0] = words[0].substring(0, words[0].length() - 2);
-
     }
     else if (words[0].endsWith("s")) {
       words[0] = words[0].substring(0, words[0].length() - 1);

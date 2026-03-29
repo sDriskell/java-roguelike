@@ -69,26 +69,26 @@ public class TextWindow {
         if (y == 0 || y == argH - 1) {
           if (x == 0) {
             if (y == 0) {
-              argTerm.put(x, sY, lines[0].symbol());
+              argTerm.put(x, sY, lines[0].getArtifact());
             }
             else {
-              argTerm.put(x, sY, lines[1].symbol());
+              argTerm.put(x, sY, lines[1].getArtifact());
             }
           }
           else if (x == argW - 1) {
             if (y == 0) {
-              argTerm.put(x, sY, lines[2].symbol());
+              argTerm.put(x, sY, lines[2].getArtifact());
             }
             else {
-              argTerm.put(x, sY, lines[3].symbol());
+              argTerm.put(x, sY, lines[3].getArtifact());
             }
           }
           else {
-            argTerm.put(x, sY, lines[4].symbol());
+            argTerm.put(x, sY, lines[4].getArtifact());
           }
         }
         else if (x == 0 || x == argW - 1) {
-          argTerm.put(x, sY, lines[5].symbol());
+          argTerm.put(x, sY, lines[5].getArtifact());
         }
       }
     }

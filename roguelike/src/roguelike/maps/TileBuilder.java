@@ -35,13 +35,13 @@ public class TileBuilder {
     groundColor.add(SColorFactory.desaturate(SColor.BLACK, 0.4), 4);
     groundColor.add(SColorFactory.desaturate(SColor.BLACK_CHESTNUT_OAK, 0.8), 2);
 
-    trees.add(Symbol.TREE2.symbol(), 15);
-    trees.add(Symbol.TREE1.symbol(), 7);
+    trees.add(Symbol.TREE2.getArtifact(), 15);
+    trees.add(Symbol.TREE1.getArtifact(), 7);
 
-    water.add(Symbol.WATER.symbol(), 20);
+    water.add(Symbol.WATER.getArtifact(), 20);
 
-    ground.add(Symbol.GROUND1.symbol(), 30);
-    ground.add(Symbol.GROUND2.symbol(), 1);
+    ground.add(Symbol.GROUND1.getArtifact(), 30);
+    ground.add(Symbol.GROUND2.getArtifact(), 1);
   }
 
   /**
@@ -54,11 +54,11 @@ public class TileBuilder {
 
     switch (argChar) {
       case WALL:
-        t.setValues(argChar.symbol(), false, SColor.LIGHT_YELLOW_DYE, true).setLighting(1f);
+        t.setValues(argChar.getArtifact(), false, SColor.LIGHT_YELLOW_DYE, true).setLighting(1f);
         break;
 
       case DOOR:
-        return new Door().setValues(argChar.symbol(), false, SColor.BIRCH_BROWN, true);
+        return new Door().setValues(argChar.getArtifact(), false, SColor.BIRCH_BROWN, true);
 
       case TREE:
         t.setValues(trees.random(), true, SColor.KELLY_GREEN).setLighting(0.5f)
@@ -66,7 +66,7 @@ public class TileBuilder {
         break;
 
       case BUILDING_FLOOR:
-        t.setValues(argChar.symbol(), true, SColor.EARTHEN_YELLOW);
+        t.setValues(argChar.getArtifact(), true, SColor.EARTHEN_YELLOW);
         break;
 
       case WATER:
@@ -83,15 +83,15 @@ public class TileBuilder {
         break;
 
       case MOUNTAIN:
-        t.setValues(argChar.symbol(), false, SColor.WHITE_MOUSE, true);
+        t.setValues(argChar.getArtifact(), false, SColor.WHITE_MOUSE, true);
         break;
 
       case HILLS:
-        t.setValues(argChar.symbol(), true, SColor.BENI_DYE).setLighting(0);
+        t.setValues(argChar.getArtifact(), true, SColor.BENI_DYE).setLighting(0);
         break;
 
       case DUNGEON_FLOOR:
-        t.setValues(argChar.symbol(), true, SColor.AUBURN).setLighting(0.1f);
+        t.setValues(argChar.getArtifact(), true, SColor.AUBURN).setLighting(0.1f);
         break;
 
       case GROUND:
@@ -99,20 +99,20 @@ public class TileBuilder {
         break;
 
       case STAIRS_DOWN:
-        return new Stairs(new DungeonMapBuilder(), true).setValues(argChar.symbol(), true,
+        return new Stairs(new DungeonMapBuilder(), true).setValues(argChar.getArtifact(), true,
             SColor.WHITE);
 
       case STAIRS_UP:
-        return new Stairs(new DungeonMapBuilder(), false).setValues(argChar.symbol(), true,
+        return new Stairs(new DungeonMapBuilder(), false).setValues(argChar.getArtifact(), true,
             SColor.WHITE);
 
       case BOX_BOTTOM_LEFT_SINGLE:
         // TODO: change the character and make this a torch or something
-        t.setValues(argChar.symbol(), false, SColor.ORANGE, true);
+        t.setValues(argChar.getArtifact(), false, SColor.ORANGE, true);
         break;
 
       default:
-        t = buildTile(argChar.symbol());
+        t = buildTile(argChar.getArtifact());
     }
 
     return t;
@@ -129,7 +129,7 @@ public class TileBuilder {
     // TODO: refactor char values in case to make readable without comments
     switch (argTile) {
       case '#': // wall
-        t.setValues(Symbol.WALL.symbol(), false, SColor.DARK_GRAY, true).setLighting(1f);
+        t.setValues(Symbol.WALL.getArtifact(), false, SColor.DARK_GRAY, true).setLighting(1f);
         break;
 
       case '+': // door

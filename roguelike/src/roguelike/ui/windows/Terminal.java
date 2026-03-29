@@ -59,7 +59,7 @@ public class Terminal extends TerminalBase {
         }
 
         CharEx c = argData[getX(x)][getY(y)];
-        CharEx c2 = new CharEx(c.symbol(), c.foregroundColor(), colors.background());
+        CharEx c2 = new CharEx(c.getSymbol(), c.getForegroundColor(), colors.background());
         argData[sx][sy] = c2;
         argTermChange.onChanged(sx, sy, c2);
 

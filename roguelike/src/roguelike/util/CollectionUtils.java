@@ -5,31 +5,45 @@ import java.util.List;
 import roguelike.Game;
 import squidpony.squidmath.RNG;
 
+/**
+ * 
+ */
 public class CollectionUtils {
+
   private static final RNG rng = Game.current().random();
+
+  private CollectionUtils() {
+    // Utility class
+  }
 
   /**
    * Returns a random element from the provided list. If the list is empty then
    * null is returned.
    *
    * @param <T>
-   * @param list
+   * @param argList
    * @return
    */
-  public static <T> T getRandomElement(List<T> list) {
-    if (list.isEmpty()) {
+  public static <T> T getRandomElement(List<T> argList) {
+    if (argList.isEmpty()) {
       return null;
     }
-    return list.get(rng.nextInt(list.size()));
+
+    return argList.get(rng.nextInt(argList.size()));
   }
 
-  public static <T> T getRandomElement(T[] list) {
-    if (list.length <= 0) {
+  /**
+   * 
+   * @param <T>
+   * @param argList
+   * @return
+   */
+  public static <T> T getRandomElement(T[] argList) {
+    if (argList.length <= 0) {
       return null;
     }
-    return list[rng.nextInt(list.length)];
+
+    return argList[rng.nextInt(argList.length)];
   }
 
-  private CollectionUtils() {
-  }
 }

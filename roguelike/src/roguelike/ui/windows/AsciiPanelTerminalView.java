@@ -20,10 +20,10 @@ public class AsciiPanelTerminalView {
       @Override
       public void onChanged(int x, int y, CharEx c) {
         try {
-          asciiPanel.write(c.symbol(), x, y, c.foregroundColor(), c.backgroundColor());
+          asciiPanel.write(c.getSymbol(), x, y, c.getForegroundColor(), c.argBackgroundColor());
         }
         catch (Exception e) {
-          System.out.println("char=" + c.symbol());
+          System.out.println("char=" + c.getSymbol());
           throw e;
         }
       }

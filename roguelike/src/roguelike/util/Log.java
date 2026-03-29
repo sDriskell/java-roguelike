@@ -1,18 +1,21 @@
 package roguelike.util;
 
+/**
+ * 
+ */
 public class Log {
-  public static void verboseDebug(String message) {
+  public static void verboseDebug(String argMsg) {
   }
 
-  public static void debug(String message) {
-    System.out.println("DEBUG: " + message);
+  public static void debug(String argMsg) {
+    System.out.println("DEBUG: " + argMsg);
   }
 
-  public static void warning(String message) {
-    System.out.println("WARNING: " + message);
+  public static void warning(String argMsg) {
+    System.out.println("WARNING: " + argMsg);
   }
 
-  public static void info(String message) {
-    System.out.println("INFO: " + message);
+  public static void info(String argMsg) {
+    System.out.println("INFO: " + argMsg);
   }
 }

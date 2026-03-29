@@ -166,7 +166,7 @@ public class MapHelpers {
     List<Point> neighbors = getNeighbors(argMap.length, argMap[0].length, x, y, 1);
 
     for (Point p : neighbors) {
-      if (argMap[p.x][p.y].symbol == argTile.symbol()) {
+      if (argMap[p.x][p.y].symbol == argTile.getArtifact()) {
 
         if (argNoDiags) {
           /* diagonals */

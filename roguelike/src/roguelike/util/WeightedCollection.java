@@ -4,6 +4,10 @@ import java.util.ArrayList;
 
 import squidpony.squidutility.Pair;
 
+/**
+ * 
+ * @param <T>
+ */
 public class WeightedCollection<T> {
 
   private final ArrayList<Pair<Integer, T>> table = new ArrayList<>();
@@ -17,19 +21,27 @@ public class WeightedCollection<T> {
    * 
    * @return
    */
-  public T getItem(int value) {
+  public T getItem(int argVal) {
     if (table.isEmpty()) {
       return null;
     }
-    int index = value;
-    for (int i = 0; i < table.size(); i++) {// start looping at second item
+
+    int index = argVal;
+
+    // Start looping at second item
+    for (int i = 0; i < table.size(); i++) {
       index -= table.get(i).getFirst();
+
       if (index < 0) {
         return table.get(i).getSecond();
       }
     }
-    return null;// something went wrong, shouldn't have been able to get all
-    // the way through without finding an item
+
+    /*
+     * Something went wrong, shouldn't have been able to get all the way through
+     * without finding an item
+     */
+    return null;
   }
 
   /**
@@ -37,14 +49,15 @@ public class WeightedCollection<T> {
    * 
    * Weight must be greater than 0.
    * 
-   * @param item
-   * @param weight
+   * @param argItm
+   * @param argWgt
    */
-  public void add(T item, int weight) {
-    table.add(new Pair<>(weight, item));
-    total += weight;
+  public void add(T argItm, int argWgt) {
+    table.add(new Pair<>(argWgt, argItm));
+    total += argWgt;
 
-    table.sort(
-        ((Pair<Integer, T> o1, Pair<Integer, T> o2) -> o1.getFirst().compareTo(o2.getFirst())));
+    table
+        .sort(
+            ((Pair<Integer, T> o1, Pair<Integer, T> o2) -> o1.getFirst().compareTo(o2.getFirst())));
   }
 }

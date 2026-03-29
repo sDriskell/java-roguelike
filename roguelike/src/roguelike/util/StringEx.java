@@ -7,13 +7,17 @@ import java.util.stream.Collectors;
 import squidpony.squidcolor.SColor;
 import squidpony.squidcolor.SColorFactory;
 
+//TODO: remove serializable property of class
 /**
  * String composed of Characters to provide color info
  * 
  * @author john
- * 
  */
 public class StringEx extends ArrayList<CharEx> {
+
+  /**
+   * 
+   */
   private class CharacterParseResult {
     public List<Character> parsedColor;
     public boolean readColor;
@@ -27,28 +31,46 @@ public class StringEx extends ArrayList<CharEx> {
   public StringEx() {
   }
 
-  public StringEx(List<CharEx> characters) {
-    super(characters);
+  /**
+   * 
+   * @param argChars
+   */
+  public StringEx(List<CharEx> argChars) {
+    super(argChars);
 
-    char[] strChars = new char[characters.size()];
-    for (int x = 0; x < characters.size(); x++)
-      strChars[x] = characters.get(x).symbol();
+    char[] strChars = new char[argChars.size()];
 
-    this.text = new String(strChars);
+    for (int x = 0; x < argChars.size(); x++) {
+      strChars[x] = argChars.get(x).getSymbol();
+    }
+
+    text = new String(strChars);
   }
 
-  public StringEx(String text) {
-    this(text, CharEx.defaultForeground, CharEx.defaultBackground);
+  /**
+   * 
+   * @param argTxt
+   */
+  public StringEx(String argTxt) {
+    this(argTxt, CharEx.defaultForeground, CharEx.defaultBackground);
   }
 
-  public StringEx(String text, SColor foreground, SColor background) {
-    this.text = text;
-    SColor fg = foreground;
-    SColor bg = background;
+  /**
+   * 
+   * @param argxt
+   * @param argFg
+   * @param argBg
+   */
+  public StringEx(String argxt, SColor argFg, SColor argBg) {
+    text = argxt;
+    SColor fg = argFg;
+    SColor bg = argBg;
     CharacterParseResult res = new CharacterParseResult();
-    for (int x = 0; x < text.length(); x++) {
-      char c = text.charAt(x);
+
+    for (int x = 0; x < argxt.length(); x++) {
+      char c = argxt.charAt(x);
       res = parseColor(c, res.parsedColor);
+
       if (res.readColor) {
         fg = toColor(res.parsedColor);
         res.parsedColor = null;
@@ -64,28 +86,35 @@ public class StringEx extends ArrayList<CharEx> {
     return text;
   }
 
-  public StringEx[] wordWrap(int lineWidth) {
+  /**
+   * 
+   * @param argLnWidth
+   * @return
+   */
+  public StringEx[] wordWrap(int argLnWidth) {
     List<StringEx> lines = new ArrayList<>();
     StringEx line;
 
     int lastWrapPoint = 0;
     int prevLastWrapPoint = 0;
     int thisLineStart = 0;
+
     for (int i = 0; i < size(); i++) {
       CharEx c = this.get(i);
 
       if (c.isWhitespace()) {
-        if (lastWrapPoint > 0)
+        if (lastWrapPoint > 0) {
           prevLastWrapPoint = lastWrapPoint;
+        }
+
         lastWrapPoint = i;
       }
 
       // wrap if we got too long
-      if (i - thisLineStart >= lineWidth) {
+      if (i - thisLineStart >= argLnWidth) {
         if (lastWrapPoint != 0) {
           // have a recent point to wrap at, so word wrap
-          if (lastWrapPoint - thisLineStart > lineWidth && lastWrapPoint > 0) {
-
+          if (lastWrapPoint - thisLineStart > argLnWidth && lastWrapPoint > 0) {
             line = substring(thisLineStart, prevLastWrapPoint - thisLineStart);
             thisLineStart = prevLastWrapPoint;
           }
@@ -116,18 +145,29 @@ public class StringEx extends ArrayList<CharEx> {
     return lines.toArray(new StringEx[0]);
   }
 
-  public StringEx substring(int startIndex, int length) {
+  public StringEx substring(int argStartIdx, int argLen) {
     StringEx substring = new StringEx();
-    substring.addAll(this.stream().skip(startIndex).limit((long) startIndex + length)
-        .collect(Collectors.toList()));
+    substring
+        .addAll(this
+            .stream().skip(argStartIdx).limit((long) argStartIdx + argLen)
+            .collect(Collectors.toList()));
 
     return substring;
   }
 
-  public StringEx substring(int startIndex) {
-    return substring(startIndex, size() - startIndex);
+  /**
+   * 
+   * @param argStartIdx
+   * @return
+   */
+  public StringEx substring(int argStartIdx) {
+    return substring(argStartIdx, size() - argStartIdx);
   }
 
+  /**
+   * 
+   * @return
+   */
   public StringEx trim() {
     StringEx trimmed = new StringEx(this);
 
@@ -144,35 +184,47 @@ public class StringEx extends ArrayList<CharEx> {
     return trimmed;
   }
 
-  private CharacterParseResult parseColor(Character c, List<Character> read) {
+  /**
+   * 
+   * @param c
+   * @param argReadChars
+   * @return
+   */
+  private CharacterParseResult parseColor(char c, List<Character> argReadChars) {
     CharacterParseResult res = new CharacterParseResult();
     if (c == '`') {
-      if (read == null) {
+      if (argReadChars == null) {
         res.parsedColor = new ArrayList<>();
       }
       else {
         // we're done reading the string
-        res.parsedColor = read;
+        res.parsedColor = argReadChars;
         res.readColor = true;
       }
     }
-    else if (read != null) {
-      res.parsedColor = read;
+    else if (argReadChars != null) {
+      res.parsedColor = argReadChars;
       res.parsedColor.add(c);
     }
     else {
       res.isTextChar = true;
     }
+
     return res;
   }
 
-  private SColor toColor(List<Character> color) {
-    char[] chars = new char[color.size()];
-    for (int x = 0; x < chars.length; x++)
-      chars[x] = color.get(x);
+  /**
+   * 
+   * @param argCol
+   * @return
+   */
+  private SColor toColor(List<Character> argCol) {
+    char[] chars = new char[argCol.size()];
 
-    String s = new String(chars);
+    for (int x = 0; x < chars.length; x++) {
+      chars[x] = argCol.get(x);
+    }
 
-    return SColorFactory.colorForName(s);
+    return SColorFactory.colorForName(new String(chars));
   }
 }

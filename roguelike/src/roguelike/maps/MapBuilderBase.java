@@ -219,7 +219,7 @@ public abstract class MapBuilderBase implements Serializable {
    * @param argChar
    */
   protected void setTile(Point argPt, Symbol argChar) {
-    if (map[argPt.x][argPt.y].symbol == Symbol.WALL.symbol()) {
+    if (map[argPt.x][argPt.y].symbol == Symbol.WALL.getArtifact()) {
       map[argPt.x][argPt.y] = tb.buildTile(argChar);
     }
   }
