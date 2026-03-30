@@ -15,6 +15,8 @@ ABBREVIATIONS:
 	-atk	attack
 	-atkr	attacker
 	-bg		background
+	-bld	build
+	-bldr	builder
 	-char	character
 	-col	color
 	-cmd	command
@@ -22,6 +24,7 @@ ABBREVIATIONS:
 	-dmg	damage
 	-dflt	default
 	-def	defense
+	-dif	difficulty
 	-fmt	format
 	-fg		foreground
 	-gph(s)	graphic(s)
@@ -39,12 +42,14 @@ ABBREVIATIONS:
 	-plyr	player
 	-pos	position
 	-rad	radius
+	-scn	screen
 	-strat	strategy
 	-str	string
 	-sym	symbol
 	-tgt	target
 	-term	terminal
 	-trns	transformer
+	-txt	text
 	-val	value
 	-w		width
 	-wgt	weight

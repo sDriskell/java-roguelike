@@ -25,23 +25,23 @@ public abstract class Dialog<T> extends TextWindow {
 
   /**
    * 
-   * @param argWidth
-   * @param argHeight
+   * @param argW
+   * @param argH
    */
-  protected Dialog(int argWidth, int argHeight) {
-    this(argWidth, argHeight, NOT_FULL_SCREEN);
+  protected Dialog(int argW, int argH) {
+    this(argW, argH, NOT_FULL_SCREEN);
   }
 
   /**
    * 
-   * @param argWidth
-   * @param argHeight
-   * @param argIsFullScrn
+   * @param argW
+   * @param argH
+   * @param argIsFullScn
    */
-  protected Dialog(int argWidth, int argHeight, boolean argIsFullScrn) {
-    super(argWidth, argHeight);
+  protected Dialog(int argW, int argH, boolean argIsFullScn) {
+    super(argW, argH);
     isOpen = false;
-    isFullScreen = argIsFullScrn;
+    isFullScreen = argIsFullScn;
   }
 
   /**
@@ -124,13 +124,13 @@ public abstract class Dialog<T> extends TextWindow {
 
   /**
    * 
-   * @param argWidth
-   * @param argHeight
+   * @param argH
+   * @param argW
    * @return
    */
-  protected Point getLocation(int argWidth, int argHeight) {
-    int x = (int) ((argWidth / 2f) - (size.width / 2f));
-    int y = (int) ((argHeight / 2f) - (size.height / 2f));
+  protected Point getLocation(int argH, int argW) {
+    int x = (int) ((argH / 2f) - (size.width / 2f));
+    int y = (int) ((argW / 2f) - (size.height / 2f));
     return new Point(x, y);
   }
 

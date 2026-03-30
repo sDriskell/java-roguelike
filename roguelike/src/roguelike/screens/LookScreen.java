@@ -79,11 +79,11 @@ public class LookScreen extends CursorScreen {
 
     /**
      * 
-     * @param argWidth
-     * @param argHeight
+     * @param argW
+     * @param argH
      */
-    public InformationPanel(int argWidth, int argHeight) {
-      super(argWidth, argHeight);
+    public InformationPanel(int argW, int argH) {
+      super(argW, argH);
     }
 
     /**
@@ -134,20 +134,20 @@ public class LookScreen extends CursorScreen {
      * @param argTerm
      * @param argTxtln
      * @param argTop
-     * @param argHeight
+     * @param argH
      */
     private void drawInfo(TerminalBase argTerm, ArrayList<StringEx> argTxtln, int argTop,
-        int argHeight) {
+        int argH) {
       SColor menuBgColor = SColorFactory.asSColor(30, 30, 30);
       TerminalBase background = argTerm.withColor(menuBgColor, menuBgColor);
       TerminalBase text = argTerm.withColor(SColor.WHITE, menuBgColor);
       int textY = TOP_MARGIN + argTop;
-      background.fill(1, 1 + argTop, size.width - 2, argHeight - 2, ' ');
+      background.fill(1, 1 + argTop, size.width - 2, argH - 2, ' ');
 
       for (int i = 0; i < argTxtln.size(); i++) {
         text.write(2, i + textY, argTxtln.get(i));
 
-        if ((i + textY) >= (argHeight + argTop)) {
+        if ((i + textY) >= (argH + argTop)) {
           text.write(3, i + textY + 2, "...");
           break;
         }
