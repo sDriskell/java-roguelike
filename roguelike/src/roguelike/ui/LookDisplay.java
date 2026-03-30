@@ -30,11 +30,11 @@ public class LookDisplay extends TextWindow {
   /**
    * 
    * @param argTerm
-   * @param argWidth
-   * @param argHeight
+   * @param argW
+   * @param argH
    */
-  public LookDisplay(TerminalBase argTerm, int argWidth, int argHeight) {
-    super(argWidth, argHeight);
+  public LookDisplay(TerminalBase argTerm, int argW, int argH) {
+    super(argW, argH);
     setTerminal(argTerm);
   }
 
@@ -81,17 +81,17 @@ public class LookDisplay extends TextWindow {
 
   /**
    * 
-   * @param argHeight
+   * @param argH
    */
-  public void draw(int argHeight) {
-    int top = terminal.size().height - argHeight - 1;
+  public void draw(int argH) {
+    int top = terminal.size().height - argH - 1;
 
     if (terminal.size().y > Game.current().getPlayer().position.y) {
       top = 0;
     }
 
-    drawBoxShape(terminal, top, argHeight + 1, true);
-    drawInfo(textLines, top, argHeight);
+    drawBoxShape(terminal, top, argH + 1, true);
+    drawInfo(textLines, top, argH);
   }
 
   /**
@@ -164,21 +164,21 @@ public class LookDisplay extends TextWindow {
 
   /**
    * 
-   * @param argLines
+   * @param arglns
    * @param argTop
-   * @param argHeight
+   * @param argH
    */
-  private void drawInfo(ArrayList<StringEx> argLines, int argTop, int argHeight) {
+  private void drawInfo(ArrayList<StringEx> arglns, int argTop, int argH) {
     SColor menuBgColor = SColorFactory.asSColor(30, 30, 30);
     TerminalBase background = terminal.withColor(menuBgColor, menuBgColor);
     TerminalBase text = terminal.withColor(SColor.WHITE, menuBgColor);
     int textY = TOP_MARGIN + argTop;
 
-    background.fill(1, 1 + argTop, size.width - 2, argHeight - 1, ' ');
+    background.fill(1, 1 + argTop, size.width - 2, argH - 1, ' ');
 
-    for (int i = 0; i < argLines.size(); i++) {
-      text.write(2, i + textY, argLines.get(i));
-      if ((i + textY) >= (argHeight + argTop)) {
+    for (int i = 0; i < arglns.size(); i++) {
+      text.write(2, i + textY, arglns.get(i));
+      if ((i + textY) >= (argH + argTop)) {
         text.write(3, i + textY + 2, "...");
         break;
       }

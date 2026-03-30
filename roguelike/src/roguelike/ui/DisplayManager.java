@@ -116,20 +116,20 @@ public class DisplayManager {
 
   /**
    * 
-   * @param argWidth
-   * @param argHeight
+   * @param argW
+   * @param argH
    */
-  public void init(int argWidth, int argHeight) {
-    Log.info("DisplayManager.init(" + argWidth + ", " + argHeight + ")");
+  public void init(int argW, int argH) {
+    Log.info("DisplayManager.init(" + argW + ", " + argH + ")");
     font = getFont(FONT_NAME);
     font = font.deriveFont((float) fontSize);
 
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
     ge.registerFont(font);
 
-    gridWidth = argWidth;
-    gridHeight = argHeight;
-    asciiPanel = new AsciiPanel(argWidth, argHeight);
+    gridWidth = argW;
+    gridHeight = argH;
+    asciiPanel = new AsciiPanel(argW, argH);
     displayPane = asciiPanel;
   }
 

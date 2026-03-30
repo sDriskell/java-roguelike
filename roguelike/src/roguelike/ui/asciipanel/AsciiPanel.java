@@ -218,22 +218,22 @@ public class AsciiPanel extends JPanel {
   /**
    * Class constructor specifying the width and height in characters.
    * 
-   * @param argWidth
-   * @param argHeight
+   * @param argW
+   * @param argH
    */
-  public AsciiPanel(int argWidth, int argHeight) {
+  public AsciiPanel(int argW, int argH) {
     super();
 
-    if (argWidth < 1) {
-      throw new IllegalArgumentException("width " + argWidth + " must be greater than 0.");
+    if (argW < 1) {
+      throw new IllegalArgumentException("width " + argW + " must be greater than 0.");
     }
 
-    if (argHeight < 1) {
-      throw new IllegalArgumentException("height " + argHeight + " must be greater than 0.");
+    if (argH < 1) {
+      throw new IllegalArgumentException("height " + argH + " must be greater than 0.");
     }
 
-    widthInCharacters = argWidth;
-    heightInCharacters = argHeight;
+    widthInCharacters = argW;
+    heightInCharacters = argH;
     setPreferredSize(new Dimension(charWidth * widthInCharacters, charHeight * heightInCharacters));
 
     defaultBackgroundColor = BLACK;

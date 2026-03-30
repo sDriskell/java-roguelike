@@ -31,33 +31,34 @@ public class MapArea implements Serializable {
   private float[][] lightResistances;
   private boolean[][] walls;
   protected CurrentItemTracker<Actor> actors;
-  protected int width, height;
+  protected int width;
+  protected int height;
   protected int difficulty; // controls how difficult random enemies are here
   protected String name;
 
   /**
    * 
-   * @param argWidth
-   * @param argHeight
+   * @param argW
+   * @param argH
    * @param argMapBldr
    */
-  protected MapArea(int argWidth, int argHeight, MapBuilderBase argMapBldr) {
+  protected MapArea(int argW, int argH, MapBuilderBase argMapBldr) {
     actors = new CurrentItemTracker<>();
-    width = argWidth;
-    height = argHeight;
+    width = argW;
+    height = argH;
     difficulty = 1;
     buildMapArea(argMapBldr);
   }
 
   /**
    * 
-   * @param arghWidth
-   * @param argHeight
+   * @param argW
+   * @param argH
    * @param argMapBldr
    * @return
    */
-  public static MapArea build(int arghWidth, int argHeight, MapBuilderBase argMapBldr) {
-    return new Dungeon(arghWidth, argHeight, argMapBldr, 1, 10);
+  public static MapArea build(int argW, int argH, MapBuilderBase argMapBldr) {
+    return new Dungeon(argW, argH, argMapBldr, 1, 10);
   }
 
   /**
@@ -110,9 +111,10 @@ public class MapArea implements Serializable {
         Actor npc = EnemyFactory.createEnemy(position.x, position.y, difficulty);
 
         if (addActor(npc)) {
-          Game.current().displayMessage(
-              npc.getName() + " created at " + position.x + ", " + position.y,
-              SColor.ALOEWOOD_BROWN);
+          Game
+              .current()
+              .displayMessage(npc.getName() + " created at " + position.x + ", " + position.y,
+                  SColor.ALOEWOOD_BROWN);
         }
       }
     }
