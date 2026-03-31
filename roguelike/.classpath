@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="/home/sldrisk/git/java-roguelike/roguelike/json-20140107.jar" sourcepath="/Users/john/.m2/repository/org/json/json/20140107/json-20140107-sources.jar"/>
 	<classpathentry kind="lib" path="/home/sldrisk/git/java-roguelike/roguelike/jsefa-1.0.0.RELEASE.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
