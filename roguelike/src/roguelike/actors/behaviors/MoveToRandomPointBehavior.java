@@ -71,18 +71,22 @@ public class MoveToRandomPointBehavior extends Behavior {
     if (currentTargetLocation == null) {
       // pick a new target point
 
-      int rndX = Game.current().random().between(position.x - actor.getVisionRadius() * 2,
-          position.x + actor.getVisionRadius() * 2);
-      int rndY = Game.current().random().between(position.y - actor.getVisionRadius() * 2,
-          position.y + actor.getVisionRadius() * 2);
+      int rndX = Game
+          .current().random().between(position.x - actor.getVisionRadius() * 2,
+              position.x + actor.getVisionRadius() * 2);
+      int rndY = Game
+          .current().random().between(position.y - actor.getVisionRadius() * 2,
+              position.y + actor.getVisionRadius() * 2);
 
       int count = 0;
       while (!(map.isWithinBounds(rndX, rndY) && map.getTileAt(rndX, rndY).canPass())
           && count++ < 10) {
-        rndX = Game.current().random().between(position.x - actor.getVisionRadius() * 2,
-            position.x + actor.getVisionRadius() * 2);
-        rndY = Game.current().random().between(position.y - actor.getVisionRadius() * 2,
-            position.y + actor.getVisionRadius() * 2);
+        rndX = Game
+            .current().random().between(position.x - actor.getVisionRadius() * 2,
+                position.x + actor.getVisionRadius() * 2);
+        rndY = Game
+            .current().random().between(position.y - actor.getVisionRadius() * 2,
+                position.y + actor.getVisionRadius() * 2);
       }
       if (count < 10) {
         currentTargetLocation = new Point(rndX, rndY);
@@ -95,8 +99,9 @@ public class MoveToRandomPointBehavior extends Behavior {
         if (pathToTarget != null)
           pathToTarget.nextStep(); // since the first step is just the current position
 
-        Log.debug("CurrentTargetLocation: " + rndX + ", " + rndY + ", " + actor.getName() + " pos="
-            + position.x + ", " + position.y);
+        Log
+            .debug("CurrentTargetLocation: " + rndX + ", " + rndY + ", " + actor.getName() + " pos="
+                + position.x + ", " + position.y);
       }
     }
 

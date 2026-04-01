@@ -313,8 +313,9 @@ public class Game implements Serializable {
 
     // don't perform the action if the actor is dead
     if (!currentAction.getActor().isAlive()) {
-      currentMapArea.nextActor("executeQueuedActions, currentAction actor !isAlive: "
-          + currentAction.getActor().getName());
+      currentMapArea
+          .nextActor("executeQueuedActions, currentAction actor !isAlive: "
+              + currentAction.getActor().getName());
       return argTurnResult;
     }
 
@@ -350,12 +351,16 @@ public class Game implements Serializable {
       }
       else {
 
-        Log.warning(String.format("Game: Actor=%s Alive=%s Action=%s", currentActor.getName(),
-            currentActor.isAlive(), currentAction));
-        Log.warning(
-            "Game: Remaining energy: " + currentActor.energy().getCurrent() + " Result=" + result);
-        Log.warning("Game: M=" + result.getMessage() + ", S=" + result.isSuccessful() + ", C="
-            + result.isCompleted());
+        Log
+            .warning(String
+                .format("Game: Actor=%s Alive=%s Action=%s", currentActor.getName(),
+                    currentActor.isAlive(), currentAction));
+        Log
+            .warning("Game: Remaining energy: " + currentActor.energy().getCurrent() + " Result="
+                + result);
+        Log
+            .warning("Game: M=" + result.getMessage() + ", S=" + result.isSuccessful() + ", C="
+                + result.isCompleted());
 
         /*
          * bug fix for infinite loop with enemy pathfinding where they can't move to a
