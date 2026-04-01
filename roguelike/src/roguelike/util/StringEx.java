@@ -20,7 +20,7 @@ public class StringEx extends ArrayList<CharEx> {
    */
   private class CharacterParseResult {
     public List<Character> parsedColor;
-    public boolean readColor;
+    public boolean shouldReadColor;
     public boolean isTextChar;
   }
 
@@ -71,7 +71,7 @@ public class StringEx extends ArrayList<CharEx> {
       char c = argxt.charAt(x);
       res = parseColor(c, res.parsedColor);
 
-      if (res.readColor) {
+      if (res.shouldReadColor) {
         fg = toColor(res.parsedColor);
         res.parsedColor = null;
       }
@@ -199,7 +199,7 @@ public class StringEx extends ArrayList<CharEx> {
       else {
         // we're done reading the string
         res.parsedColor = argReadChars;
-        res.readColor = true;
+        res.shouldReadColor = true;
       }
     }
     else if (argReadChars != null) {

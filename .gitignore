@@ -1,6 +1,10 @@
 .metadata
 .DS_Store
+.project
+.classpath
 roguelike/bin
 roguelike/saves
+roguelike/.classpath
+roguelike/.project
 *~
 *.log
