@@ -12,9 +12,6 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import roguelike.actors.Player;
-import roguelike.actors.conditions.Poisoned;
-import roguelike.actors.conditions.ReducedVision;
-import roguelike.actors.conditions.Stunned;
 import roguelike.items.Equipment.ItemSlot;
 import roguelike.items.MeleeWeapon;
 import roguelike.items.Projectile;
@@ -43,8 +40,8 @@ public class GameLoader {
 
     Game game = new Game();
     Player player = game.getPlayer();
-    MapArea currentMapArea = MapArea.build(Game.MAP_WIDTH, Game.MAP_HEIGHT,
-        new DungeonMapBuilder());
+    MapArea currentMapArea = MapArea
+        .build(Game.MAP_WIDTH, Game.MAP_HEIGHT, new DungeonMapBuilder());
     currentMapArea.addActor(player);
 
     game.setCurrentMapArea(currentMapArea);
@@ -112,10 +109,6 @@ public class GameLoader {
     player.inventory().add(arrow);
 
     ItemSlot.RIGHT_HAND.equipItem(player, sword);
-
-    player.addCondition(new Poisoned(10));
-    player.addCondition(new Stunned(5));
-    player.addCondition(new ReducedVision(114));
 
     return player;
   }
