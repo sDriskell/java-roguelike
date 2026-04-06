@@ -61,6 +61,7 @@ BIG GOALS:
 		-break into a package with smaller, more manageable classes
 	-Refactor and remove squidlib
 	-Build junit testing into project
+	-Add in logging
 
 MODERATE GOALS:
 	-Eliminate magic numbers

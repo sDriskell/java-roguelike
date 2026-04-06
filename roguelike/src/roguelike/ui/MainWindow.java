@@ -1,5 +1,6 @@
 package roguelike.ui;
 
+import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
@@ -10,6 +11,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 
 import roguelike.screens.Screen;
 import roguelike.screens.TitleScreen;
@@ -22,13 +24,15 @@ public class MainWindow {
 
   public static final int SCREEN_WIDTH = 1200;
   public static final int SCREEN_HEIGHT = 690;
-  public static final int CELL_WIDTH = 9; // in AsciiPanel, this is constant
+  public static final int CELL_WIDTH = 9; // In AsciiPanel, this is constant
   public static final int CELL_HEIGHT = 16;
 
   public static final int WIDTH = SCREEN_WIDTH / CELL_WIDTH;
   public static final int HEIGHT = SCREEN_HEIGHT / CELL_HEIGHT;
   public static final int STAT_WIDTH = 50;
   public static final int FONT_SIZE = 14;
+  public static final int CURSOR_IMAGE_HEIGHT = 16;
+  public static final int CURSOR_IMAGE_WIDTH = 16;
 
   private JFrame frame;
 
@@ -43,10 +47,7 @@ public class MainWindow {
    * 
    */
   public MainWindow() {
-
-    System.out.println("SKIP_TICKS: " + SKIP_TICKS);
     displayManager = new DisplayManager(FONT_SIZE);
-
     initFrame();
     setKeyBindings();
 
@@ -93,9 +94,9 @@ public class MainWindow {
   public void setKeyBindings() {
     KeyMap defaultKeys = new KeyMap("Default");
 
-    defaultKeys.bindKey(KeyEvent.VK_UP, InputCommand.UP)
-        .bindKey(KeyEvent.VK_DOWN, InputCommand.DOWN).bindKey(KeyEvent.VK_LEFT, InputCommand.LEFT)
-        .bindKey(KeyEvent.VK_RIGHT, InputCommand.RIGHT)
+    defaultKeys
+        .bindKey(KeyEvent.VK_UP, InputCommand.UP).bindKey(KeyEvent.VK_DOWN, InputCommand.DOWN)
+        .bindKey(KeyEvent.VK_LEFT, InputCommand.LEFT).bindKey(KeyEvent.VK_RIGHT, InputCommand.RIGHT)
         .bindKey(KeyEvent.VK_UP, true, InputCommand.UP_LEFT)
         .bindKey(KeyEvent.VK_RIGHT, true, InputCommand.UP_RIGHT)
         .bindKey(KeyEvent.VK_DOWN, true, InputCommand.DOWN_RIGHT)
@@ -129,13 +130,15 @@ public class MainWindow {
    */
   private void initFrame() {
     frame = new JFrame("Untitled Roguelike");
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
     try {
       frame.setIconImage(ImageIO.read(new File("./icon.png")));
     }
     catch (IOException ex) {
-      // don't do anything if it failed, the default Java icon will be
-      // used
+      /*
+       * If it fails, it will default to Java icon.
+       */
     }
 
     InputManager.registerWithFrame(frame);
@@ -152,21 +155,24 @@ public class MainWindow {
 
     Log.info("Window size: " + frame.getSize().width + "x" + frame.getSize().height);
 
-    hideMouseCursor();
+    hideMouseCursor(frame);
   }
 
   /**
+   * Hides the mouse pointer whenever it moves through the JFrame passed in the
+   * argument.
    * 
+   * @param argFrame the JFRame object that will disable mouse pointer visibility
+   *   in
    */
-  private void hideMouseCursor() {
-    BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+  private void hideMouseCursor(JFrame argFrame) {
+    BufferedImage cursorImg = new BufferedImage(CURSOR_IMAGE_WIDTH, CURSOR_IMAGE_HEIGHT,
+        BufferedImage.TYPE_INT_ARGB);
 
-    // Create a new blank cursor.
-    java.awt.Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg,
-        new Point(0, 0), "blank cursor");
+    Cursor blankCursor = Toolkit
+        .getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "blank cursor");
 
-    // Set the blank cursor to the JFrame.
-    frame.getContentPane().setCursor(blankCursor);
+    argFrame.getContentPane().setCursor(blankCursor);
   }
 
 }
