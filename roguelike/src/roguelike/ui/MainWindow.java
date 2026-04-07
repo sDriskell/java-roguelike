@@ -66,7 +66,7 @@ public class MainWindow {
     long nextTick = System.currentTimeMillis();
 
     // TODO: figure out what this does clearly.
-    while (true) {
+    while (frame.isEnabled()) {
       currentScreen.process();
       currentScreen = Screen.currentScreen();
       long drawTicks = currentScreen.draw();
@@ -82,11 +82,12 @@ public class MainWindow {
           Thread.sleep(sleepTime);
         }
         catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
           e.printStackTrace();
         }
       }
       else {
-        Log.warning("draw SLEEPTIME < 0: " + sleepTime + " drawTicks=" + drawTicks);
+        Log.warning("Draw - Sleep time: " + sleepTime + "; Ticks: " + drawTicks);
       }
     }
   }
