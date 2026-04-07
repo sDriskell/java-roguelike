@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
@@ -34,12 +33,16 @@ public class MainWindow {
   public static final int CURSOR_IMAGE_HEIGHT = 16;
   public static final int CURSOR_IMAGE_WIDTH = 16;
 
+  private static final String BLANK_CURSOR = "Blank Cursor";
+  private static final String FRAME_NAME = "Untitled Roguelike";
+
+  private static boolean hideMouse = true;
+
   private JFrame frame;
 
   static final int FRAMES_PER_SECOND = 40;
   static final int SKIP_TICKS = 1000 / FRAMES_PER_SECOND;
 
-  private JComponent displayPane;
   private Screen currentScreen;
   private DisplayManager displayManager;
 
@@ -48,7 +51,7 @@ public class MainWindow {
    */
   public MainWindow() {
     displayManager = new DisplayManager(FONT_SIZE);
-    initFrame();
+    frame = initFrame(FRAME_NAME, hideMouse);
     setKeyBindings();
 
     /*
@@ -126,36 +129,44 @@ public class MainWindow {
   }
 
   /**
+   * Initializes the setup of the MainWindow JFrame object. This includes setting,
+   * packing, visibility, display panel, mouse hiding, etc.
    * 
+   * @param argName String name for frame; if null or blank the default FRAME_NAME
+   *   will be assigned to the frame.
+   * @param argHideMouse if true hides mouse pointer when over frame
+   * @return initialized JFrame
    */
-  private void initFrame() {
-    frame = new JFrame("Untitled Roguelike");
-    frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+  private JFrame initFrame(String argName, boolean argHideMouse) {
+    if (argName == null || argName.isBlank()) {
+      argName = FRAME_NAME;
+    }
+
+    JFrame jframe = new JFrame(argName);
+    jframe.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
     try {
-      frame.setIconImage(ImageIO.read(new File("./icon.png")));
+      jframe.setIconImage(ImageIO.read(new File("./icon.png")));
     }
     catch (IOException ex) {
-      /*
-       * If it fails, it will default to Java icon.
-       */
+      // Default to the Java icon.
     }
 
-    InputManager.registerWithFrame(frame);
+    InputManager.registerWithFrame(jframe);
 
     displayManager.init(WIDTH, HEIGHT);
-    displayPane = displayManager.displayPane();
+    jframe.add(displayManager.displayPane());
+    jframe.pack();
 
-    frame.add(displayPane);
-    frame.pack();
+    jframe.setLocationRelativeTo(null);
+    jframe.setVisible(true);
+    jframe.setResizable(false);
 
-    frame.setLocationRelativeTo(null);
-    frame.setVisible(true);
-    frame.setResizable(false);
+    if (argHideMouse) {
+      hideMouseCursor(jframe);
+    }
 
-    Log.info("Window size: " + frame.getSize().width + "x" + frame.getSize().height);
-
-    hideMouseCursor(frame);
+    return jframe;
   }
 
   /**
@@ -163,16 +174,22 @@ public class MainWindow {
    * argument.
    * 
    * @param argFrame the JFRame object that will disable mouse pointer visibility
-   *   in
+   *   in it
    */
   private void hideMouseCursor(JFrame argFrame) {
     BufferedImage cursorImg = new BufferedImage(CURSOR_IMAGE_WIDTH, CURSOR_IMAGE_HEIGHT,
         BufferedImage.TYPE_INT_ARGB);
 
     Cursor blankCursor = Toolkit
-        .getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "blank cursor");
+        .getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), BLANK_CURSOR);
 
     argFrame.getContentPane().setCursor(blankCursor);
   }
 
+  /**
+   * @return MainWindow JFrame object
+   */
+  public JFrame getFrame() {
+    return frame;
+  }
 }
